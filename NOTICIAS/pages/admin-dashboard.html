@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - La Casa del Movimiento</title>
+    <link rel="stylesheet" href="../css/variables.css">
+    <link rel="stylesheet" href="../css/estilos.css">
+</head>
+<body>
+    <div class="dashboard-layout">
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div class="sidebar-header">Casa del Movimiento</div>
+            
+            <div class="sidebar-user">
+                <strong id="userName">Cargando...</strong>
+                <span class="role-badge" style="background-color: var(--color-primary);">Admin</span>
+            </div>
+
+            <nav class="sidebar-nav">
+                <li><a href="#dashboard" class="nav-link active">Dashboard</a></li>
+                <li><a href="#crear-evento" class="nav-link">Crear Evento</a></li>
+                <li><a href="#crear-noticia" class="nav-link">Crear Noticia</a></li>
+                <li><a href="#crear-taller" class="nav-link">Crear Taller</a></li>
+                <li><a href="#gestionar-noticias" class="nav-link">Gestionar Noticias</a></li>
+                <li><a href="#gestionar-talleres" class="nav-link">Gestionar Talleres</a></li>
+                <li><a href="#gestionar-usuarios" class="nav-link">Gestionar Usuarios</a></li>
+                <li><button class="logout-btn" onclick="logout()">Cerrar Sesión</button></li>
+            </nav>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+            <div class="header">
+                <h1>Panel de Administración</h1>
+            </div>
+
+            <!-- DASHBOARD OVERVIEW -->
+            <section id="dashboard" class="section">
+                <div class="card-grid">
+                    <div class="card">
+                        <h3 id="totalEventos">0</h3>
+                        <p>Eventos</p>
+                    </div>
+                    <div class="card">
+                        <h3 id="totalNoticias">0</h3>
+                        <p>Noticias</p>
+                    </div>
+                    <div class="card">
+                        <h3 id="totalTalleres">0</h3>
+                        <p>Talleres Activos</p>
+                    </div>
+                    <div class="card">
+                        <h3 id="totalTalleristas">0</h3>
+                        <p>Talleristas</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CREAR EVENTO -->
+            <section id="crear-evento" class="section" style="display: none;">
+                <div class="card">
+                    <h2 class="card-title">Crear Nuevo Evento</h2>
+                    
+                    <form id="crearEventoForm" class="form">
+                        <div class="form-group">
+                            <label>Título del Evento</label>
+                            <input type="text" id="eventoTitulo" placeholder="Ej: Festival del Papalote" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Descripción</label>
+                            <textarea id="eventoDescripcion" placeholder="Descripción detallada..." required></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Fecha y Hora</label>
+                            <input type="datetime-local" id="eventoFecha" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Duración (minutos)</label>
+                            <input type="number" id="eventoDuracion" placeholder="120" value="120">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Ubicación</label>
+                            <input type="text" id="eventoUbicacion" placeholder="Juárez 86, Tizayuca" value="Juárez 86, Tizayuca">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Taller Relacionado (Opcional)</label>
+                            <select id="eventoTaller">
+                                <option value="">Ninguno</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Crear Evento</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- CREAR NOTICIA -->
+            <section id="crear-noticia" class="section" style="display: none;">
+                <div class="card">
+                    <h2 class="card-title">Crear Nueva Noticia</h2>
+                    
+                    <form id="crearNoticiaAdminForm" class="form">
+                        <div class="form-group">
+                            <label>Autor</label>
+                            <select id="noticiaAutor" required>
+                                <option value="">Selecciona un tallerista</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Título</label>
+                            <input type="text" id="noticiaAdminTitulo" placeholder="Título" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Resumen</label>
+                            <textarea id="noticiaAdminResumen" placeholder="Resumen..." required></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Contenido</label>
+                            <textarea id="noticiaAdminCuerpo" placeholder="Contenido completo..." required></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Categoría</label>
+                            <select id="noticiaAdminCategoria" required>
+                                <option value="">Selecciona una categoría</option>
+                                <option value="reflexiones">Reflexiones</option>
+                                <option value="cronicas-eventos">Crónicas de Eventos</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" id="noticiaAdminDestacada">
+                                Destacada
+                            </label>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Crear Noticia</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- CREAR TALLER -->
+            <section id="crear-taller" class="section" style="display: none;">
+                <div class="card">
+                    <h2 class="card-title">Crear y Asignar Nuevo Taller</h2>
+                    
+                    <form id="crearTallerForm" class="form">
+                        <div class="form-group">
+                            <label>Título del Taller</label>
+                            <input type="text" id="tallerTitulo" placeholder="Ej: Pintura y Escultura Básico" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Frase Gancho (Slogan corto)</label>
+                            <input type="text" id="tallerFraseGancho" placeholder="Ej: Libera tu creatividad en 8 sesiones">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Instructor / Tallerista Asignado</label>
+                            <select id="tallerInstructor" required>
+                                <option value="">Cargando talleristas...</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Descripción Detallada</label>
+                            <textarea id="tallerDescripcion" rows="4" placeholder="¿De qué trata el taller?..." required></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label>¿Para quién está dirigido?</label>
+                            <input type="text" id="tallerParaQuien" placeholder="Ej: Principiantes sin experiencia previa">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Nivel / Rango de Edad</label>
+                            <select id="tallerNivelEdad" required>
+                                <option value="Niños (6-12 años)">Niños (6-12 años)</option>
+                                <option value="Jóvenes (13-17 años)">Jóvenes (13-17 años)</option>
+                                <option value="Adultos (18+ años)">Adultos (18+ años)</option>
+                                <option value="Público en General">Público en General</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Días de Clase</label>
+                            <input type="text" id="tallerDias" placeholder="Ej: Lunes y Miércoles" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Horario</label>
+                            <input type="text" id="tallerHoras" placeholder="Ej: 16:00 a 18:00 hrs" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Próxima Sesión / Fecha de Inicio</label>
+                            <input type="datetime-local" id="tallerProximaSesion" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Cupo Máximo</label>
+                            <input type="number" id="tallerCupo" placeholder="15" value="15" min="1" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Eje Relacionado (ID opcional)</label>
+                            <input type="number" id="tallerEje" placeholder="1">
+                        </div>
+
+                        <button type="submit" id="btnSubmitTaller" class="btn btn-primary">Crear Taller y Notificar Tallerista</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- GESTIONAR NOTICIAS -->
+            <section id="gestionar-noticias" class="section" style="display: none;">
+                <div class="card">
+                    <h2 class="card-title">Gestionar Noticias</h2>
+                    
+                    <div id="noticiasAdminList">
+                        <p>Cargando...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- GESTIONAR TALLERES -->
+            <section id="gestionar-talleres" class="section" style="display: none;">
+                <div class="card">
+                    <h2 class="card-title">Gestionar Talleres</h2>
+                    
+                    <div id="talleresAdminList">
+                        <p>Cargando...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- GESTIONAR USUARIOS -->
+            <section id="gestionar-usuarios" class="section" style="display: none;">
+                <div class="card">
+                    <h2 class="card-title">Gestionar Usuarios</h2>
+                    
+                    <div id="usuariosAdminList">
+                        <p>Cargando...</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase-config.js"></script>
+    <script src="../js/dashboard.js"></script>
+    <script>
+        // Estandarización de instancia para evitar fallos de referencia
+        const dbClient = window.supabaseClient || window.supabase;
+
+        // Proteger ruta (solo administrativos)
+        const session = protectRoute('administrativo');
+
+        if (session) {
+            document.getElementById('userName').textContent = session.userName;
+            
+            // Cargar datos del dashboard
+            loadDashboardStats();
+            loadTallersForSelect();
+            loadTalleristasForSelect();
+            loadTalleristasDropdown(); // <-- Agregado para poblar el select de talleres
+            loadAllNoticias();
+            loadAllTalleres();
+            loadAllUsuarios();
+
+            // Navegar entre secciones
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const sectionId = link.getAttribute('href').substring(1);
+                    showSection(sectionId);
+                    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                    link.classList.add('active');
+                });
+            });
+
+            // Listeners de formularios
+            document.getElementById('crearEventoForm').addEventListener('submit', createEvento);
+            document.getElementById('crearNoticiaAdminForm').addEventListener('submit', createNoticiaAdmin);
+            
+            const formTaller = document.getElementById('crearTallerForm');
+            if (formTaller) {
+                formTaller.addEventListener('submit', createTaller);
+            }
+        }
+
+        async function loadDashboardStats() {
+            try {
+                const { count: eventosCount } = await dbClient
+                    .from('eventos')
+                    .select('*', { count: 'exact', head: true });
+
+                const { count: noticiasCount } = await dbClient
+                    .from('noticias')
+                    .select('*', { count: 'exact', head: true });
+
+                const { count: talleresCount } = await dbClient
+                    .from('talleres')
+                    .select('*', { count: 'exact', head: true });
+
+                const { count: talleristasCount } = await dbClient
+                    .from('autores')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('rol', 'tallerista');
+
+                document.getElementById('totalEventos').textContent = eventosCount || 0;
+                document.getElementById('totalNoticias').textContent = noticiasCount || 0;
+                document.getElementById('totalTalleres').textContent = talleresCount || 0;
+                document.getElementById('totalTalleristas').textContent = talleristasCount || 0;
+            } catch (error) {
+                console.error('Error cargando stats:', error);
+            }
+        }
+
+        async function loadTallersForSelect() {
+            try {
+                const { data } = await dbClient
+                    .from('talleres')
+                    .select('id, titulo');
+
+                const select = document.getElementById('eventoTaller');
+                select.innerHTML = '<option value="">Ninguno</option>';
+                if (data) {
+                    data.forEach(taller => {
+                        const option = document.createElement('option');
+                        option.value = taller.id;
+                        option.textContent = taller.titulo;
+                        select.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        async function loadTalleristasForSelect() {
+            try {
+                const { data } = await dbClient
+                    .from('autores')
+                    .select('id, nombre')
+                    .eq('rol', 'tallerista');
+
+                const select = document.getElementById('noticiaAutor');
+                select.innerHTML = '<option value="">Selecciona un tallerista</option>';
+                if (data) {
+                    data.forEach(tallerista => {
+                        const option = document.createElement('option');
+                        option.value = tallerista.id;
+                        option.textContent = tallerista.nombre;
+                        select.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        // Cargar la lista de talleristas en el SELECT de creación de talleres
+        async function loadTalleristasDropdown() {
+            try {
+                const { data, error } = await dbClient
+                    .from('autores')
+                    .select('id, nombre, email')
+                    .eq('rol', 'tallerista')
+                    .order('nombre');
+
+                if (error) throw error;
+
+                const select = document.getElementById('tallerInstructor');
+                select.innerHTML = '<option value="">Selecciona un tallerista</option>';
+
+                if (data) {
+                    data.forEach(tallerista => {
+                        const option = document.createElement('option');
+                        option.value = tallerista.id;
+                        option.dataset.email = tallerista.email;
+                        option.textContent = `${tallerista.nombre} (${tallerista.email})`;
+                        select.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Error al cargar talleristas:', error.message);
+            }
+        }
+
+        // Handler para crear el Taller (Inserción limpia)
+        async function createTaller(e) {
+            e.preventDefault();
+
+            const submitBtn = document.getElementById('btnSubmitTaller');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Procesando inserción...';
+
+            const instructorId = document.getElementById('tallerInstructor').value;
+            const titulo = document.getElementById('tallerTitulo').value.trim();
+            const fraseGancho = document.getElementById('tallerFraseGancho').value.trim();
+            const descripcion = document.getElementById('tallerDescripcion').value.trim();
+            const paraQuien = document.getElementById('tallerParaQuien').value.trim();
+            const nivelEdad = document.getElementById('tallerNivelEdad').value;
+            const dias = document.getElementById('tallerDias').value.trim();
+            const horas = document.getElementById('tallerHoras').value.trim();
+            const proximaSesion = document.getElementById('tallerProximaSesion').value;
+            const cupo = parseInt(document.getElementById('tallerCupo').value);
+            const eje = document.getElementById('tallerEje').value ? parseInt(document.getElementById('tallerEje').value) : null;
+
+            const horariosJSON = {
+                dias: dias,
+                horario: horas
+            };
+
+            try {
+                const { error } = await dbClient
+                    .from('talleres')
+                    .insert({
+                        titulo,
+                        frase_gancho: fraseGancho,
+                        descripcion,
+                        instructor_id: instructorId,
+                        para_quien: paraQuien,
+                        nivel_edad: nivelEdad,
+                        horarios: horariosJSON,
+                        proxima_sesion: new Date(proximaSesion).toISOString(),
+                        cupo,
+                        eje_relacionado: eje
+                    });
+
+                if (error) throw error;
+
+                alert(`✅ Taller "${titulo}" creado con éxito. Notificación enviada automáticamente.`);
+                document.getElementById('crearTallerForm').reset();
+                
+                // Recargar componentes de UI
+                loadDashboardStats();
+                loadAllTalleres();
+                loadTallersForSelect();
+
+            } catch (error) {
+                console.error('Error al crear taller:', error);
+                alert('❌ Fallo al registrar el taller: ' + error.message);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Crear Taller y Notificar Tallerista';
+            }
+        }
+
+        async function createEvento(e) {
+            e.preventDefault();
+
+            const titulo = document.getElementById('eventoTitulo').value;
+            const descripcion = document.getElementById('eventoDescripcion').value;
+            const fecha = new Date(document.getElementById('eventoFecha').value);
+            const duracion = parseInt(document.getElementById('eventoDuracion').value);
+            const ubicacion = document.getElementById('eventoUbicacion').value;
+            const tallerRelacionado = document.getElementById('eventoTaller').value || null;
+
+            try {
+                const { error } = await dbClient
+                    .from('eventos')
+                    .insert({
+                        titulo,
+                        descripcion,
+                        fecha_evento: fecha.toISOString(),
+                        hora_inicio: fecha.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' }),
+                        duracion_minutos: duracion,
+                        ubicacion,
+                        taller_relacionado_id: tallerRelacionado,
+                        estado: 'proximo'
+                    });
+
+                if (error) throw error;
+
+                alert('✅ Evento creado exitosamente');
+                document.getElementById('crearEventoForm').reset();
+                loadDashboardStats();
+            } catch (error) {
+                console.error('Error:', error);
+                alert('❌ Error al crear evento');
+            }
+        }
+
+        async function createNoticiaAdmin(e) {
+            e.preventDefault();
+
+            const autorId = document.getElementById('noticiaAutor').value;
+            const titulo = document.getElementById('noticiaAdminTitulo').value;
+            const resumen = document.getElementById('noticiaAdminResumen').value;
+            const cuerpo = document.getElementById('noticiaAdminCuerpo').value;
+            const categorySlug = document.getElementById('noticiaAdminCategoria').value;
+            const destacada = document.getElementById('noticiaAdminDestacada').checked;
+
+            try {
+                const { data: catData, error: catError } = await dbClient
+                    .from('categorias')
+                    .select('id')
+                    .eq('slug', categorySlug)
+                    .single();
+
+                if (catError) throw catError;
+
+                const { error } = await dbClient
+                    .from('noticias')
+                    .insert({
+                        titulo,
+                        resumen,
+                        cuerpo,
+                        autor_id: autorId,
+                        categoria_id: catData.id,
+                        publicado: true,
+                        destacada
+                    });
+
+                if (error) throw error;
+
+                alert('✅ Noticia creada');
+                document.getElementById('crearNoticiaAdminForm').reset();
+                loadAllNoticias();
+                loadDashboardStats();
+            } catch (error) {
+                console.error('Error:', error);
+                alert('❌ Error al crear noticia: ' + error.message);
+            }
+        }
+
+        async function loadAllNoticias() {
+            try {
+                const { data } = await dbClient
+                    .from('noticias')
+                    .select('id, titulo, publicado, destacada')
+                    .order('fecha_publicacion', { ascending: false });
+
+                if (!data) return;
+
+                const html = `
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Título</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${data.map(n => `
+                                <tr>
+                                    <td>${n.titulo}</td>
+                                    <td>${n.publicado ? '✅ Publicada' : '❌ Borrador'} ${n.destacada ? '⭐ Destacada' : ''}</td>
+                                    <td>
+                                        <button class="btn btn-secondary" onclick="deleteNoticia('${n.id}')">Eliminar</button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+
+                document.getElementById('noticiasAdminList').innerHTML = html;
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        async function loadAllTalleres() {
+            try {
+                const { data } = await dbClient
+                    .from('talleres')
+                    .select('id, titulo, cupo');
+
+                if (!data) return;
+
+                const html = `
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Taller</th>
+                                <th>Cupo</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${data.map(t => `
+                                <tr>
+                                    <td>${t.titulo}</td>
+                                    <td>${t.cupo} personas</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+
+                document.getElementById('talleresAdminList').innerHTML = html;
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        async function loadAllUsuarios() {
+            try {
+                const { data } = await dbClient
+                    .from('autores')
+                    .select('id, nombre, email, rol')
+                    .order('nombre');
+
+                if (!data) return;
+
+                const html = `
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Email</th>
+                                <th>Rol</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${data.map(u => `
+                                <tr>
+                                    <td>${u.nombre}</td>
+                                    <td>${u.email}</td>
+                                    <td>${u.rol === 'administrativo' ? '🔐 Admin' : '👨‍🏫 Tallerista'}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+
+                document.getElementById('usuariosAdminList').innerHTML = html;
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        async function deleteNoticia(noticiaId) {
+            if (confirm('¿Estás seguro de que quieres eliminar esta noticia?')) {
+                try {
+                    const { error } = await dbClient
+                        .from('noticias')
+                        .delete()
+                        .eq('id', noticiaId);
+
+                    if (error) throw error;
+
+                    alert('✅ Noticia eliminada');
+                    loadAllNoticias();
+                    loadDashboardStats();
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('❌ Error al eliminar');
+                }
+            }
+        }
+
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(s => s.style.display = 'none');
+            document.getElementById(sectionId).style.display = 'block';
+        }
+        async function logout() {
+    try {
+        // 1. Destruir la sesión activa en Supabase Auth
+        if (dbClient && dbClient.auth) {
+            await dbClient.auth.signOut();
+        }
+    } catch (error) {
+        console.error('Error al cerrar sesión en Supabase:', error.message);
+    } finally {
+        // 2. Limpiar persistencia local
+        localStorage.clear();
+        sessionStorage.clear();
+
+        // 3. Redireccionar a la raíz
+        window.location.href = '../../index.html';
+    }
+}
+    </script>
+</body>
+</html>

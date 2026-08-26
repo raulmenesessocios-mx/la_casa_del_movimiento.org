@@ -1,0 +1,43 @@
+:root {
+    /* Paleta de colores - Manual de Estilos */
+    --color-primary: #9E1B22;           /* Rojo profundo */
+    --color-primary-dark: #7A141A;      /* Rojo más oscuro */
+    --color-success: #4CAF50;           /* Verde - CTAs */
+    --color-success-hover: #3E8E41;     /* Verde hover */
+    --color-accent: #E0A72F;            /* Oro */
+    --color-alert: #C0392B;             /* Rojo alerta */
+    --color-bg: #F5F5F3;                /* Fondo claro */
+    --color-text: #4A4A4A;              /* Texto neutral */
+    --color-text-light: #7A7A7A;        /* Texto secundario */
+    --color-border: #D3D3D3;            /* Bordes */
+    --color-white: #FFFFFF;             /* Blanco */
+
+    /* Tipografía */
+    --font-serif: 'Lora', serif;
+    --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+    /* Espaciado */
+    --spacing-xs: 0.5rem;
+    --spacing-sm: 1rem;
+    --spacing-md: 1.5rem;
+    --spacing-lg: 2rem;
+    --spacing-xl: 3rem;
+    --spacing-xxl: 4rem;
+
+    /* Bordes */
+    --border-radius: 8px;
+    --border-radius-lg: 12px;
+
+    /* Sombras */
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.2);
+
+    /* Z-index */
+    --z-modal: 1000;
+    --z-dropdown: 100;
+    --z-sticky: 50;
+}
+
+/* Importar fuentes */
+@import url('https://fonts.googleapis.com/css2?family=Lora:wght@400;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');

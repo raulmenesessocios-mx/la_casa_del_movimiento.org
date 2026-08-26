@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>La Casa del Movimiento | Inicio</title>
+    <!-- Tu archivo CSS maestro unificado -->
+    <link rel="stylesheet" href="CSS/styles.css">
+</head>
+<body>
+
+
+    <!-- SECCIÓN 1: HEADER -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio - La Casa del Movimiento</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;700&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- ========================================
+        HEADER / NAVBAR (CORRECCIÓN DE NAVEGACIÓN)
+        ======================================== -->
+    <header>
+        <a href="#" class="brand-logo">La Casa del Movimiento</a>
+        <nav>
+            <ul>
+                <li><a href="index.html" >Inicio</a></li>
+                <li><a href="talleres.html">Talleres</a></li>
+                <li><a href="#eventos" class="nav-item-active">Eventos</a></li>
+                <li><a href="noticias.html">Noticias</a></li>
+                <!-- Contacto se mudó al footer -->
+            </ul>
+        </nav>
+    </header>
+
+    <section class="events-section" id="eventos">
+    <div class="section-padding">
+        <h2 class="section-title">Eventos</h2>
+        <p class="events-subtitle">Descubre qué está sucediendo en La Casa del Movimiento</p>
+
+        <!-- VISTA DUAL: AGENDA IZQUIERDA + EVENTO DESTACADO DERECHA -->
+        <div class="events-container">
+
+            <!-- LADO IZQUIERDO: LISTA DE AGENDA (Próximos eventos) -->
+            <aside class="events-agenda">
+                <h3 class="agenda-title">Próximos Eventos</h3>
+                
+                <div class="agenda-list">
+                    <!-- Evento 1 -->
+                    <div class="agenda-item agenda-item-active" data-event-id="evento-1">
+                        <div class="agenda-date">
+                            <span class="agenda-day">18</span>
+                            <span class="agenda-month">OCT</span>
+                        </div>
+                        <div class="agenda-info">
+                            <h4>Inauguración de Exposición</h4>
+                            <p class="agenda-time">4:00 PM</p>
+                        </div>
+                        <span class="agenda-arrow">→</span>
+                    </div>
+
+                    <!-- Evento 2 -->
+                    <div class="agenda-item" data-event-id="evento-2">
+                        <div class="agenda-date">
+                            <span class="agenda-day">20</span>
+                            <span class="agenda-month">OCT</span>
+                        </div>
+                        <div class="agenda-info">
+                            <h4>Café Literario: Octubre</h4>
+                            <p class="agenda-time">11:00 AM</p>
+                        </div>
+                        <span class="agenda-arrow">→</span>
+                    </div>
+
+                    <!-- Evento 3 -->
+                    <div class="agenda-item" data-event-id="evento-3">
+                        <div class="agenda-date">
+                            <span class="agenda-day">25</span>
+                            <span class="agenda-month">OCT</span>
+                        </div>
+                        <div class="agenda-info">
+                            <h4>Cine Club: Película Sorpresa</h4>
+                            <p class="agenda-time">8:00 PM</p>
+                        </div>
+                        <span class="agenda-arrow">→</span>
+                    </div>
+
+                    <!-- Evento 4 -->
+                    <div class="agenda-item" data-event-id="evento-4">
+                        <div class="agenda-date">
+                            <span class="agenda-day">01</span>
+                            <span class="agenda-month">NOV</span>
+                        </div>
+                        <div class="agenda-info">
+                            <h4>Taller de Cartonería Especial</h4>
+                            <p class="agenda-time">3:00 PM</p>
+                        </div>
+                        <span class="agenda-arrow">→</span>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- LADO DERECHO: EVENTO DESTACADO -->
+            <main class="featured-event-container">
+                <div class="featured-event" id="featured-evento-1">
+                    <!-- Imagen limpia (arte, no flyer con texto) -->
+                    <div class="event-featured-image">
+                        <img src="https://via.placeholder.com/500x350?text=Inauguración+Exposición" alt="Inauguración de Exposición" loading="lazy">
+                    </div>
+                    
+                    <!-- Contenido HTML real (indexable por SEO) -->
+                    <div class="event-featured-content">
+                        <h3 class="event-featured-title">Inauguración de Exposición</h3>
+                        
+                        <div class="event-featured-meta">
+                            <span class="event-meta-item">
+                                📅 18 de Octubre, 2026
+                            </span>
+                            <span class="event-meta-item">
+                                🕐 4:00 PM
+                            </span>
+                            <span class="event-meta-item">
+                                📍 Juárez 86, Tizayuca
+                            </span>
+                        </div>
+
+                        <p class="event-featured-description">
+                            Acompáñanos a la inauguración de nuestra nueva sala de exposiciones. Un espacio dedicado a mostrar el trabajo de nuestros artistas locales y celebrar la creatividad comunitaria.
+                        </p>
+
+                        <a href="#contacto" class="btn btn-cta">Quiero Asistir</a>
+                    </div>
+                </div>
+
+                <!-- Duplicar para otros eventos -->
+                <div class="featured-event" id="featured-evento-2" style="display: none;">
+                    <div class="event-featured-image">
+                        <img src="https://via.placeholder.com/500x350?text=Café+Literario" alt="Café Literario" loading="lazy">
+                    </div>
+                    <div class="event-featured-content">
+                        <h3 class="event-featured-title">Café Literario: Octubre</h3>
+                        <div class="event-featured-meta">
+                            <span class="event-meta-item">📅 20 de Octubre, 2026</span>
+                            <span class="event-meta-item">🕐 11:00 AM</span>
+                            <span class="event-meta-item">📍 Juárez 86, Tizayuca</span>
+                        </div>
+                        <p class="event-featured-description">
+                            Círculo de lectura semanal donde exploramos desde clásicos hasta voces contemporáneas. Acompañado de café y excelente compañía.
+                        </p>
+                        <a href="#contacto" class="btn btn-cta">Quiero Asistir</a>
+                    </div>
+                </div>
+
+                <div class="featured-event" id="featured-evento-3" style="display: none;">
+                    <div class="event-featured-image">
+                        <img src="https://via.placeholder.com/500x350?text=Cine+Club" alt="Cine Club" loading="lazy">
+                    </div>
+                    <div class="event-featured-content">
+                        <h3 class="event-featured-title">Cine Club: Película Sorpresa</h3>
+                        <div class="event-featured-meta">
+                            <span class="event-meta-item">📅 25 de Octubre, 2026</span>
+                            <span class="event-meta-item">🕐 8:00 PM</span>
+                            <span class="event-meta-item">📍 Juárez 86, Tizayuca</span>
+                        </div>
+                        <p class="event-featured-description">
+                            Proyección de cine con análisis posterior. Descubre qué película veremos este mes y únete a la conversación que sigue cada función.
+                        </p>
+                        <a href="#contacto" class="btn btn-cta">Quiero Asistir</a>
+                    </div>
+                </div>
+
+                <div class="featured-event" id="featured-evento-4" style="display: none;">
+                    <div class="event-featured-image">
+                        <img src="https://via.placeholder.com/500x350?text=Cartonería+Especial" alt="Taller Cartonería" loading="lazy">
+                    </div>
+                    <div class="event-featured-content">
+                        <h3 class="event-featured-title">Taller de Cartonería Especial</h3>
+                        <div class="event-featured-meta">
+                            <span class="event-meta-item">📅 1 de Noviembre, 2026</span>
+                            <span class="event-meta-item">🕐 3:00 PM</span>
+                            <span class="event-meta-item">📍 Juárez 86, Tizayuca</span>
+                        </div>
+                        <p class="event-featured-description">
+                            Sesión especial de cartonería enfocada en técnicas avanzadas. Nivel intermedio. Cupos limitados.
+                        </p>
+                        <a href="#contacto" class="btn btn-cta">Quiero Asistir</a>
+                    </div>
+                </div>
+            </main>
+
+        </div>
+
+        <!-- EVENTOS REALIZADOS (Grid Masonry) -->
+        <div class="events-history">
+            <h3 class="history-title">Eventos Realizados</h3>
+            <p class="history-subtitle">Revisa la galería de nuestros eventos pasados y la vida que vivimos juntos</p>
+
+            <div class="events-masonry-history">
+                <!-- Evento Realizado 1 -->
+                <div class="event-history-card event-history-card-large">
+                    <img src="https://via.placeholder.com/500x400?text=Festival+Día+Muertos" alt="Festival Día de Muertos" class="history-image" loading="lazy">
+                    <div class="history-overlay">
+                        <h4 class="history-card-title">Festival Día de Muertos</h4>
+                        <p class="history-card-date">Octubre 2025</p>
+                    </div>
+                </div>
+
+                <!-- Evento Realizado 2 -->
+                <div class="event-history-card">
+                    <img src="https://via.placeholder.com/400x300?text=Festival+Navidad" alt="Festival Navidad" class="history-image" loading="lazy">
+                    <div class="history-overlay">
+                        <h4 class="history-card-title">Festival Navidad</h4>
+                        <p class="history-card-date">Diciembre 2025</p>
+                    </div>
+                </div>
+
+                <!-- Evento Realizado 3 -->
+                <div class="event-history-card">
+                    <img src="https://via.placeholder.com/400x300?text=Festival+Engrane" alt="Festival Engrane" class="history-image" loading="lazy">
+                    <div class="history-overlay">
+                        <h4 class="history-card-title">Festival Engrane</h4>
+                        <p class="history-card-date">Febrero 2026</p>
+                    </div>
+                </div>
+
+                <!-- Evento Realizado 4 -->
+                <div class="event-history-card">
+                    <img src="https://via.placeholder.com/400x300?text=Festival+Papalote" alt="Festival Papalote" class="history-image" loading="lazy">
+                    <div class="history-overlay">
+                        <h4 class="history-card-title">Festival del Papalote</h4>
+                        <p class="history-card-date">Marzo 2026</p>
+                    </div>
+                </div>
+
+                <!-- Evento Realizado 5 -->
+                <div class="event-history-card event-history-card-large">
+                    <img src="https://via.placeholder.com/500x400?text=Exposición+Cartonería" alt="Exposición Cartonería" class="history-image" loading="lazy">
+                    <div class="history-overlay">
+                        <h4 class="history-card-title">Exposición Cartonería Fina</h4>
+                        <p class="history-card-date">Enero 2026</p>
+                    </div>
+                </div>
+
+                <!-- Evento Realizado 6 -->
+                <div class="event-history-card">
+                    <img src="https://via.placeholder.com/400x300?text=Círculo+Estudio" alt="Círculo de Estudio" class="history-image" loading="lazy">
+                    <div class="history-overlay">
+                        <h4 class="history-card-title">Círculo de Estudio</h4>
+                        <p class="history-card-date">Febrero 2026</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- SECCIÓN DE CONTACTO / LEADS -->
+<section class="leads-section" id="contacto">
+    <div class="section-padding">
+        <h2 class="leads-title">¿Quieres ser parte del movimiento?</h2>
+        <p class="leads-subtitle">Únete a nuestra comunidad de creadores y transformadores</p>
+
+        <form class="contact-form" id="contact-form">
+            <div class="form-group-wrapper">
+                <div class="form-group">
+                    <input 
+                        type="text" 
+                        id="name" 
+                        name="name" 
+                        placeholder="Tu nombre" 
+                        required
+                        aria-label="Nombre"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <input 
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        placeholder="Tu correo electrónico" 
+                        required
+                        aria-label="Correo electrónico"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <textarea 
+                        id="message" 
+                        name="message" 
+                        placeholder="¿Por qué quieres unirte?" 
+                        rows="4"
+                        aria-label="Mensaje"
+                    ></textarea>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-cta btn-submit">Unirme Ahora</button>
+        </form>
+
+        <p class="form-disclaimer">Nos pondremos en contacto contigo pronto. ¡Bienvenido al movimiento!</p>
+    </div>
+</section>
+
+<!-- FOOTER BANNER (Cierre de página) -->
+<footer class="footer-banner">
+    <div class="footer-banner-content">
+        <h2 class="footer-banner-title">El movimiento lo somos todos</h2>
+        <p class="footer-banner-text">Juntos creamos, transformamos y celebramos la vida comunitaria</p>
+    </div>
+</footer>
+<script src="js/js_eventos.js"></script>
+</body>
+</html>

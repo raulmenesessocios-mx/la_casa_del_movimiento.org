@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>La Casa del Movimiento | Inicio</title>
+    <!-- Tu archivo CSS maestro unificado -->
+    <link rel="stylesheet" href="CSS/styles.css">
+</head>
+<body>
+
+
+    <!-- SECCIÓN 1: HEADER -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio - La Casa del Movimiento</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;700&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- ========================================
+        HEADER / NAVBAR (CORRECCIÓN DE NAVEGACIÓN)
+        ======================================== -->
+    <header>
+        <a href="#" class="brand-logo">La Casa del Movimiento</a>
+        <nav>
+            <ul>
+                <li><a href="#inicio" class="nav-item-active">Inicio</a></li>
+                <li><a href="talleres.html">Talleres</a></li>
+                <li><a href="eventos.html">Eventos</a></li>
+                <li><a href="noticias.html">Noticias</a></li>
+                <!-- Contacto se mudó al footer -->
+            </ul>
+        </nav>
+    </header>
+
+    <!-- ========================================
+        SECCIÓN 1: HERO HÍBRIDO (SOLUCIÓN 1)
+        ======================================== -->
+    <section class="hero" id="inicio">
+        <!-- Overlay oscuro + contenido -->
+        <div class="hero-content">
+            <h1 class="hero-title">Casa de Cultura</h1>
+            <p class="hero-subtitle">Un espacio donde la comunidad aprende, crea y transforma la realidad a través del arte y el movimiento.</p>
+            <a href="#talleres" class="btn btn-cta">Explorar Talleres</a>
+        </div>
+    </section>
+
+    <!-- ========================================
+        SECCIÓN 2: CONTADORES ANIMADOS (SOLUCIÓN 2)
+        ======================================== -->
+    <section class="section-padding about-metrics" id="quienes-somos">
+        <h2 class="section-title">¿Quiénes somos?</h2>
+        
+        <div class="metrics-container">
+            <div class="metric-card">
+                <div class="metric-number" data-target="6">0</div>
+                <p class="metric-label">Talleres Activos</p>
+                <p class="metric-description">Cartonería, Pintura, Música, Psicología y más.</p>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-number" data-target="8">0</div>
+                <p class="metric-label">Eventos Realizados</p>
+                <p class="metric-description">Festivales, exposiciones y encuentros comunitarios.</p>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-number" data-target="150">0</div>
+                <p class="metric-label">Participantes Activos</p>
+                <p class="metric-description">Talleristas, artistas y vecinos comprometidos.</p>
+            </div>
+        </div>
+
+        <!-- Párrafo corporativo debajo de los contadores -->
+        <div class="about-text" style="max-width: 800px; margin: 4rem auto 0; text-align: center;">
+            <p>Somos el núcleo del desarrollo artístico local. Provemos infraestructura, talento y espacios seguros para transformar el entorno comunitario. En La Casa del Movimiento, creemos que cada persona tiene algo valioso que crear y compartir.</p>
+        </div>
+    </section>
+
+    <!-- ========================================
+        SECCIÓN 3: MISIÓN/VISIÓN PARALELAS (SOLUCIÓN 3)
+        ======================================== -->
+    <section class="section-padding strategy-section" id="nuestro-camino">
+        <h2 class="section-title">Nuestro Camino</h2>
+        
+        <div class="strategy-container">
+            <!-- TARJETA MISIÓN -->
+            <div class="strategy-card mission-card">
+                <div class="strategy-icon">✈️</div>
+                <h3 class="strategy-heading">Misión</h3>
+                <p>Potenciar a los creadores locales mediante espacios de alto rendimiento, donde la técnica se encuentra con la pasión y la comunidad prospera.</p>
+            </div>
+
+            <!-- TARJETA VISIÓN -->
+            <div class="strategy-card vision-card">
+                <div class="strategy-icon">🚀</div>
+                <h3 class="strategy-heading">Visión</h3>
+                <p>Ser el epicentro cultural autogestivo de la región, donde la resistencia de lo hecho a mano desafía la uniformidad del mundo digital.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================
+        SECCIÓN 4: UBICACIÓN - PANTALLA DIVIDIDA (SOLUCIÓN 4)
+        ======================================== -->
+    <section class="location-section section-padding" id="ubicacion">
+        <h2 class="section-title">¿Cómo llegar?</h2>
+        
+        <div class="location-container">
+            <!-- LADO IZQUIERDO: TARJETA DE DIRECCIÓN -->
+            <div class="location-info">
+                <h3>Visítanos</h3>
+                <p class="address">
+                    <strong>Juárez 86</strong><br>
+                    Tizayuca, Hidalgo<br>
+                    México
+                </p>
+                <p class="location-description">Un espacio comunitario abierto a la creatividad. Ven y conoce nuestros talleres, eventos y galería.</p>
+                
+                <!-- CTA: Botón limpio a Google Maps -->
+                <a href="https://maps.google.com/?q=Juárez+86+Tizayuca+Hidalgo" 
+                   target="_blank" 
+                   class="btn btn-cta" 
+                   style="display: inline-block; margin-top: 1.5rem;">
+                    📍 Abrir en Google Maps
+                </a>
+            </div>
+
+            <!-- LADO DERECHO: MAPA EMBEBIDO -->
+            <div class="map-wrapper">
+                <div class="map-container" id="mapa">
+                    <!-- Alternativa 1: Google Maps Embed API -->
+                    <iframe 
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3759.8207851234567!2d-98.59!3d19.82!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85d1d1d1d1d1d1d1%3A0x123456789!2sJuar%C3%A9z%2086!5e0!3m2!1ses!2smx!4v1234567890"
+                        width="100%" 
+                        height="100%" 
+                        style="border:0;" 
+                        allowfullscreen="" 
+                        loading="lazy" 
+                        referrerpolicy="no-referrer-when-downgrade">
+                    </iframe>
+                    
+                    <!-- Fallback si no carga el iframe -->
+                    <noscript>
+                        <p>Mapa disponible en <a href="https://maps.google.com/?q=Juárez+86+Tizayuca+Hidalgo" target="_blank">Google Maps</a></p>
+                    </noscript>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================
+        SECCIÓN 5: GALERÍA MASONRY (SOLUCIÓN 5)
+        ======================================== -->
+    <section class="gallery-section section-padding" id="nuestros-inicios">
+        <h2 class="section-title">Nuestros Inicios</h2>
+        <p class="gallery-subtitle">Explora los eventos, talleres y momentos que hemos compartido con la comunidad.</p>
+        
+        <!-- MASONRY GRID (Reemplaza el carrusel de 9 puntos) -->
+        <div class="events-masonry">
+            
+            <!-- Evento 1: Festival Día de Muertos -->
+            <div class="event-card event-card-large">
+                <img src="https://via.placeholder.com/500x400?text=Festival+Día+de+Muertos" alt="Festival Día de Muertos" class="event-image" loading="lazy">
+                <div class="event-overlay">
+                    <h3 class="event-title">Festival Día de Muertos</h3>
+                    <p class="event-date">Octubre 2025</p>
+                    <a href="#" class="event-link">Ver evento →</a>
+                </div>
+            </div>
+
+            <!-- Evento 2: Festival Navidad -->
+            <div class="event-card">
+                <img src="https://via.placeholder.com/400x300?text=Festival+Navidad" alt="Festival Navidad" class="event-image" loading="lazy">
+                <div class="event-overlay">
+                    <h3 class="event-title">Festival Navidad</h3>
+                    <p class="event-date">Diciembre 2025</p>
+                    <a href="#" class="event-link">Ver evento →</a>
+                </div>
+            </div>
+
+            <!-- Evento 3: Café Literario -->
+            <div class="event-card">
+                <img src="https://via.placeholder.com/400x300?text=Café+Literario" alt="Café Literario" class="event-image" loading="lazy">
+                <div class="event-overlay">
+                    <h3 class="event-title">Café Literario</h3>
+                    <p class="event-date">Semanal / Quincenal</p>
+                    <a href="#" class="event-link">Ver evento →</a>
+                </div>
+            </div>
+
+            <!-- Evento 4: Taller de Pintura -->
+            <div class="event-card">
+                <img src="https://via.placeholder.com/400x300?text=Exposición+Pintura" alt="Exposición Pintura" class="event-image" loading="lazy">
+                <div class="event-overlay">
+                    <h3 class="event-title">Exposición Pintura</h3>
+                    <p class="event-date">Febrero 2026</p>
+                    <a href="#" class="event-link">Ver evento →</a>
+                </div>
+            </div>
+
+            <!-- Evento 5: Festival Engrane -->
+            <div class="event-card">
+                <img src="https://via.placeholder.com/400x300?text=Festival+Engrane" alt="Festival Engrane" class="event-image" loading="lazy">
+                <div class="event-overlay">
+                    <h3 class="event-title">Festival Engrane</h3>
+                    <p class="event-date">Febrero 2026</p>
+                    <a href="#" class="event-link">Ver evento →</a>
+                </div>
+            </div>
+
+            <!-- Evento 6: Cine Club -->
+            <div class="event-card">
+                <img src="https://via.placeholder.com/400x300?text=Cine+Club" alt="Cine Club" class="event-image" loading="lazy">
+                <div class="event-overlay">
+                    <h3 class="event-title">Cine Club</h3>
+                    <p class="event-date">Mensual</p>
+                    <a href="#" class="event-link">Ver evento →</a>
+                </div>
+            </div>
+
+            <!-- Evento 7: Cartonería Fine -->
+            <div class="event-card event-card-large">
+                <img src="https://via.placeholder.com/500x400?text=Exposición+Cartonería" alt="Exposición Cartonería Fina" class="event-image" loading="lazy">
+                <div class="event-overlay">
+                    <h3 class="event-title">Exposición Cartonería Fina</h3>
+                    <p class="event-date">Enero 2026</p>
+                    <a href="#" class="event-link">Ver evento →</a>
+                </div>
+            </div>
+
+            <!-- Evento 8: Festival del Papalote -->
+            <div class="event-card">
+                <img src="https://via.placeholder.com/400x300?text=Festival+Papalote" alt="Festival del Papalote" class="event-image" loading="lazy">
+                <div class="event-overlay">
+                    <h3 class="event-title">Primer Festival Papalote</h3>
+                    <p class="event-date">Marzo 2026</p>
+                    <a href="#" class="event-link">Ver evento →</a>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- RESUMEN DE EVENTOS (Mantiene la idea original pero integrada) -->
+        <div class="summary-box" style="margin-top: 4rem;">
+            <h3>Un año de transformación comunitaria</h3>
+            <p>Desde nuestros inicios, hemos realizado 8+ eventos, acogido a 150+ participantes y abierto 6 espacios de creación. Cada evento es un paso más hacia una comunidad más conectada y creativa.</p>
+        </div>
+    </section>
+
+    <!-- ========================================
+        FOOTER (Placeholder)
+        ======================================== -->
+    <footer class="footer">
+        <div class="section-padding">
+            <h2>Contáctanos</h2>
+            <p>Email: contacto@lacasadelmovimieto.mx | Teléfono: +52 (771) XXX-XXXX</p>
+            <p>&copy; 2026 La Casa del Movimiento. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- ========================================
+        JAVASCRIPT: CONTADORES ANIMADOS
+        ======================================== -->
+    <script>
+        /**
+         * SOLUCIÓN 2: Contadores Animados (CSS Puro + Intersection Observer)
+         * Se ejecuta cuando el usuario hace scroll hasta la sección
+         */
+        const observerOptions = {
+            threshold: 0.5, // Activa cuando el 50% de la sección es visible
+            rootMargin: '0px'
+        };
+
+        const animateCounters = () => {
+            const counters = document.querySelectorAll('.metric-number');
+            
+            counters.forEach(counter => {
+                const target = parseInt(counter.getAttribute('data-target'));
+                const duration = 2000; // 2 segundos de animación
+                const start = 0;
+                const increment = target / (duration / 50); // Incremento por cada 50ms
+
+                let current = start;
+
+                const timer = setInterval(() => {
+                    current += increment;
+                    if (current >= target) {
+                        counter.textContent = target;
+                        clearInterval(timer);
+                    } else {
+                        counter.textContent = Math.floor(current);
+                    }
+                }, 50);
+            });
+        };
+
+        // Observador para activar contadores solo cuando son visibles
+        const metricsSection = document.querySelector('.about-metrics');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !metricsSection.classList.contains('animated')) {
+                    animateCounters();
+                    metricsSection.classList.add('animated');
+                }
+            });
+        }, observerOptions);
+
+        observer.observe(metricsSection);
+
+        /**
+         * BONUS: Smooth scroll para enlaces de navegación
+         */
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
+</body>
+</html>
