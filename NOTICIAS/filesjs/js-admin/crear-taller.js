@@ -42,7 +42,7 @@ async function createTaller(e) {
     const submitBtn = document.getElementById('btnSubmitTaller');
     if (submitBtn) {
         submitBtn.disabled = true;
-        submitBtn.textContent = 'Procesando inserción...';
+        submitBtn.textContent = 'Procesando inserción e imagen...';
     }
 
     const instructorId = document.getElementById('tallerInstructor').value;
@@ -56,19 +56,56 @@ async function createTaller(e) {
     const proximaSesion = document.getElementById('tallerProximaSesion').value;
     const cupo = parseInt(document.getElementById('tallerCupo').value);
     const eje = document.getElementById('tallerEje').value ? parseInt(document.getElementById('tallerEje').value) : null;
+    const imagenInput = document.getElementById('tallerImagen');
 
-    const horariosJSON = {
-        dias: dias,
-        horario: horas
-    };
+    let imagenGanchoId = null;
 
     try {
-        const { error } = await window.dbClient
+        // 1. Subida de imagen a Supabase Storage (Bucket 'IMAGENES') si se seleccionó archivo
+        if (imagenInput && imagenInput.files.length > 0) {
+            const file = imagenInput.files[0];
+            const fileExt = file.name.split('.').pop();
+            const fileName = `taller-${Date.now()}.${fileExt}`;
+            const filePath = `talleres/${fileName}`;
+
+            const { error: uploadError } = await window.dbClient.storage
+                .from('IMAGENES')
+                .upload(filePath, file);
+
+            if (uploadError) throw uploadError;
+
+            // Obtener URL pública de la imagen
+            const { data: urlData } = window.dbClient.storage
+                .from('IMAGENES')
+                .getPublicUrl(filePath);
+
+            // Insertar registro en la tabla 'imagenes'
+            const { data: imgRecord, error: imgError } = await window.dbClient
+                .from('imagenes')
+                .insert({
+                    url: urlData.publicUrl,
+                    alt_texto: titulo
+                })
+                .select('id')
+                .single();
+
+            if (imgError) throw imgError;
+            imagenGanchoId = imgRecord.id;
+        }
+
+        // 2. Guardar el taller en la base de datos vinculando la imagen_gancho_id
+        const horariosJSON = {
+            dias: dias,
+            horario: horas
+        };
+
+        const { error: tallerError } = await window.dbClient
             .from('talleres')
             .insert({
                 titulo,
                 frase_gancho: fraseGancho,
                 descripcion,
+                imagen_gancho_id: imagenGanchoId,
                 instructor_id: instructorId,
                 para_quien: paraQuien,
                 nivel_edad: nivelEdad,
@@ -78,7 +115,7 @@ async function createTaller(e) {
                 eje_relacionado: eje
             });
 
-        if (error) throw error;
+        if (tallerError) throw tallerError;
 
         alert(`✅ Taller "${titulo}" creado con éxito.`);
         document.getElementById('crearTallerForm').reset();

@@ -63,7 +63,7 @@
             </section>
 
             <!-- perfil -->
-            <section id="perfil" class="section">
+            <section id="perfil" class="section" style="display: none;">
                 <div class="card">
                     <h2 class="card-title">Mi Perfil</h2>
                     
@@ -246,6 +246,12 @@
                             <input type="number" id="tallerEje" placeholder="1">
                         </div>
 
+                        <!-- Insertar antes del botón de enviar en #crearTallerForm -->
+                        <div class="form-group">
+                            <label>Imagen Promocional / Gancho</label>
+                            <input type="file" id="tallerImagen" accept="image/*">
+                        </div>
+
                         <button type="submit" id="btnSubmitTaller" class="btn btn-primary">Crear Taller y Notificar Tallerista</button>
                     </form>
                 </div>
@@ -313,6 +319,11 @@
                         <div class="form-group">
                             <label>Biografía (Opcional)</label>
                             <textarea id="usuarioBiografia" placeholder="Breve descripción o biografía..."></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="usuarioFoto">Foto de Perfil del Tallerista</label>
+                            <input type="file" id="usuarioFoto" accept="image/*">
                         </div>
 
                         <button type="submit" id="btnSubmitUsuario" class="btn btn-primary">Crear Usuario</button>

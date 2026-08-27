@@ -63,7 +63,7 @@ async function createUsuario(e) {
     const submitBtn = document.getElementById('btnSubmitUsuario');
     if (submitBtn) {
         submitBtn.disabled = true;
-        submitBtn.textContent = 'Creando usuario...';
+        submitBtn.textContent = 'Guardando usuario...';
     }
 
     const nombre = document.getElementById('usuarioNombre').value.trim();
@@ -71,56 +71,81 @@ async function createUsuario(e) {
     const password = document.getElementById('usuarioPassword').value;
     const rol = document.getElementById('usuarioRol').value;
     const biografia = document.getElementById('usuarioBiografia').value.trim();
+    const fotoInput = document.getElementById('usuarioFoto');
+
+    let fotoId = null;
 
     try {
-        // A) Usamos una instancia aislada de cliente para NO cerrar la sesión del Administrador actual
-        const tempSupabase = window.supabase.createClient(
+        // 1. Subir la Foto de Perfil si el usuario seleccionó un archivo
+        if (fotoInput && fotoInput.files.length > 0) {
+            const file = fotoInput.files[0];
+            const fileExt = file.name.split('.').pop();
+            const fileName = `perfil-${Date.now()}.${fileExt}`;
+            const filePath = `perfiles/${fileName}`;
+
+            const { error: uploadError } = await window.dbClient.storage
+                .from('IMAGENES')
+                .upload(filePath, file);
+
+            if (uploadError) throw uploadError;
+
+            const { data: urlData } = window.dbClient.storage
+                .from('IMAGENES')
+                .getPublicUrl(filePath);
+
+            const { data: imgRecord, error: imgError } = await window.dbClient
+                .from('imagenes')
+                .insert({
+                    url: urlData.publicUrl,
+                    alt_texto: `Foto de perfil de ${nombre}`
+                })
+                .select('id')
+                .single();
+
+            if (imgError) throw imgError;
+            fotoId = imgRecord.id;
+        }
+
+        // 2. Crear Auth en Supabase
+        const createClientFn = window.createSupabaseClient || (window.supabase && window.supabase.createClient);
+        if (!createClientFn) throw new Error('No se encontró el cliente de Supabase.');
+
+        const tempSupabase = createClientFn(
             'https://ilmkmivwhfjlvznrsgoc.supabase.co',
             'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlsbWttaXZ3aGZqbHZ6bnJzZ29jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc3MTA1NzcsImV4cCI6MjEwMzI4NjU3N30.YXKAm5Zxeb1tm_YiVdc2myntJXDjq62biHY27XSG4-g',
             { auth: { persistSession: false } }
         );
 
-        // B) Registrar usuario enviando metadatos para que el Trigger automático de BD no falle
         const { data: authData, error: authError } = await tempSupabase.auth.signUp({
             email,
             password,
-            options: {
-                data: {
-                    nombre: nombre,
-                    rol: rol
-                }
-            }
+            options: { data: { nombre, rol } }
         });
 
         if (authError) throw authError;
-        if (!authData.user) throw new Error('No se pudo generar la cuenta de usuario.');
-
         const userId = authData.user.id;
 
-        // C) Dar un pequeño margen de tiempo (300ms) para que el Trigger de BD termine de insertar en 'autores'
-        await new Promise(resolve => setTimeout(resolve, 300));
+        await new Promise(resolve => setTimeout(resolve, 350));
 
-        // D) Usamos UPDATE (no insert) para agregar la biografía y asegurar que todos los campos queden guardados
+        // 3. Actualizar la tabla 'autores' incluyendo biografia y foto_id
         const { error: dbError } = await window.dbClient
             .from('autores')
             .update({
                 nombre,
                 email,
                 rol,
-                biografia: biografia || null
+                biografia: biografia || null,
+                foto_id: fotoId
             })
             .eq('id', userId);
 
         if (dbError) throw dbError;
 
-        alert(`✅ Usuario "${nombre}" creado exitosamente.`);
+        alert(`✅ Tallerista "${nombre}" registrado correctamente.`);
         document.getElementById('crearUsuarioForm').reset();
 
-        // Actualizar listas del panel
         loadAllUsuarios();
-        if (typeof loadDashboardStats === 'function') loadDashboardStats();
         if (typeof loadTalleristasDropdown === 'function') loadTalleristasDropdown();
-        if (typeof loadTalleristasForSelect === 'function') loadTalleristasForSelect();
 
     } catch (error) {
         console.error('Error al crear usuario:', error);

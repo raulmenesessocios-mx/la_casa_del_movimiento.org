@@ -3,7 +3,10 @@
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlsbWttaXZ3aGZqbHZ6bnJzZ29jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc3MTA1NzcsImV4cCI6MjEwMzI4NjU3N30.YXKAm5Zxeb1tm_YiVdc2myntJXDjq62biHY27XSG4-g';
 
     if (!window.supabaseClient) {
-        const { createClient } = window.supabase;
+        // Guardamos la función original de la librería antes de sobrescribir el objeto global
+        window.createSupabaseClient = window.supabase ? window.supabase.createClient : null;
+
+        const createClient = window.createSupabaseClient;
         window.supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         window.supabase = window.supabaseClient; // Alias para compatibilidad global
     }

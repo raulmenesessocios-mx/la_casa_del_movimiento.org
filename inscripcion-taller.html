@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscripción a Taller | La Casa del Movimiento</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="CSS/styles.css">
+</head>
+<body>
+
+    <!-- Header / Navbar -->
+    <header>
+        <a href="index.html" class="brand-logo">La Casa del Movimiento</a>
+        <nav>
+            <ul>
+                <li><a href="index.html">Volver</a></li>
+                <li><a href="index.html#talleres" class="nav-item-active">Talleres</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="workshops-section section-padding">
+        <h1 class="section-title">Inscripción al Taller</h1>
+        <p class="workshops-subtitle">Reserva tu cupo completando el siguiente formulario</p>
+
+        <!-- Resumen del Taller Seleccionado -->
+        <section class="summary-box" style="margin-bottom: 4rem;">
+            <h3>Danza Contemporánea Avanzada</h3>
+            <p><strong>Horarios:</strong> Martes y Jueves, 18:00 - 20:00 HS</p>
+            <p><strong>Docente:</strong> Martín Benítez</p>
+            <p><strong>Inicio:</strong> Próximo 01 de Octubre</p>
+        </section>
+
+        <!-- Formulario de Registro (Contenedor Leads) -->
+        <section class="leads-section" style="padding: 3rem 2rem; border-radius: 8px;">
+            <h2 class="leads-title">Tus Datos de Registro</h2>
+            <p class="leads-subtitle">Asegura tu lugar en la próxima cohorte</p>
+
+            <form class="contact-form" action="#" method="POST">
+                <div class="form-group-wrapper">
+                    <div class="form-group">
+                        <input type="text" name="nombre" placeholder="Nombre completo *" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" name="email" placeholder="Correo electrónico *" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="tel" name="telefono" placeholder="Teléfono / WhatsApp *" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" name="experiencia" placeholder="Nivel / Experiencia previa (Opcional)">
+                    </div>
+                    <div class="form-group">
+                        <textarea name="comentarios" rows="4" placeholder="¿Tienes alguna consulta o condición médica que debamos considerar?"></textarea>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-submit" >Confirmar Inscripción</button>
+                <p class="form-disclaimer">Recibirás un correo con las instrucciones de dia y hora de los horarios.</p>
+            </form>
+        </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <h2>La Casa del Movimiento</h2>
+        <p>&copy; 2026 Todos los derechos reservados.</p>
+    </footer>
+
+</body>
+</html>
