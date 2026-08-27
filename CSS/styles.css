@@ -60,6 +60,7 @@ body {
    3. COMPONENTES REUTILIZABLES
    ========================================= */
 /* Botones */
+
 .btn {
     font-weight: 700;
     padding: 1rem 2.5rem;
@@ -2257,3 +2258,90 @@ html {
         font-size: 1.6rem;
     }
 }
+
+/* Card Container */
+        .contact-card {
+            border-radius: 16px;
+            box-shadow: var(--shadow-medium);
+            border: none;
+            max-width: 650px;
+            width: 100%;
+            align-items: center;
+        }
+
+        .contact-title {
+            font-family: var(--font-brand);
+            color: var(--color-canvas);
+        }
+
+        /* Botón de Correo (Primary) */
+        .btn-mail {
+            border: 1px solid var(--color-primary);
+            color: var(--color-primary);
+            border-radius: 8px;
+            padding: 8px 18px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition-ease);
+        }
+
+        .btn-mail:hover {
+            background-color: var(--color-primary);
+            box-shadow: var(--shadow-light);
+        }
+
+        .text-mail {
+            color: var(--color-canvas);
+            transition: var(--transition-ease);
+        }
+
+        .text-mail:hover {
+            color: var(--color-canvas);
+        }
+
+        /* Botón de WhatsApp (Action) */
+        .btn-whatsapp {
+            background-color: var(--color-action);
+            border-radius: 8px;
+            padding: 8px 18px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition-ease);
+        }
+
+        .btn-whatsapp:hover {
+            background-color: var(--color-action-hover);
+            box-shadow: var(--shadow-medium);
+            transform: translateY(-2px);
+        }
+
+        .text-whatsapp {
+            color: var(--color-action);
+            transition: var(--transition-ease);
+        }
+
+        .text-whatsapp:hover {
+            color: var(--color-action-hover);
+        }
+
+        /* Adaptabilidad del separador en móviles */
+        @media (max-width: 767.98px) {
+            .border-end-md {
+                border-right: none !important;
+                border-bottom: 1px solid rgba(0,0,0,0.08);
+                padding-bottom: 2rem;
+                margin-bottom: 1.5rem;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .border-end-md {
+                border-right: 1px solid rgba(0,0,0,0.08) !important;
+            }
+        }
