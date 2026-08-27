@@ -1,11 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Si ya hay sesión local, redirigir
-    const existingSession = getSessionFromLocalStorage();
-    if (existingSession) {
-        redirectByRole(existingSession.role);
-        return;
-    }
-
     const form = document.getElementById('loginForm');
     const errorDiv = document.getElementById('errorMessage');
     const loadingDiv = document.getElementById('loadingMessage');

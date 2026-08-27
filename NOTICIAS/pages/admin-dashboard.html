@@ -15,12 +15,15 @@
             <div class="sidebar-header">Casa del Movimiento</div>
             
             <div class="sidebar-user">
+
                 <strong id="userName">Cargando...</strong>
                 <span class="role-badge" style="background-color: var(--color-primary);">Admin</span>
             </div>
 
             <nav class="sidebar-nav">
+                
                 <li><a href="#dashboard" class="nav-link active">Dashboard</a></li>
+                <li><a href="#perfil" class="nav-link">Perfil</a></li>
                 <li><a href="#crear-evento" class="nav-link">Crear Evento</a></li>
                 <li><a href="#crear-noticia" class="nav-link">Crear Noticia</a></li>
                 <li><a href="#crear-taller" class="nav-link">Crear Taller</a></li>
@@ -56,6 +59,30 @@
                         <h3 id="totalTalleristas">0</h3>
                         <p>Talleristas</p>
                     </div>
+                </div>
+            </section>
+
+            <!-- perfil -->
+            <section id="perfil" class="section">
+                <div class="card">
+                    <h2 class="card-title">Mi Perfil</h2>
+                    
+                    <div class="form-group">
+                        <label>Nombre</label>
+                        <input type="text" id="profileName" readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="profileEmail" readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Biografía</label>
+                        <textarea id="profileBio" placeholder="Cuéntanos sobre ti..."></textarea>
+                    </div>
+
+                    <button class="btn btn-primary" onclick="updateProfile()">Guardar Cambios</button>
                 </div>
             </section>
 
@@ -248,445 +275,65 @@
 
             <!-- GESTIONAR USUARIOS -->
             <section id="gestionar-usuarios" class="section" style="display: none;">
+                <!-- Tarjeta de Lista de Usuarios -->
                 <div class="card">
-                    <h2 class="card-title">Gestionar Usuarios</h2>
-                    
+                    <h2 class="card-title">Usuarios Registrados</h2>
                     <div id="usuariosAdminList">
                         <p>Cargando...</p>
                     </div>
                 </div>
+
+                <!-- Tarjeta para Crear Usuario -->
+                <div class="card" style="margin-bottom: 2rem;">
+                    <h2 class="card-title">Crear Nuevo Usuario</h2>
+                    <form id="crearUsuarioForm" class="form">
+                        <div class="form-group">
+                            <label>Nombre Completo</label>
+                            <input type="text" id="usuarioNombre" placeholder="Ej: María Pérez" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Correo Electrónico</label>
+                            <input type="email" id="usuarioEmail" placeholder="correo@ejemplo.com" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Contraseña</label>
+                            <input type="password" id="usuarioPassword" placeholder="••••••••" minlength="6" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Rol del Usuario</label>
+                            <select id="usuarioRol" required>
+                                <option value="tallerista">👨‍🏫 Tallerista</option>
+                                <option value="administrativo">🔐 Administrativo (Admin)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Biografía (Opcional)</label>
+                            <textarea id="usuarioBiografia" placeholder="Breve descripción o biografía..."></textarea>
+                        </div>
+
+                        <button type="submit" id="btnSubmitUsuario" class="btn btn-primary">Crear Usuario</button>
+                    </form>
+                </div>
+                
             </section>
         </main>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="../js/supabase-config.js"></script>
-    <script src="../js/dashboard.js"></script>
-    <script>
-        // Estandarización de instancia para evitar fallos de referencia
-        const dbClient = window.supabaseClient || window.supabase;
+    <script src="../filesjs/js-login/supabase-config.js"></script>    
+    <script src="../filesjs/js-admin/panel-admin.js"></script>
+    <script src="../filesjs/js-admin/dashboard.js"></script>    
+    <script src="../filesjs/js-admin/gestion-perfil.js"></script>
+    <script src="../filesjs/js-admin/crear-evento.js"></script>
+    <script src="../filesjs/js-admin/crear-noticia.js"></script>
+    <script src="../filesjs/js-admin/crear-taller.js"></script>
+    <script src="../filesjs/js-admin/gestionar-noticias.js"></script>
+    <script src="../filesjs/js-admin/gestionar-talleres.js"></script>
+    <script src="../filesjs/js-admin/gestionar-usuarios.js"></script>
 
-        // Proteger ruta (solo administrativos)
-        const session = protectRoute('administrativo');
-
-        if (session) {
-            document.getElementById('userName').textContent = session.userName;
-            
-            // Cargar datos del dashboard
-            loadDashboardStats();
-            loadTallersForSelect();
-            loadTalleristasForSelect();
-            loadTalleristasDropdown(); // <-- Agregado para poblar el select de talleres
-            loadAllNoticias();
-            loadAllTalleres();
-            loadAllUsuarios();
-
-            // Navegar entre secciones
-            document.querySelectorAll('.nav-link').forEach(link => {
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const sectionId = link.getAttribute('href').substring(1);
-                    showSection(sectionId);
-                    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-                    link.classList.add('active');
-                });
-            });
-
-            // Listeners de formularios
-            document.getElementById('crearEventoForm').addEventListener('submit', createEvento);
-            document.getElementById('crearNoticiaAdminForm').addEventListener('submit', createNoticiaAdmin);
-            
-            const formTaller = document.getElementById('crearTallerForm');
-            if (formTaller) {
-                formTaller.addEventListener('submit', createTaller);
-            }
-        }
-
-        async function loadDashboardStats() {
-            try {
-                const { count: eventosCount } = await dbClient
-                    .from('eventos')
-                    .select('*', { count: 'exact', head: true });
-
-                const { count: noticiasCount } = await dbClient
-                    .from('noticias')
-                    .select('*', { count: 'exact', head: true });
-
-                const { count: talleresCount } = await dbClient
-                    .from('talleres')
-                    .select('*', { count: 'exact', head: true });
-
-                const { count: talleristasCount } = await dbClient
-                    .from('autores')
-                    .select('*', { count: 'exact', head: true })
-                    .eq('rol', 'tallerista');
-
-                document.getElementById('totalEventos').textContent = eventosCount || 0;
-                document.getElementById('totalNoticias').textContent = noticiasCount || 0;
-                document.getElementById('totalTalleres').textContent = talleresCount || 0;
-                document.getElementById('totalTalleristas').textContent = talleristasCount || 0;
-            } catch (error) {
-                console.error('Error cargando stats:', error);
-            }
-        }
-
-        async function loadTallersForSelect() {
-            try {
-                const { data } = await dbClient
-                    .from('talleres')
-                    .select('id, titulo');
-
-                const select = document.getElementById('eventoTaller');
-                select.innerHTML = '<option value="">Ninguno</option>';
-                if (data) {
-                    data.forEach(taller => {
-                        const option = document.createElement('option');
-                        option.value = taller.id;
-                        option.textContent = taller.titulo;
-                        select.appendChild(option);
-                    });
-                }
-            } catch (error) {
-                console.error('Error:', error);
-            }
-        }
-
-        async function loadTalleristasForSelect() {
-            try {
-                const { data } = await dbClient
-                    .from('autores')
-                    .select('id, nombre')
-                    .eq('rol', 'tallerista');
-
-                const select = document.getElementById('noticiaAutor');
-                select.innerHTML = '<option value="">Selecciona un tallerista</option>';
-                if (data) {
-                    data.forEach(tallerista => {
-                        const option = document.createElement('option');
-                        option.value = tallerista.id;
-                        option.textContent = tallerista.nombre;
-                        select.appendChild(option);
-                    });
-                }
-            } catch (error) {
-                console.error('Error:', error);
-            }
-        }
-
-        // Cargar la lista de talleristas en el SELECT de creación de talleres
-        async function loadTalleristasDropdown() {
-            try {
-                const { data, error } = await dbClient
-                    .from('autores')
-                    .select('id, nombre, email')
-                    .eq('rol', 'tallerista')
-                    .order('nombre');
-
-                if (error) throw error;
-
-                const select = document.getElementById('tallerInstructor');
-                select.innerHTML = '<option value="">Selecciona un tallerista</option>';
-
-                if (data) {
-                    data.forEach(tallerista => {
-                        const option = document.createElement('option');
-                        option.value = tallerista.id;
-                        option.dataset.email = tallerista.email;
-                        option.textContent = `${tallerista.nombre} (${tallerista.email})`;
-                        select.appendChild(option);
-                    });
-                }
-            } catch (error) {
-                console.error('Error al cargar talleristas:', error.message);
-            }
-        }
-
-        // Handler para crear el Taller (Inserción limpia)
-        async function createTaller(e) {
-            e.preventDefault();
-
-            const submitBtn = document.getElementById('btnSubmitTaller');
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Procesando inserción...';
-
-            const instructorId = document.getElementById('tallerInstructor').value;
-            const titulo = document.getElementById('tallerTitulo').value.trim();
-            const fraseGancho = document.getElementById('tallerFraseGancho').value.trim();
-            const descripcion = document.getElementById('tallerDescripcion').value.trim();
-            const paraQuien = document.getElementById('tallerParaQuien').value.trim();
-            const nivelEdad = document.getElementById('tallerNivelEdad').value;
-            const dias = document.getElementById('tallerDias').value.trim();
-            const horas = document.getElementById('tallerHoras').value.trim();
-            const proximaSesion = document.getElementById('tallerProximaSesion').value;
-            const cupo = parseInt(document.getElementById('tallerCupo').value);
-            const eje = document.getElementById('tallerEje').value ? parseInt(document.getElementById('tallerEje').value) : null;
-
-            const horariosJSON = {
-                dias: dias,
-                horario: horas
-            };
-
-            try {
-                const { error } = await dbClient
-                    .from('talleres')
-                    .insert({
-                        titulo,
-                        frase_gancho: fraseGancho,
-                        descripcion,
-                        instructor_id: instructorId,
-                        para_quien: paraQuien,
-                        nivel_edad: nivelEdad,
-                        horarios: horariosJSON,
-                        proxima_sesion: new Date(proximaSesion).toISOString(),
-                        cupo,
-                        eje_relacionado: eje
-                    });
-
-                if (error) throw error;
-
-                alert(`✅ Taller "${titulo}" creado con éxito. Notificación enviada automáticamente.`);
-                document.getElementById('crearTallerForm').reset();
-                
-                // Recargar componentes de UI
-                loadDashboardStats();
-                loadAllTalleres();
-                loadTallersForSelect();
-
-            } catch (error) {
-                console.error('Error al crear taller:', error);
-                alert('❌ Fallo al registrar el taller: ' + error.message);
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Crear Taller y Notificar Tallerista';
-            }
-        }
-
-        async function createEvento(e) {
-            e.preventDefault();
-
-            const titulo = document.getElementById('eventoTitulo').value;
-            const descripcion = document.getElementById('eventoDescripcion').value;
-            const fecha = new Date(document.getElementById('eventoFecha').value);
-            const duracion = parseInt(document.getElementById('eventoDuracion').value);
-            const ubicacion = document.getElementById('eventoUbicacion').value;
-            const tallerRelacionado = document.getElementById('eventoTaller').value || null;
-
-            try {
-                const { error } = await dbClient
-                    .from('eventos')
-                    .insert({
-                        titulo,
-                        descripcion,
-                        fecha_evento: fecha.toISOString(),
-                        hora_inicio: fecha.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' }),
-                        duracion_minutos: duracion,
-                        ubicacion,
-                        taller_relacionado_id: tallerRelacionado,
-                        estado: 'proximo'
-                    });
-
-                if (error) throw error;
-
-                alert('✅ Evento creado exitosamente');
-                document.getElementById('crearEventoForm').reset();
-                loadDashboardStats();
-            } catch (error) {
-                console.error('Error:', error);
-                alert('❌ Error al crear evento');
-            }
-        }
-
-        async function createNoticiaAdmin(e) {
-            e.preventDefault();
-
-            const autorId = document.getElementById('noticiaAutor').value;
-            const titulo = document.getElementById('noticiaAdminTitulo').value;
-            const resumen = document.getElementById('noticiaAdminResumen').value;
-            const cuerpo = document.getElementById('noticiaAdminCuerpo').value;
-            const categorySlug = document.getElementById('noticiaAdminCategoria').value;
-            const destacada = document.getElementById('noticiaAdminDestacada').checked;
-
-            try {
-                const { data: catData, error: catError } = await dbClient
-                    .from('categorias')
-                    .select('id')
-                    .eq('slug', categorySlug)
-                    .single();
-
-                if (catError) throw catError;
-
-                const { error } = await dbClient
-                    .from('noticias')
-                    .insert({
-                        titulo,
-                        resumen,
-                        cuerpo,
-                        autor_id: autorId,
-                        categoria_id: catData.id,
-                        publicado: true,
-                        destacada
-                    });
-
-                if (error) throw error;
-
-                alert('✅ Noticia creada');
-                document.getElementById('crearNoticiaAdminForm').reset();
-                loadAllNoticias();
-                loadDashboardStats();
-            } catch (error) {
-                console.error('Error:', error);
-                alert('❌ Error al crear noticia: ' + error.message);
-            }
-        }
-
-        async function loadAllNoticias() {
-            try {
-                const { data } = await dbClient
-                    .from('noticias')
-                    .select('id, titulo, publicado, destacada')
-                    .order('fecha_publicacion', { ascending: false });
-
-                if (!data) return;
-
-                const html = `
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Título</th>
-                                <th>Estado</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${data.map(n => `
-                                <tr>
-                                    <td>${n.titulo}</td>
-                                    <td>${n.publicado ? '✅ Publicada' : '❌ Borrador'} ${n.destacada ? '⭐ Destacada' : ''}</td>
-                                    <td>
-                                        <button class="btn btn-secondary" onclick="deleteNoticia('${n.id}')">Eliminar</button>
-                                    </td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                `;
-
-                document.getElementById('noticiasAdminList').innerHTML = html;
-            } catch (error) {
-                console.error('Error:', error);
-            }
-        }
-
-        async function loadAllTalleres() {
-            try {
-                const { data } = await dbClient
-                    .from('talleres')
-                    .select('id, titulo, cupo');
-
-                if (!data) return;
-
-                const html = `
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Taller</th>
-                                <th>Cupo</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${data.map(t => `
-                                <tr>
-                                    <td>${t.titulo}</td>
-                                    <td>${t.cupo} personas</td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                `;
-
-                document.getElementById('talleresAdminList').innerHTML = html;
-            } catch (error) {
-                console.error('Error:', error);
-            }
-        }
-
-        async function loadAllUsuarios() {
-            try {
-                const { data } = await dbClient
-                    .from('autores')
-                    .select('id, nombre, email, rol')
-                    .order('nombre');
-
-                if (!data) return;
-
-                const html = `
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Nombre</th>
-                                <th>Email</th>
-                                <th>Rol</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${data.map(u => `
-                                <tr>
-                                    <td>${u.nombre}</td>
-                                    <td>${u.email}</td>
-                                    <td>${u.rol === 'administrativo' ? '🔐 Admin' : '👨‍🏫 Tallerista'}</td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                `;
-
-                document.getElementById('usuariosAdminList').innerHTML = html;
-            } catch (error) {
-                console.error('Error:', error);
-            }
-        }
-
-        async function deleteNoticia(noticiaId) {
-            if (confirm('¿Estás seguro de que quieres eliminar esta noticia?')) {
-                try {
-                    const { error } = await dbClient
-                        .from('noticias')
-                        .delete()
-                        .eq('id', noticiaId);
-
-                    if (error) throw error;
-
-                    alert('✅ Noticia eliminada');
-                    loadAllNoticias();
-                    loadDashboardStats();
-                } catch (error) {
-                    console.error('Error:', error);
-                    alert('❌ Error al eliminar');
-                }
-            }
-        }
-
-        function showSection(sectionId) {
-            document.querySelectorAll('.section').forEach(s => s.style.display = 'none');
-            document.getElementById(sectionId).style.display = 'block';
-        }
-        async function logout() {
-    try {
-        // 1. Destruir la sesión activa en Supabase Auth
-        if (dbClient && dbClient.auth) {
-            await dbClient.auth.signOut();
-        }
-    } catch (error) {
-        console.error('Error al cerrar sesión en Supabase:', error.message);
-    } finally {
-        // 2. Limpiar persistencia local
-        localStorage.clear();
-        sessionStorage.clear();
-
-        // 3. Redireccionar a la raíz
-        window.location.href = '../../index.html';
-    }
-}
-    </script>
 </body>
 </html>
