@@ -249,7 +249,7 @@
                         <!-- Insertar antes del botón de enviar en #crearTallerForm -->
                         <div class="form-group">
                             <label>Imagen Promocional / Gancho</label>
-                            <input type="file" id="tallerImagen" accept="image/*">
+                            <input type="file" id="tallerImagen" accept="image/webp"  onchange="previewAvatar(event)">
                         </div>
 
                         <button type="submit" id="btnSubmitTaller" class="btn btn-primary">Crear Taller y Notificar Tallerista</button>
@@ -323,7 +323,8 @@
 
                         <div class="form-group">
                             <label for="usuarioFoto">Foto de Perfil del Tallerista</label>
-                            <input type="file" id="usuarioFoto" accept="image/*">
+                            <input type="file" id="usuarioFoto" accept="image/webp"  onchange="previewAvatar(event)">
+
                         </div>
 
                         <button type="submit" id="btnSubmitUsuario" class="btn btn-primary">Crear Usuario</button>

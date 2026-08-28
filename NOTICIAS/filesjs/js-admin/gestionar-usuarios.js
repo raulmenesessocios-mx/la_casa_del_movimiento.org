@@ -135,10 +135,9 @@ async function createUsuario(e) {
                 nombre,
                 email,
                 rol,
-                biografia: biografia || null,
+                biografia: biografia || null,  
                 foto_id: fotoId
             });
-
         if (dbError) throw dbError;
 
         alert(` El ${rol} "${nombre}" ha registrado correctamente.`);

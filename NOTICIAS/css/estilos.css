@@ -384,6 +384,32 @@ body {
     border-color: var(--color-primary);
 }
 
+.avatar-uploader {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.avatar-preview {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 3px solid var(--color-primary);
+}
+
+.avatar-uploader-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.avatar-note {
+    font-size: 0.8rem;
+    color: var(--color-text-light);
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .dashboard-layout {

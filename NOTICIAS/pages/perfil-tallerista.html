@@ -39,7 +39,29 @@
             <section id="perfil" class="section">
                 <div class="card">
                     <h2 class="card-title">Mi Perfil</h2>
-                    
+
+                <div class="form-group avatar-group">
+                    <label>Foto de Perfil</label>
+
+                    <div class="avatar-uploader">
+                        <img id="profileAvatarPreview" 
+                            src="https://placehold.co/150x150?text=Sin+Foto" 
+                            alt="Avatar del tallerista" 
+                            class="avatar-preview">
+
+                        <div class="avatar-uploader-actions">
+                            <button type="button" class="btn btn-secondary" id="btnCambiarFoto">
+                                📷 Cambiar foto de perfil
+                            </button>
+                            <p class="avatar-note">Solo se permiten imágenes en formato <strong>.webp</strong></p>
+                        </div>
+
+                        <!-- Input oculto, se activa con el botón -->
+                        <input type="file" id="profileAvatarFile" accept=".webp,image/webp" 
+                            onchange="previewAvatar(event)" hidden>
+                    </div>
+                </div>
+
                     <div class="form-group">
                         <label>Nombre</label>
                         <input type="text" id="profileName" readonly>
@@ -57,15 +79,90 @@
 
                     <button class="btn btn-primary" onclick="updateProfile()">Guardar Cambios</button>
                 </div>
+
+                <div class="form-group" style="margin-top: 1.5rem;">
+                    <button type="button" class="btn btn-secondary" onclick="solicitarRestablecimiento()" style="background-color: #f39c12; border: none;">
+                        Restablecer contraseña
+                    </button>
+                </div>
+
             </section>
 
             <!-- SECCIÓN: MI TALLER -->
             <section id="mi-taller" class="section" style="display: none;">
                 <div class="card">
                     <h2 class="card-title">Mi Taller a Cargo</h2>
+                    
                     <div id="tallerInfo">
                         <p>Cargando información del taller...</p>
                     </div>
+
+                    <!-- FORMULARIO DE EDICIÓN (se llena dinámicamente por JS) -->
+                    <form id="editarTallerForm" class="form" style="display: none;">
+                        <input type="hidden" id="miTallerId">
+
+                        <div class="form-group">
+                            <label>Título del Taller</label>
+                            <input type="text" id="miTallerTitulo" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Frase Gancho (Slogan corto)</label>
+                            <input type="text" id="miTallerFraseGancho">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Descripción Detallada</label>
+                            <textarea id="miTallerDescripcion" rows="4" required></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label>¿Para quién está dirigido?</label>
+                            <input type="text" id="miTallerParaQuien">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Nivel / Rango de Edad</label>
+                            <select id="miTallerNivelEdad" required>
+                                <option value="Niños (6-12 años)">Niños (6-12 años)</option>
+                                <option value="Jóvenes (13-17 años)">Jóvenes (13-17 años)</option>
+                                <option value="Adultos (18+ años)">Adultos (18+ años)</option>
+                                <option value="Público en General">Público en General</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Días de Clase</label>
+                            <input type="text" id="miTallerDias" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Horario</label>
+                            <input type="text" id="miTallerHoras" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Próxima Sesión</label>
+                            <input type="datetime-local" id="miTallerProximaSesion" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Cupo Máximo</label>
+                            <input type="number" id="miTallerCupo" min="1" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Imagen Promocional / Gancho</label>
+                            <img id="miTallerImagenPreview" 
+                                src="https://placehold.co/300x180?text=Sin+Imagen" 
+                                alt="Imagen del taller"
+                                style="max-width:200px; border-radius:8px; display:block; margin-bottom:0.75rem;">
+                            <input type="file" id="miTallerImagenFile" accept=".webp,image/webp" onchange="previewTallerImagen(event)">
+                            <p class="avatar-note">Solo se permiten imágenes en formato <strong>.webp</strong></p>
+                        </div>
+
+                        <button type="submit" id="btnGuardarTaller" class="btn btn-primary">Guardar Cambios del Taller</button>
+                    </form>
                 </div>
             </section>
 

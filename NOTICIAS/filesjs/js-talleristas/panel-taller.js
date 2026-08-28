@@ -47,6 +47,6 @@ async function logout() {
     } finally {
         localStorage.clear();
         sessionStorage.clear();
-        window.location.href = '../index.html';
+        window.location.href = '../../index.html';
     }
 }

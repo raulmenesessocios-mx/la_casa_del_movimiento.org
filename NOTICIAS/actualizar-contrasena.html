@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Actualizar Contraseña</title>
+    <link rel="stylesheet" href="../css/estilos.css">
+</head>
+<body>
+    <div class="login-container">
+        <h2>Ingresa tu nueva contraseña</h2>
+        <form id="updatePasswordForm">
+            <div class="form-group">
+                <label>Nueva Contraseña</label>
+                <input type="password" id="newPassword" required minlength="6">
+            </div>
+            <div class="form-group">
+                <label>Confirmar Contraseña</label>
+                <input type="password" id="confirmPassword" required minlength="6">
+            </div>
+            <button type="submit" class="btn btn-primary" id="btnGuardar">Guardar Contraseña</button>
+        </form>
+    </div>
+
+    <!-- Cargar Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../filesjs/js-login/supabase-config.js"></script>
+    
+    <script>
+        document.getElementById('updatePasswordForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const pass1 = document.getElementById('newPassword').value;
+            const pass2 = document.getElementById('confirmPassword').value;
+
+            if (pass1 !== pass2) {
+                alert("❌ Las contraseñas no coinciden.");
+                return;
+            }
+
+            document.getElementById('btnGuardar').textContent = "Guardando...";
+
+            try {
+                // Supabase ya detecta el token de la URL automáticamente y sabe a qué usuario actualizar
+                const { error } = await window.supabaseClient.auth.updateUser({
+                    password: pass1
+                });
+
+                if (error) throw error;
+
+                alert("✅ Contraseña actualizada correctamente. Inicia sesión con tu nueva contraseña.");
+                window.location.href = '../index.html'; // Redirigir al login
+                
+            } catch (error) {
+                console.error(error);
+                alert("❌ Error al actualizar: " + error.message);
+                document.getElementById('btnGuardar').textContent = "Guardar Contraseña";
+            }
+        });
+    </script>
+</body>
+</html>
