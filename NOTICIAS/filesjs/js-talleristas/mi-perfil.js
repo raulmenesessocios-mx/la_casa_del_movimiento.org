@@ -128,12 +128,11 @@ async function solicitarRestablecimiento() {
         if (userError || !user) throw new Error("No se pudo identificar la sesión activa.");
 
         // 3. Construir la URL de redirección dinámica (funciona en local y en producción)
-        const redirectUrl = `${window.location.origin}/pages/actualizar-contrasena.html`;
+            const redirectUrl = `${window.location.origin}/pages/actualizar-contrasena.html`;
 
-        // 4. Solicitar el correo de restablecimiento
-        const { error } = await client.auth.resetPasswordForEmail(user.email, {
-            redirectTo: redirectUrl
-        });
+            const { error } = await client.auth.resetPasswordForEmail(user.email, {
+                redirectTo: redirectUrl
+            });
 
         if (error) throw error;
 
