@@ -50,3 +50,18 @@ async function logout() {
         window.location.href = '../../index.html';
     }
 }
+function toggleMenu() {
+        const nav = document.querySelector('.sidebar-nav');
+        const user = document.querySelector('.sidebar-user');
+        
+        nav.classList.toggle('active');
+        if (user) user.classList.toggle('active');
+    }
+
+    // Cerrar el menú automáticamente al hacer clic en cualquier opción
+    document.querySelectorAll('.sidebar-nav a, .logout-btn').forEach(item => {
+        item.addEventListener('click', () => {
+            document.querySelector('.sidebar-nav')?.classList.remove('active');
+            document.querySelector('.sidebar-user')?.classList.remove('active');
+        });
+    });

@@ -41,7 +41,7 @@ async function loadAllUsuarios() {
                             <td>${u.biografia || '<span style="color: #888;">Sin biografía</span>'}</td>
                             <td>
                                 <button class="btn btn-secondary" style="background-color: #dc3545; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;" onclick="deleteUsuario('${u.id}', '${u.nombre.replace(/'/g, "\\'")}')">
-                                    🗑️ Eliminar
+                                    Eliminar
                                 </button>
                             </td>
                         </tr>

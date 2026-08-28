@@ -450,3 +450,252 @@ body {
         padding: var(--spacing-xs);
     }
 }
+
+/* ============================================
+   CORRECCIÓN RESPONSIVA PARA MÓVILES (≤ 768px)
+   ============================================ */
+@media (max-width: 768px) {
+    /* 1. Forzar distribución vertical completa */
+    .dashboard-layout {
+        display: flex !important;
+        flex-direction: column !important;
+        width: 100% !important;
+        min-height: 100vh;
+        overflow-x: hidden;
+    }
+
+    /* 2. Sidebar ocupa el 100% del ancho superior */
+    .sidebar {
+        position: relative !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: auto !important;
+        min-height: auto !important;
+        padding: 1rem !important;
+        box-shadow: var(--shadow-sm);
+        z-index: 10;
+    }
+
+    .sidebar-header {
+        font-size: 1.2rem !important;
+        text-align: center;
+        margin-bottom: 0.75rem !important;
+        padding-bottom: 0.5rem !important;
+    }
+
+    .sidebar-user {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 0.75rem !important;
+        padding: 0.5rem 0.75rem !important;
+    }
+
+    .sidebar-user strong {
+        margin-bottom: 0 !important;
+        font-size: 0.85rem;
+    }
+
+    /* 3. Botones del menú distribuidos de forma fluida */
+    .sidebar-nav {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 0.4rem !important;
+        justify-content: center !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    .sidebar-nav li {
+        margin-bottom: 0 !important;
+        flex: 1 1 auto;
+    }
+
+    .sidebar-nav a, 
+    .sidebar-nav .logout-btn {
+        font-size: 0.8rem !important;
+        padding: 0.45rem 0.6rem !important;
+        text-align: center;
+        white-space: nowrap;
+        display: block;
+        width: 100%;
+    }
+
+    .sidebar-nav a:hover,
+    .sidebar-nav a.active {
+        padding-left: 0.6rem !important;
+    }
+
+    /* 4. Contenido Principal adaptable */
+    .main-content {
+        width: 100% !important;
+        padding: 1rem !important;
+        overflow-x: hidden;
+    }
+
+    .header {
+        margin-bottom: 1rem !important;
+        padding-bottom: 0.5rem !important;
+        text-align: center;
+    }
+
+    .header h1 {
+        font-size: 1.3rem !important;
+    }
+
+    .card {
+        padding: 1rem !important;
+        margin-bottom: 1rem !important;
+    }
+
+    /* Formulario y controles de perfil */
+    .avatar-uploader {
+        flex-direction: column !important;
+        align-items: center !important;
+        text-align: center;
+    }
+
+    .avatar-uploader-actions {
+        width: 100%;
+        align-items: center;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea,
+    .btn {
+        width: 100% !important;
+    }
+}
+
+/* ============================================
+   TABLAS RESPONSIVAS PARA EL PANEL ADMIN
+   ============================================ */
+
+/* Contenedores dinámicos con scroll horizontal */
+#usuariosAdminList,
+#noticiasAdminList,
+#talleresAdminList,
+#interesadosList {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch; /* Scroll suave en iOS */
+    border-radius: var(--border-radius);
+}
+
+/* Ancho mínimo para mantener legible la información */
+.table {
+    width: 100%;
+    min-width: 580px; /* Evita que las columnas se amontonen */
+    border-collapse: collapse;
+}
+
+/* Prevención de desbordamiento en la tarjeta */
+.card {
+    max-width: 100%;
+    overflow: hidden;
+}
+
+@media (max-width: 768px) {
+    .table th,
+    .table td {
+        padding: 0.6rem 0.5rem;
+        font-size: 0.85rem;
+        white-space: nowrap; /* Mantiene la fila alineada en scroll horizontal */
+    }
+
+    /* Romper texto solo en la biografía para no estirar de más la tabla */
+    .table td:nth-child(4) {
+        white-space: normal;
+        min-width: 150px;
+    }
+}
+
+/* Botón Hamburguesa (oculto en PC) */
+.menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    color: var(--color-white);
+    font-size: 1.8rem;
+    cursor: pointer;
+    line-height: 1;
+}
+
+/* ============================================
+   RESPONSIVO CON MENÚ HAMBURGUESA (≤ 768px)
+   ============================================ */
+@media (max-width: 768px) {
+    .dashboard-layout {
+        display: flex !important;
+        flex-direction: column !important;
+        width: 100% !important;
+        min-height: 100vh;
+    }
+
+    .sidebar {
+        position: relative !important;
+        width: 100% !important;
+        height: auto !important;
+        padding: 0.8rem 1rem !important;
+        top: 0 !important;
+        left: 0 !important;
+        z-index: 100;
+    }
+
+    .sidebar-header {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        margin-bottom: 0 !important;
+        padding-bottom: 0 !important;
+        border-bottom: none !important;
+    }
+
+    .menu-toggle {
+        display: block !important; /* Muestra la hamburguesa en celular */
+    }
+
+    /* Ocultar usuario y navegación por defecto */
+    .sidebar-user,
+    .sidebar-nav {
+        display: none !important;
+    }
+
+    /* Mostrar menú al hacer clic (clase .active) */
+    .sidebar-nav.active {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 0.5rem !important;
+        margin-top: 1rem !important;
+        padding-top: 0.8rem !important;
+        border-top: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .sidebar-user.active {
+        display: flex !important;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 0.8rem !important;
+        margin-bottom: 0.5rem !important;
+    }
+
+    .sidebar-nav li {
+        width: 100%;
+        margin-bottom: 0 !important;
+    }
+
+    .sidebar-nav a,
+    .sidebar-nav .logout-btn {
+        width: 100% !important;
+        text-align: left !important;
+        padding: 0.6rem 0.8rem !important;
+        font-size: 0.95rem !important;
+    }
+
+    .main-content {
+        width: 100% !important;
+        padding: 1rem !important;
+    }
+}
