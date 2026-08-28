@@ -130,18 +130,18 @@ async function createUsuario(e) {
         // 3. Actualizar la tabla 'autores' incluyendo biografia y foto_id
         const { error: dbError } = await window.dbClient
             .from('autores')
-            .update({
+            .upsert({
+                id: userId,
                 nombre,
                 email,
                 rol,
                 biografia: biografia || null,
                 foto_id: fotoId
-            })
-            .eq('id', userId);
+            });
 
         if (dbError) throw dbError;
 
-        alert(`✅ Tallerista "${nombre}" registrado correctamente.`);
+        alert(` El ${rol} "${nombre}" ha registrado correctamente.`);
         document.getElementById('crearUsuarioForm').reset();
 
         loadAllUsuarios();

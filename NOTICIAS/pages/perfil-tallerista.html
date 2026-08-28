@@ -21,6 +21,7 @@
 
             <nav class="sidebar-nav">
                 <li><a href="#perfil" class="nav-link active">Mi Perfil</a></li>
+                <li><a href="#mi-taller" class="nav-link">Mi Taller</a></li>
                 <li><a href="#interesados" class="nav-link">Interesados</a></li>
                 <li><a href="#mis-noticias" class="nav-link">Mis Noticias</a></li>
                 <li><a href="#crear-noticia" class="nav-link">Crear Noticia</a></li>
@@ -58,11 +59,20 @@
                 </div>
             </section>
 
+            <!-- SECCIÓN: MI TALLER -->
+            <section id="mi-taller" class="section" style="display: none;">
+                <div class="card">
+                    <h2 class="card-title">Mi Taller a Cargo</h2>
+                    <div id="tallerInfo">
+                        <p>Cargando información del taller...</p>
+                    </div>
+                </div>
+            </section>
+
             <!-- SECCIÓN: INTERESADOS -->
             <section id="interesados" class="section" style="display: none;">
                 <div class="card">
                     <h2 class="card-title">Personas Interesadas en mi Taller</h2>
-                    
                     <div id="interesadosList">
                         <p>Cargando...</p>
                     </div>
@@ -73,7 +83,6 @@
             <section id="mis-noticias" class="section" style="display: none;">
                 <div class="card">
                     <h2 class="card-title">Mis Noticias</h2>
-                    
                     <div id="noticiasGrid" class="card-grid">
                         <p>Cargando...</p>
                     </div>
@@ -124,228 +133,18 @@
         </main>
     </div>
 
+    <!-- Carga de Supabase y Scripts Modulares -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="../js/supabase-config.js"></script>
-    <script src="../js/dashboard.js"></script>
-    <script>
-        // Proteger ruta (solo talleristas)
-        const session = protectRoute('tallerista');
-
-        if (session) {
-            // Cargar datos iniciales
-            document.getElementById('userName').textContent = session.userName;
-            loadProfileData(session.userId);
-            loadInteresados(session.userId);
-            loadMyNoticias(session.userId);
-
-            // Navegar entre secciones
-            document.querySelectorAll('.nav-link').forEach(link => {
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const sectionId = link.getAttribute('href').substring(1);
-                    showSection(sectionId);
-                    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-                    link.classList.add('active');
-                });
-            });
-
-            // Crear noticia
-            document.getElementById('crearNoticiaForm').addEventListener('submit', async (e) => {
-                e.preventDefault();
-                await createNoticia(session.userId);
-            });
-        }
-
-        async function loadProfileData(userId) {
-            try {
-                const { data, error } = await supabase
-                    .from('autores')
-                    .select('nombre, email, biografia')
-                    .eq('id', userId)
-                    .single();
-
-                if (error) throw error;
-
-                document.getElementById('profileName').value = data.nombre;
-                document.getElementById('profileEmail').value = data.email;
-                document.getElementById('profileBio').value = data.biografia || '';
-            } catch (error) {
-                console.error('Error cargando perfil:', error);
-            }
-        }
-
-        async function updateProfile() {
-            const userId = localStorage.getItem('userId');
-            const bio = document.getElementById('profileBio').value;
-
-            try {
-                const { error } = await supabase
-                    .from('autores')
-                    .update({ biografia: bio })
-                    .eq('id', userId);
-
-                if (error) throw error;
-                alert('✅ Perfil actualizado correctamente');
-            } catch (error) {
-                console.error('Error:', error);
-                alert('❌ Error al actualizar perfil');
-            }
-        }
-
-        async function loadInteresados(userId) {
-            try {
-                // Obtener el ID del taller del tallerista
-                const { data: tallerData, error: tallerError } = await supabase
-                    .from('talleres')
-                    .select('id')
-                    .eq('instructor_id', userId)
-                    .single();
-
-                if (tallerError || !tallerData) {
-                    document.getElementById('interesadosList').innerHTML = 
-                        '<p>No tienes talleres registrados</p>';
-                    return;
-                }
-
-                // Obtener interesados
-                const { data, error } = await supabase
-                    .from('interesados_talleres')
-                    .select('*')
-                    .eq('taller_id', tallerData.id)
-                    .order('fecha_registro', { ascending: false });
-
-                if (error) throw error;
-
-                if (data.length === 0) {
-                    document.getElementById('interesadosList').innerHTML = 
-                        '<p>Aún no hay personas interesadas</p>';
-                    return;
-                }
-
-                const html = `
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Nombre</th>
-                                <th>Email</th>
-                                <th>Teléfono</th>
-                                <th>Fecha</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${data.map(i => `
-                                <tr>
-                                    <td>${i.nombre}</td>
-                                    <td>${i.email}</td>
-                                    <td>${i.telefono || 'N/A'}</td>
-                                    <td>${new Date(i.fecha_registro).toLocaleDateString()}</td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                `;
-
-                document.getElementById('interesadosList').innerHTML = html;
-            } catch (error) {
-                console.error('Error:', error);
-                document.getElementById('interesadosList').innerHTML = 
-                    '<p>Error al cargar interesados</p>';
-            }
-        }
-
-        async function loadMyNoticias(userId) {
-            try {
-                const { data, error } = await supabase
-                    .from('noticias')
-                    .select('id, titulo, resumen, fecha_publicacion, publicado')
-                    .eq('autor_id', userId)
-                    .order('fecha_publicacion', { ascending: false });
-
-                if (error) throw error;
-
-                if (data.length === 0) {
-                    document.getElementById('noticiasGrid').innerHTML = 
-                        '<p>Aún no tienes noticias publicadas</p>';
-                    return;
-                }
-
-                const html = data.map(noticia => `
-                    <div class="card">
-                        <h3>${noticia.titulo}</h3>
-                        <p>${noticia.resumen}</p>
-                        <p style="font-size: 0.85rem; color: #999;">
-                            ${new Date(noticia.fecha_publicacion).toLocaleDateString()}
-                            ${noticia.publicado ? '✅ Publicada' : '❌ Borrador'}
-                        </p>
-                    </div>
-                `).join('');
-
-                document.getElementById('noticiasGrid').innerHTML = html;
-            } catch (error) {
-                console.error('Error:', error);
-            }
-        }
-
-        async function createNoticia(userId) {
-            const titulo = document.getElementById('noticiaTitle').value;
-            const resumen = document.getElementById('noticiaResumen').value;
-            const cuerpo = document.getElementById('noticiaCuerpo').value;
-            const categorySlug = document.getElementById('noticiaCategoria').value;
-            const destacada = document.getElementById('noticiaDedicada').checked;
-
-            try {
-                // Obtener ID de la categoría
-                const { data: catData } = await supabase
-                    .from('categorias')
-                    .select('id')
-                    .eq('slug', categorySlug)
-                    .single();
-
-                // Crear noticia
-                const { error } = await supabase
-                    .from('noticias')
-                    .insert({
-                        titulo,
-                        resumen,
-                        cuerpo,
-                        autor_id: userId,
-                        categoria_id: catData.id,
-                        publicado: true,
-                        destacada
-                    });
-
-                if (error) throw error;
-
-                alert('✅ Noticia creada exitosamente');
-                document.getElementById('crearNoticiaForm').reset();
-                loadMyNoticias(userId);
-            } catch (error) {
-                console.error('Error:', error);
-                alert('❌ Error al crear noticia');
-            }
-        }
-
-        function showSection(sectionId) {
-            document.querySelectorAll('.section').forEach(s => s.style.display = 'none');
-            document.getElementById(sectionId).style.display = 'block';
-        }
-        async function logout() {
-    try {
-        // 1. Destruir la sesión activa en Supabase Auth
-        if (dbClient && dbClient.auth) {
-            await dbClient.auth.signOut();
-        }
-    } catch (error) {
-        console.error('Error al cerrar sesión en Supabase:', error.message);
-    } finally {
-        // 2. Limpiar persistencia local
-        localStorage.clear();
-        sessionStorage.clear();
-
-        // 3. Redireccionar a la raíz
-        window.location.href = '../../index.html';
-    }
-}
-    </script>
+    <script src="../filesjs/js-login/supabase-config.js"></script>
+    
+    <!-- Módulos por Función -->
+    <script src="../filesjs/js-talleristas/mi-perfil.js"></script>
+    <script src="../filesjs/js-talleristas/mi-taller.js"></script>
+    <script src="../filesjs/js-talleristas/interesados.js"></script>
+    <script src="../filesjs/js-talleristas/mis-noticias.js"></script>
+    <script src="../filesjs/js-talleristas/crear-noticia.js"></script>
+    
+    <!-- Orquestador Principal -->
+    <script src="../filesjs/js-talleristas/panel-taller.js"></script>
 </body>
 </html>
