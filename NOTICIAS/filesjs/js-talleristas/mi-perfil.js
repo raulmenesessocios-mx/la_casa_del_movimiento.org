@@ -115,25 +115,29 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 async function solicitarRestablecimiento() {
-    // 1. Mostrar la confirmación
-    const confirmacion = confirm("¿Estás seguro de restablecer la contraseña? Le llegará un email para confirmar que eres tú.");
-    
-    if (!confirmacion) return; // Si el usuario cancela, no hacemos nada
+    const confirmacion = confirm("¿Estás seguro de restablecer la contraseña? Te llegará un correo para confirmar que eres tú.");
+    if (!confirmacion) return;
 
     try {
-        // 2. Obtener el usuario actual
-        const { data: { user }, error: userError } = await window.dbClient.auth.getUser();
-        if (userError || !user) throw new Error("No se pudo identificar tu sesión.");
+        // 1. Obtener el cliente activo de Supabase de forma segura
+        const client = window.supabaseClient || window.dbClient || window.supabase;
+        if (!client) throw new Error("No se encontró el cliente de Supabase cargado.");
 
-        // 3. Enviar el correo de Supabase indicando a dónde debe redirigir el enlace del correo
-        const { data, error } = await window.dbClient.auth.resetPasswordForEmail(user.email, {
-            // ⚠️ IMPORTANTE: Cambia esto por la URL de tu página local o en producción
-            redirectTo: 'https://la-casa-del-movimiento.netlify.app/noticias/actualizar-contrasena.html' 
+        // 2. Obtener el usuario de la sesión actual
+        const { data: { user }, error: userError } = await client.auth.getUser();
+        if (userError || !user) throw new Error("No se pudo identificar la sesión activa.");
+
+        // 3. Construir la URL de redirección dinámica (funciona en local y en producción)
+        const redirectUrl = `${window.location.origin}/pages/actualizar-contrasena.html`;
+
+        // 4. Solicitar el correo de restablecimiento
+        const { error } = await client.auth.resetPasswordForEmail(user.email, {
+            redirectTo: redirectUrl
         });
 
         if (error) throw error;
 
-        alert("✅ ¡Listo! Te hemos enviado un correo con las instrucciones.");
+        alert("✅ ¡Listo! Revisa tu correo electrónico para restablecer tu contraseña.");
 
     } catch (error) {
         console.error("Error al enviar correo de restablecimiento:", error);

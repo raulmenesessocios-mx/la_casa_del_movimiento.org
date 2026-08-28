@@ -62,7 +62,7 @@
         }
         if (requiredRole && session.role !== requiredRole) {
             alert('Acceso no autorizado.');
-            window.location.href = 'index.html';
+            window.location.href = '../../index.html';
             return null;
         }
         return session;

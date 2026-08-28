@@ -53,6 +53,6 @@ function redirectByRole(role) {
     } else if (role === 'tallerista') {
         window.location.href = 'pages/perfil-tallerista.html';
     } else {
-        window.location.href = 'index.html';
+        window.location.href = '../../index.html';
     }
 }
