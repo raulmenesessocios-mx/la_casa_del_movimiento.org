@@ -86,6 +86,9 @@ body {
     color: var(--color-white);
     font-size: 0.95rem;
 }
+.label-login{
+    color: var(--color-white);
+}
 
 .form-group input {
     padding: var(--spacing-sm);
@@ -95,8 +98,20 @@ body {
     font-size: 1rem;
     transition: all 0.3s ease;
     background-color: var(--colr-white);
-    color: var(--color-white);
+    color: var(--color-text);
 }
+
+.login-cagas input {
+    padding: var(--spacing-sm);
+    border: 2px solid var(--color-border);
+    border-radius: var(--border-radius);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: linear-gradient(135deg, var(--color-white) 0%, var(--color-border) 100%);
+    color: var(--color-text);
+}
+
 
 .form-group input:focus {
     outline: none;
@@ -863,4 +878,8 @@ body {
 
 .ogin-box{
     background-color: var(--color-primary);
+}
+
+.label-login{
+    color: var(--color-white);
 }
