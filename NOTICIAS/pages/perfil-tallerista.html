@@ -220,6 +220,12 @@
                         </div>
 
                         <div class="form-group">
+                            <label>Imagen Promocional (.webp)</label>
+                            <input type="file" id="noticiaImagen" accept=".webp,image/webp">
+                            <p class="avatar-note">Solo se permiten imágenes en formato <strong>.webp</strong></p>
+                        </div>
+
+                        <div class="form-group">
                             <label>
                                 <input type="checkbox" id="noticiaDedicada">
                                 Marcar como destacada (aparecerá en grande)
@@ -231,6 +237,51 @@
                 </div>
             </section>
         </main>
+    </div>
+
+<!-- MODAL DE EDICIÓN PARA EL TALLERISTA -->
+    <div id="modalEditarNoticiaTallerista" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
+        <div class="modal-content" style="background: #fff; padding: 25px; border-radius: 12px; max-width: 550px; width: 90%; max-height: 90vh; overflow-y: auto;">
+            <h3 style="margin-top: 0; margin-bottom: 15px;">Editar Noticia para Reenviar</h3>
+            
+            <form id="formEditarTallerista" style="display: flex; flex-direction: column; gap: 12px;">
+                <input type="hidden" id="editTalleristaId">
+                <input type="hidden" id="editTalleristaImagenIdActual">
+
+                <div class="form-group">
+                    <label style="font-weight: bold; display: block; margin-bottom: 4px;">Título:</label>
+                    <input type="text" id="editTalleristaTitulo" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                </div>
+
+                <div class="form-group">
+                    <label style="font-weight: bold; display: block; margin-bottom: 4px;">Categoría:</label>
+                    <select id="editTalleristaCategoria" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                        <option value="reflexiones">Reflexiones</option>
+                        <option value="cronicas-eventos">Crónicas de Eventos</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label style="font-weight: bold; display: block; margin-bottom: 4px;">Imagen (.webp opcional para cambiar):</label>
+                    <input type="file" id="editTalleristaImagen" accept=".webp,image/webp">
+                </div>
+
+                <div class="form-group">
+                    <label style="font-weight: bold; display: block; margin-bottom: 4px;">Resumen:</label>
+                    <textarea id="editTalleristaResumen" rows="2" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label style="font-weight: bold; display: block; margin-bottom: 4px;">Cuerpo:</label>
+                    <textarea id="editTalleristaCuerpo" rows="6" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;"></textarea>
+                </div>
+
+                <div style="margin-top: 15px; display: flex; gap: 10px; justify-content: flex-end;">
+                    <button type="submit" class="btn btn-primary" style="background:#27ae60; color: white; border: none; padding: 10px 16px; border-radius: 6px; cursor: pointer; font-weight: bold;">🚀 Volver a Mandar</button>
+                    <button type="button" class="btn btn-secondary" onclick="cerrarModalTallerista()" style="padding: 10px 16px; border-radius: 6px; cursor: pointer;">Cancelar</button>
+                </div>
+            </form>
+        </div>
     </div>
 
     <!-- Carga de Supabase y Scripts Modulares -->

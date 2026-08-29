@@ -699,3 +699,163 @@ body {
         padding: 1rem !important;
     }
 }
+
+/* =========================================
+   ESTILOS DE ADMINISTRACIÓN DE NOTICIAS
+   ========================================= */
+
+/* Pestañas de filtrado */
+.admin-tabs {
+    margin-bottom: 1.5rem;
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.admin-tab-btn {
+    background-color: #E2E8F0;
+    color: var(--color-text-neutral);
+    border: none;
+    padding: 0.6rem 1.25rem;
+    border-radius: 6px;
+    font-family: var(--font-ui);
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: var(--transition-ease);
+}
+
+.admin-tab-btn:hover {
+    background-color: #CBD5E1;
+    color: var(--color-primary);
+}
+
+.admin-tab-btn.active {
+    background-color: var(--color-primary);
+    color: #FFFFFF;
+}
+
+/* Tabla principal */
+.admin-table-container {
+    background: #FFFFFF;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: var(--shadow-light);
+    border: 1px solid rgba(158, 27, 34, 0.1);
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--font-ui);
+}
+
+.admin-table th {
+    background-color: var(--color-primary);
+    color: #FFFFFF;
+    padding: 1rem 1.25rem;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.95rem;
+    letter-spacing: 0.5px;
+}
+
+.admin-table td {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    vertical-align: middle;
+    font-size: 0.95rem;
+}
+
+.admin-table tbody tr:hover {
+    background-color: rgba(245, 245, 243, 0.5);
+}
+
+/* Acciones y Botones */
+.actions-cell {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.btn-tabla {
+    font-family: var(--font-ui);
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 0.5rem 0.85rem;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    transition: var(--transition-ease);
+}
+
+.btn-tabla:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-light);
+}
+
+.btn-publicar {
+    background-color: #b8deb9e1;
+    color: var(--color-text-neutral);
+}
+
+.btn-publicar:hover {
+    background-color: #8bd18ce1 ;
+}
+
+.btn-regresar {
+    background-color: #deacace1;
+    color: var(--color-text-neutral);
+}
+
+.btn-regresar:hover {
+    background-color: #d47a7ae1 ;
+    filter: brightness(0.9);
+}
+
+.btn-editar {
+    background-color: #E2E8F0;
+    color: var(--color-text-neutral);
+}
+
+.btn-editar:hover {
+    background-color: #CBD5E1;
+}
+
+.btn-eliminar {
+    background-color: rgba(158, 27, 34, 0.1);
+    color: var(--color-primary);
+}
+
+.btn-eliminar:hover {
+    background-color: var(--color-primary);
+    color: #FFFFFF;
+}
+
+/* Badges de Estado */
+.badge-status {
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 0.3rem 0.65rem;
+    border-radius: 20px;
+    display: inline-block;
+}
+
+.badge-publicado {
+    background-color: rgba(76, 175, 80, 0.15);
+    color: var(--color-action-hover);
+}
+
+.badge-revision {
+    background-color: rgba(224, 167, 47, 0.15);
+    color: #B47D00;
+}
+
+.badge-rechazado {
+    background-color: rgba(158, 27, 34, 0.15);
+    color: var(--color-primary);
+}

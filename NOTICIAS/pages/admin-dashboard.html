@@ -65,11 +65,34 @@
                 </div>
             </section>
 
-            <!-- perfil -->
+            <!-- SECCIÓN: MI PERFIL -->
             <section id="perfil" class="section" style="display: none;">
                 <div class="card">
                     <h2 class="card-title">Mi Perfil</h2>
-                    
+
+                    <!-- Avatar / Foto de Perfil -->
+                    <div class="form-group avatar-group">
+                        <label>Foto de Perfil</label>
+
+                        <div class="avatar-uploader">
+                            <img id="profileAvatarPreview" 
+                                src="https://placehold.co/150x150?text=Sin+Foto" 
+                                alt="Avatar de usuario" 
+                                class="avatar-preview">
+
+                            <div class="avatar-uploader-actions">
+                                <button type="button" class="btn btn-secondary" id="btnCambiarFoto">
+                                    📷 Cambiar foto de perfil
+                                </button>
+                                <p class="avatar-note">Solo se permiten imágenes en formato <strong>.webp</strong></p>
+                            </div>
+
+                            <!-- Input oculto para cargar la foto -->
+                            <input type="file" id="profileAvatarFile" accept=".webp,image/webp" 
+                                onchange="previewAvatar(event)" hidden>
+                        </div>
+                    </div>
+
                     <div class="form-group">
                         <label>Nombre</label>
                         <input type="text" id="profileName" readonly>
@@ -86,6 +109,13 @@
                     </div>
 
                     <button class="btn btn-primary" onclick="updateProfile()">Guardar Cambios</button>
+                </div>
+
+                <!-- Restablecer contraseña -->
+                <div class="form-group" style="margin-top: 1.5rem;">
+                    <button type="button" class="btn btn-secondary" onclick="solicitarRestablecimiento()" style="background-color: #f39c12; border: none; color: white;">
+                        Restablecer contraseña
+                    </button>
                 </div>
             </section>
 
@@ -174,6 +204,11 @@
                                 <input type="checkbox" id="noticiaAdminDestacada">
                                 Destacada
                             </label>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Imagen Promocional (.webp)</label>
+                            <input type="file" id="noticiaAdminImagen" accept=".webp,image/webp">
                         </div>
 
                         <button type="submit" class="btn btn-primary">Crear Noticia</button>
@@ -269,6 +304,7 @@
                         <p>Cargando...</p>
                     </div>
                 </div>
+                
             </section>
 
             <!-- GESTIONAR TALLERES -->
@@ -337,6 +373,51 @@
             </section>
         </main>
     </div>
+    <!-- MODAL DE EDICIÓN PARA EL TALLERISTA -->
+<div id="modalEditarNoticiaTallerista" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
+    <div class="modal-content card" style="max-width: 550px; width: 90%; background: #fff; padding: 25px; border-radius: 12px; max-height: 90vh; overflow-y: auto;">
+        <h3 class="card-title" style="margin-bottom: 20px;">Editar Noticia para Reenviar</h3>
+        
+        <form id="formEditarTallerista" class="form">
+            <input type="hidden" id="editTalleristaId">
+            <input type="hidden" id="editTalleristaImagenIdActual">
+
+            <div class="form-group" style="margin-bottom: 15px; display: flex; flex-direction: column;">
+                <label style="font-weight: bold; margin-bottom: 5px;">Título:</label>
+                <input type="text" id="editTalleristaTitulo" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+            </div>
+
+            <div class="form-group" style="margin-bottom: 15px; display: flex; flex-direction: column;">
+                <label style="font-weight: bold; margin-bottom: 5px;">Categoría:</label>
+                <select id="editTalleristaCategoria" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                    <option value="reflexiones">Reflexiones</option>
+                    <option value="cronicas-eventos">Crónicas de Eventos</option>
+                </select>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 15px; display: flex; flex-direction: column;">
+                <label style="font-weight: bold; margin-bottom: 5px;">Imagen Promocional (.webp opcional):</label>
+                <input type="file" id="editTalleristaImagen" accept=".webp,image/webp">
+                <p class="avatar-note" style="font-size: 0.85em; color: #666; margin-top: 4px;">Solo se permiten imágenes en formato <strong>.webp</strong></p>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 15px; display: flex; flex-direction: column;">
+                <label style="font-weight: bold; margin-bottom: 5px;">Resumen:</label>
+                <textarea id="editTalleristaResumen" rows="2" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;"></textarea>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 15px; display: flex; flex-direction: column;">
+                <label style="font-weight: bold; margin-bottom: 5px;">Cuerpo:</label>
+                <textarea id="editTalleristaCuerpo" rows="5" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;"></textarea>
+            </div>
+
+            <div style="margin-top: 20px; display: flex; justify-content: flex-end; gap: 10px;">
+                <button type="submit" class="btn btn-primary" style="background:#27ae60; color:white; border:none; padding: 10px 16px; border-radius:6px; cursor:pointer; font-weight:bold;">🚀 Volver a Mandar</button>
+                <button type="button" class="btn btn-secondary" onclick="cerrarModalTallerista()" style="padding: 10px 16px; border-radius:6px; cursor:pointer;">Cancelar</button>
+            </div>
+        </form>
+    </div>
+</div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../filesjs/js-login/supabase-config.js"></script>    

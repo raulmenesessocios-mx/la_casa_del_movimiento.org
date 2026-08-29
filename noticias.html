@@ -3,22 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>La Casa del Movimiento | noticias</title>
-    <!-- Tu archivo CSS maestro unificado -->
+    <title>La Casa del Movimiento | Noticias</title>
     <link rel="stylesheet" href="CSS/styles.css">
     <link rel="icon" type="image/png" href="https://ilmkmivwhfjlvznrsgoc.supabase.co/storage/v1/object/public/IMAGENES/logo.ico">
-</head>
-<body>
-
-
-    <!-- SECCIÓN 1: HEADER -->
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inicio - La Casa del Movimiento</title>
-    <link rel="stylesheet" href="styles.css">
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -26,107 +13,67 @@
 </head>
 <body>
 
-    <!-- ========================================
-        HEADER / NAVBAR (CORRECCIÓN DE NAVEGACIÓN)
-        ======================================== -->
+    <!-- HEADER / NAVBAR -->
     <header>
-        <a href="#" class="brand-logo">La Casa del Movimiento</a>
+        <a href="index.html" class="brand-logo">La Casa del Movimiento</a>
         <nav>
             <ul>
-                <li><a href="index.html" >Inicio</a></li>
+                <li><a href="index.html">Inicio</a></li>
                 <li><a href="talleres.html">Talleres</a></li>
                 <li><a href="eventos.html">Eventos</a></li>
                 <li><a href="#noticias" class="nav-item-active">Noticias</a></li>
-                <li><a href="NOTICIAS/indexlog.html">Nueva Noticias</a></li>
-                <!-- Contacto se mudó al footer -->
+                <LI><a href="NOTICIAS/indexlog.html">Nueva Noticia</a></LI>
             </ul>
         </nav>
     </header>
 
+    <!-- SECCIÓN DE NOTICIAS -->
     <section class="news-section" id="noticias">
-    <div class="section-padding">
-        <h2 class="section-title">Noticias</h2>
-        <p class="news-subtitle">Artículos, reflexiones y crónicas de la comunidad</p>
+        <div class="section-padding">
+            <h2 class="section-title">Noticias</h2>
+            <p class="news-subtitle">Artículos, reflexiones y crónicas de la comunidad</p>
 
-        <!-- SOLUCIÓN 3: TABS INTERACTIVOS -->
-        <div class="news-tabs">
-            <button class="tab-button tab-active" data-filter="todos">Todos</button>
-            <button class="tab-button" data-filter="reflexiones">Reflexiones</button>
-            <button class="tab-button" data-filter="cronicas">Crónicas de Eventos</button>
-        </div>
-
-        <!-- SOLUCIÓN 1: GRID ASIMÉTRICO (2/3 + 1/3) -->
-        <div class="news-grid">
-
-            <!-- LADO IZQUIERDO (2/3): TARJETA DESTACADA -->
-            <div class="news-featured">
-                
-                <!-- Articulo Destacado 1 -->
-                <article class="news-card news-card-featured" data-category="reflexiones">
-                    <div class="news-card-image">
-                        <img src="https://via.placeholder.com/600x350?text=Noticia+Principal" alt="Inauguración sala exposiciones" loading="lazy">
-                    </div>
-                    <div class="news-card-content">
-                        <!-- SOLUCIÓN 2: Badge de Categoría -->
-                        <span class="news-badge">Reflexión</span>
-                        
-                        <h3 class="news-card-title">Inauguración de la nueva sala de exposiciones</h3>
-                        
-                        <!-- SOLUCIÓN 2: Extracto + Meta (Autor + Fecha) -->
-                        <p class="news-excerpt">Exploramos el significado de los espacios compartidos y cómo la creación colectiva transforma nuestro entorno comunitario...</p>
-                        
-                        <div class="news-meta">
-                            <span class="news-author">Por María Flores</span>
-                            <span class="news-date">12 OCT 2026</span>
-                        </div>
-                        
-                        <!-- SOLUCIÓN 2: Enlace "Leer más" -->
-                        <a href="#" class="news-link">Leer más →</a>
-                    </div>
-                </article>
-
+            <!-- TABS INTERACTIVOS -->
+            <div class="news-tabs">
+                <button class="tab-button tab-active" data-filter="todos">Todos</button>
+                <button class="tab-button" data-filter="reflexiones">Reflexiones</button>
+                <button class="tab-button" data-filter="cronicas">Crónicas de Eventos</button>
             </div>
 
-            <!-- LADO DERECHO (1/3): TARJETAS SECUNDARIAS APILADAS -->
-            <div class="news-sidebar-grid">
-                
-                <!-- Artículo 2 (Compacto) -->
-                <article class="news-card news-card-compact" data-category="cronicas">
-                    <div class="news-card-image-small">
-                        <img src="https://via.placeholder.com/300x180?text=Noticia+2" alt="Convocatoria artistas" loading="lazy">
-                    </div>
-                    <div class="news-card-content-small">
-                        <span class="news-badge news-badge-small">Crónica</span>
-                        <h4 class="news-card-title-small">Resultados de convocatoria para artistas locales</h4>
-                        <p class="news-meta-small">
-                            <span class="news-author">Por Juan Rodríguez</span>
-                            <span class="news-date">08 OCT 2026</span>
-                        </p>
-                        <a href="#" class="news-link-small">Leer más →</a>
-                    </div>
-                </article>
+            <!-- GRID ASIMÉTRICO DINÁMICO (Se llena con JS) -->
+            <div class="news-grid">
 
-                <!-- Artículo 3 (Compacto) -->
-                <article class="news-card news-card-compact" data-category="reflexiones">
-                    <div class="news-card-image-small">
-                        <img src="https://via.placeholder.com/300x180?text=Noticia+3" alt="Alianza colec 
-                    <div class="news-card-content-small">
-                        <span class="news-badge news-badge-small">Reflexión</span>
-                        <h4 class="news-card-title-small">Alianza estratégica con colectivos independientes</h4>
-                        <p class="news-meta-small">
-                            <span class="news-author">Por Laura Sánchez</span>
-                            <span class="news-date">01 OCT 2026</span>
-                        </p>
-                        <a href="#" class="news-link-small">Leer más →</a>
-                    </div>
-                </article>
+                <!-- LADO IZQUIERDO (2/3): TARJETA DESTACADA -->
+                <div class="news-featured">
+                    <p>Cargando noticia principal...</p>
+                </div>
+
+                <!-- LADO DERECHO (1/3): TARJETAS SECUNDARIAS APILADAS -->
+                <div class="news-sidebar-grid">
+                    <p>Cargando noticias...</p>
+                </div>
 
             </div>
-
         </div>
+    </section>
 
+    <!-- MODAL DE DETALLE DE NOTICIA -->
+    <div id="newsDetailModal" class="news-modal">
+        <div class="news-modal-overlay"></div>
+        <div class="news-modal-container">
+            <button class="news-modal-close" id="closeNewsModal">&times;</button>
+            <div id="modalNewsBody" class="news-modal-body">
+                <!-- Se llena dinámicamente con JS -->
+            </div>
+        </div>
     </div>
-</section>
-<script src="js/scritps.js"></script>
+
+
+    <!-- 1. Cargar Supabase CDN y tu Configuración (OBLIGATORIO) -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="NOTICIAS/filesjs/js-login/supabase-config.js"></script>
+
+    <!-- 2. Tu script de lógica pública -->
+    <script src="js/scritps.js"></script>
 </body>
 </html>

@@ -1,48 +1,244 @@
+let filterEstadoActual = 'todas';
+
+// 1. Escuchador único al cargar la página
 document.addEventListener('DOMContentLoaded', () => {
-    loadAllNoticias();
+    loadAllNoticiasAdmin();
+
+    const formEdit = document.getElementById('editarNoticiaForm');
+    if (formEdit) {
+        formEdit.addEventListener('submit', guardarEdicionNoticia);
+    }
 });
 
-async function loadAllNoticias() {
+// 2. Consulta a Supabase con todos los campos requeridos
+async function loadAllNoticiasAdmin() {
     try {
         const container = document.getElementById('noticiasAdminList');
         if (!container) return;
 
-        const { data } = await window.dbClient
+        const { data, error } = await window.dbClient
             .from('noticias')
-            .select('id, titulo, publicado, destacada')
+            .select(`
+                id, 
+                titulo, 
+                resumen, 
+                cuerpo, 
+                publicado, 
+                estado,
+                destacada, 
+                categoria_id,
+                imagen_id,
+                categorias(slug, nombre),
+                autores(nombre)
+            `)
             .order('fecha_publicacion', { ascending: false });
 
-        if (!data) return;
+        if (error) throw error;
+        
+        window.noticiasAdminCache = data || [];
+        renderTableAdmin();
+    } catch (error) {
+        console.error('Error al listar noticias admin:', error);
+    }
+}
 
-        const html = `
-            <table class="table">
+// 3. Control del filtro de pestañas
+function setFilterNoticias(estado) {
+    filterEstadoActual = estado;
+    renderTableAdmin();
+}
+
+// 4. Renderizado dinámico de la tabla según la pestaña activa
+function renderTableAdmin() {
+    const container = document.getElementById('noticiasAdminList');
+    if (!container) return;
+
+    let filtradas = window.noticiasAdminCache;
+    if (filterEstadoActual === 'publicadas') {
+        filtradas = filtradas.filter(n => n.estado === 'publicado');
+    } else if (filterEstadoActual === 'revision') {
+        filtradas = filtradas.filter(n => n.estado === 'en_revision');
+    } else if (filterEstadoActual === 'rechazadas') {
+        filtradas = filtradas.filter(n => n.estado === 'rechazado');
+    }
+
+    const html = `
+        <div class="admin-tabs">
+            <button class="admin-tab-btn ${filterEstadoActual === 'todas' ? 'active' : ''}" onclick="setFilterNoticias('todas')">Todas</button>
+            <button class="admin-tab-btn ${filterEstadoActual === 'revision' ? 'active' : ''}" onclick="setFilterNoticias('revision')">En Revisión</button>
+            <button class="admin-tab-btn ${filterEstadoActual === 'publicadas' ? 'active' : ''}" onclick="setFilterNoticias('publicadas')">Publicadas</button>
+            <button class="admin-tab-btn ${filterEstadoActual === 'rechazadas' ? 'active' : ''}" onclick="setFilterNoticias('rechazadas')">Rechazadas</button>
+        </div>
+        <div class="admin-table-container">
+            <table class="admin-table">
                 <thead>
                     <tr>
                         <th>Título</th>
+                        <th>Autor</th>
                         <th>Estado</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
-                    ${data.map(n => `
+                    ${filtradas.length === 0 ? '<tr><td colspan="4" style="text-align:center; padding: 2rem;">No hay noticias en esta sección.</td></tr>' : ''}
+                    ${filtradas.map(n => {
+                        const esPublicado = n.estado === 'publicado';
+                        const esRechazado = n.estado === 'rechazado';
+
+                        return `
                         <tr>
-                            <td>${n.titulo}</td>
-                            <td>${n.publicado ? '✅ Publicada' : '❌ Borrador'} ${n.destacada ? '⭐ Destacada' : ''}</td>
+                            <td><strong>${n.titulo}</strong></td>
+                            <td>${n.autores?.nombre || 'Desconocido'}</td>
                             <td>
-                                <button class="btn btn-secondary" onclick="deleteNoticia('${n.id}')">Eliminar</button>
+                                ${getBadgeEstado(n.estado)}
+                                ${n.destacada ? ' ⭐ destacada' : ''}
+                            </td>
+                            <td>
+                                <div class="actions-cell">
+                                    ${!esPublicado ? `<button class="btn-tabla btn-publicar" onclick="cambiarEstadoNoticia('${n.id}', 'publicado', true)">Publicar</button>` : ''}
+                                    ${!esPublicado && !esRechazado ? `<button class="btn-tabla btn-regresar" onclick="cambiarEstadoNoticia('${n.id}', 'rechazado', false)">Regresar</button>` : ''}
+                                    <button class="btn-tabla btn-editar" onclick="abrirEditarNoticia('${n.id}')">Editar</button>
+                                    <button class="btn-tabla btn-eliminar" onclick="deleteNoticia('${n.id}')">🗑️</button>
+                                </div>
                             </td>
                         </tr>
-                    `).join('')}
+                        `;
+                    }).join('')}
                 </tbody>
             </table>
-        `;
+        </div>
+    `;
 
-        container.innerHTML = html;
-    } catch (error) {
-        console.error('Error al listar noticias:', error);
+    container.innerHTML = html;
+}
+
+// 5. Formato de etiquetas de estado
+function getBadgeEstado(estado) {
+    if (estado === 'publicado') return '<span class="badge-status badge-publicado">Publicada</span>';
+    if (estado === 'rechazado') return '<span class="badge-status badge-rechazado">Rechazada</span>';
+    return '<span class="badge-status badge-revision">En Revisión</span>';
+}
+
+// 6. Cambiar estado rápido
+async function cambiarEstadoNoticia(noticiaId, nuevoEstado, esPublicado) {
+    try {
+        const { error } = await window.dbClient
+            .from('noticias')
+            .update({ 
+                estado: nuevoEstado, 
+                publicado: esPublicado 
+            })
+            .eq('id', noticiaId);
+
+        if (error) throw error;
+
+        loadAllNoticiasAdmin();
+    } catch (err) {
+        console.error('Error cambiando estado:', err);
     }
 }
 
+// 7. Modal de edición
+function abrirEditarNoticia(noticiaId) {
+    const noticia = window.noticiasAdminCache.find(n => n.id === noticiaId);
+    if (!noticia) return;
+
+    document.getElementById('editNoticiaId').value = noticia.id;
+    document.getElementById('editImagenIdActual').value = noticia.imagen_id || '';
+    document.getElementById('editNoticiaTitulo').value = noticia.titulo;
+    document.getElementById('editNoticiaResumen').value = noticia.resumen;
+    document.getElementById('editNoticiaCuerpo').value = noticia.cuerpo;
+    document.getElementById('editNoticiaCategoria').value = noticia.categorias?.slug || 'reflexiones';
+    document.getElementById('editNoticiaPublicado').checked = noticia.publicado;
+    document.getElementById('editNoticiaDestacada').checked = noticia.destacada;
+
+    document.getElementById('editNoticiaModal').style.display = 'flex';
+}
+
+function cerrarModalEditar() {
+    document.getElementById('editNoticiaModal').style.display = 'none';
+    document.getElementById('editarNoticiaForm').reset();
+}
+
+async function guardarEdicionNoticia(e) {
+    e.preventDefault();
+
+    const id = document.getElementById('editNoticiaId').value;
+    let imagenId = document.getElementById('editImagenIdActual').value || null;
+    const titulo = document.getElementById('editNoticiaTitulo').value.trim();
+    const resumen = document.getElementById('editNoticiaResumen').value.trim();
+    const cuerpo = document.getElementById('editNoticiaCuerpo').value.trim();
+    const categorySlug = document.getElementById('editNoticiaCategoria').value;
+    const publicado = document.getElementById('editNoticiaPublicado').checked;
+    const destacada = document.getElementById('editNoticiaDestacada').checked;
+    const fileInput = document.getElementById('editNoticiaImagen');
+    const file = fileInput ? fileInput.files[0] : null;
+
+    try {
+        if (file) {
+            if (file.type !== 'image/webp') {
+                alert('⚠️ La imagen debe estar en formato .webp');
+                return;
+            }
+
+            const fileName = `noticia-${Date.now()}.webp`;
+            const filePath = `noticias/${fileName}`;
+
+            const { error: uploadErr } = await window.dbClient.storage
+                .from('IMAGENES')
+                .upload(filePath, file, { upsert: true, contentType: 'image/webp' });
+
+            if (uploadErr) throw uploadErr;
+
+            const { data: publicUrlData } = window.dbClient.storage
+                .from('IMAGENES')
+                .getPublicUrl(filePath);
+
+            const { data: imgRecord, error: imgErr } = await window.dbClient
+                .from('imagenes')
+                .insert({ url: publicUrlData.publicUrl, alt_texto: `Imagen actualizable: ${titulo}` })
+                .select('id')
+                .single();
+
+            if (imgErr) throw imgErr;
+            imagenId = imgRecord.id;
+        }
+
+        const { data: catData, error: catErr } = await window.dbClient
+            .from('categorias')
+            .select('id')
+            .eq('slug', categorySlug)
+            .single();
+
+        if (catErr) throw catErr;
+
+        const { error: updateErr } = await window.dbClient
+            .from('noticias')
+            .update({
+                titulo,
+                resumen,
+                cuerpo,
+                categoria_id: catData.id,
+                imagen_id: imagenId,
+                publicado,
+                estado: publicado ? 'publicado' : 'en_revision',
+                destacada,
+                actualizado_en: new Date().toISOString()
+            })
+            .eq('id', id);
+
+        if (updateErr) throw updateErr;
+
+        alert('✅ Noticia actualizada con éxito');
+        cerrarModalEditar();
+        loadAllNoticiasAdmin();
+    } catch (error) {
+        console.error('Error al actualizar noticia:', error);
+        alert('❌ Error al actualizar: ' + error.message);
+    }
+}
+
+// 8. Eliminar noticia
 async function deleteNoticia(noticiaId) {
     if (confirm('¿Estás seguro de que quieres eliminar esta noticia?')) {
         try {
@@ -54,7 +250,7 @@ async function deleteNoticia(noticiaId) {
             if (error) throw error;
 
             alert('✅ Noticia eliminada');
-            loadAllNoticias();
+            loadAllNoticiasAdmin();
             if (typeof loadDashboardStats === 'function') loadDashboardStats();
         } catch (error) {
             console.error('Error:', error);

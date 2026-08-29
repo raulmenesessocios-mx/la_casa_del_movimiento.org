@@ -1,38 +1,74 @@
-async function createNoticia(userId) {
-    const titulo = document.getElementById('noticiaTitle').value;
-    const resumen = document.getElementById('noticiaResumen').value;
-    const cuerpo = document.getElementById('noticiaCuerpo').value;
-    const categorySlug = document.getElementById('noticiaCategoria').value;
-    const destacada = document.getElementById('noticiaDedicada').checked;
+document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('crearNoticiaForm');
+    if (form) {
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await createNoticiaTallerista();
+        });
+    }
+});
 
+async function createNoticiaTallerista() {
     try {
-        const { data: catData, error: catError } = await window.supabaseClient
+        const client = window.supabaseClient || window.dbClient;
+        const { data: { user } } = await client.auth.getUser();
+
+        if (!user) {
+            alert('⚠️ Debes iniciar sesión.');
+            return;
+        }
+
+        // 1. Obtener id del autor ligado al email del usuario autenticado
+        const { data: autor, error: autorErr } = await client
+            .from('autores')
+            .select('id')
+            .eq('email', user.email)
+            .single();
+
+        if (autorErr || !autor) {
+            alert('⚠️ No se encontró la ficha de autor asociada a tu usuario.');
+            return;
+        }
+
+        const titulo = document.getElementById('noticiaTitle').value.trim();
+        const resumen = document.getElementById('noticiaResumen').value.trim();
+        const cuerpo = document.getElementById('noticiaCuerpo').value.trim();
+        const categorySlug = document.getElementById('noticiaCategoria').value;
+        const destacada = document.getElementById('noticiaDedicada')?.checked || false;
+
+        // 2. Obtener id de la categoría
+        const { data: catData, error: catErr } = await client
             .from('categorias')
             .select('id')
             .eq('slug', categorySlug)
             .single();
 
-        if (catError) throw catError;
+        if (catErr) throw catErr;
 
-        const { error } = await window.supabaseClient
+        // 3. Insertar noticia en revisión
+        const { error: insertErr } = await client
             .from('noticias')
             .insert({
                 titulo,
                 resumen,
                 cuerpo,
-                autor_id: userId,
+                autor_id: autor.id,
                 categoria_id: catData.id,
-                publicado: true,
+                publicado: false,
+                estado: 'en_revision',
                 destacada
             });
 
-        if (error) throw error;
+        if (insertErr) throw insertErr;
 
-        alert('✅ Noticia creada exitosamente');
+        alert('📩 Noticia enviada a revisión exitosamente.');
         document.getElementById('crearNoticiaForm').reset();
-        loadMyNoticias(userId);
+
+        if (typeof loadMyNoticias === 'function') {
+            loadMyNoticias(autor.id);
+        }
     } catch (error) {
-        console.error('Error:', error);
-        alert('❌ Error al crear noticia');
+        console.error('Error al crear noticia:', error);
+        alert('❌ Error al enviar noticia: ' + error.message);
     }
 }
