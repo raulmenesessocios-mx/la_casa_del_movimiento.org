@@ -374,50 +374,110 @@
         </main>
     </div>
     <!-- MODAL DE EDICIÓN PARA EL TALLERISTA -->
-<div id="modalEditarNoticiaTallerista" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
-    <div class="modal-content card" style="max-width: 550px; width: 90%; background: #fff; padding: 25px; border-radius: 12px; max-height: 90vh; overflow-y: auto;">
-        <h3 class="card-title" style="margin-bottom: 20px;">Editar Noticia para Reenviar</h3>
-        
-        <form id="formEditarTallerista" class="form">
-            <input type="hidden" id="editTalleristaId">
-            <input type="hidden" id="editTalleristaImagenIdActual">
+    <div id="modalEditarNoticiaTallerista" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
+        <div class="modal-content card" style="max-width: 550px; width: 90%; background: #fff; padding: 25px; border-radius: 12px; max-height: 90vh; overflow-y: auto;">
+            <h3 class="card-title" style="margin-bottom: 20px;">Editar Noticia para Reenviar</h3>
+            
+            <form id="formEditarTallerista" class="form">
+                <input type="hidden" id="editTalleristaId">
+                <input type="hidden" id="editTalleristaImagenIdActual">
 
-            <div class="form-group" style="margin-bottom: 15px; display: flex; flex-direction: column;">
-                <label style="font-weight: bold; margin-bottom: 5px;">Título:</label>
-                <input type="text" id="editTalleristaTitulo" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
-            </div>
+                <div class="form-group" style="margin-bottom: 15px; display: flex; flex-direction: column;">
+                    <label style="font-weight: bold; margin-bottom: 5px;">Título:</label>
+                    <input type="text" id="editTalleristaTitulo" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                </div>
 
-            <div class="form-group" style="margin-bottom: 15px; display: flex; flex-direction: column;">
-                <label style="font-weight: bold; margin-bottom: 5px;">Categoría:</label>
-                <select id="editTalleristaCategoria" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
-                    <option value="reflexiones">Reflexiones</option>
-                    <option value="cronicas-eventos">Crónicas de Eventos</option>
-                </select>
-            </div>
+                <div class="form-group" style="margin-bottom: 15px; display: flex; flex-direction: column;">
+                    <label style="font-weight: bold; margin-bottom: 5px;">Categoría:</label>
+                    <select id="editTalleristaCategoria" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                        <option value="reflexiones">Reflexiones</option>
+                        <option value="cronicas-eventos">Crónicas de Eventos</option>
+                    </select>
+                </div>
 
-            <div class="form-group" style="margin-bottom: 15px; display: flex; flex-direction: column;">
-                <label style="font-weight: bold; margin-bottom: 5px;">Imagen Promocional (.webp opcional):</label>
-                <input type="file" id="editTalleristaImagen" accept=".webp,image/webp">
-                <p class="avatar-note" style="font-size: 0.85em; color: #666; margin-top: 4px;">Solo se permiten imágenes en formato <strong>.webp</strong></p>
-            </div>
+                <div class="form-group" style="margin-bottom: 15px; display: flex; flex-direction: column;">
+                    <label style="font-weight: bold; margin-bottom: 5px;">Imagen Promocional (.webp opcional):</label>
+                    <input type="file" id="editTalleristaImagen" accept=".webp,image/webp">
+                    <p class="avatar-note" style="font-size: 0.85em; color: #666; margin-top: 4px;">Solo se permiten imágenes en formato <strong>.webp</strong></p>
+                </div>
 
-            <div class="form-group" style="margin-bottom: 15px; display: flex; flex-direction: column;">
-                <label style="font-weight: bold; margin-bottom: 5px;">Resumen:</label>
-                <textarea id="editTalleristaResumen" rows="2" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;"></textarea>
-            </div>
+                <div class="form-group" style="margin-bottom: 15px; display: flex; flex-direction: column;">
+                    <label style="font-weight: bold; margin-bottom: 5px;">Resumen:</label>
+                    <textarea id="editTalleristaResumen" rows="2" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;"></textarea>
+                </div>
 
-            <div class="form-group" style="margin-bottom: 15px; display: flex; flex-direction: column;">
-                <label style="font-weight: bold; margin-bottom: 5px;">Cuerpo:</label>
-                <textarea id="editTalleristaCuerpo" rows="5" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;"></textarea>
-            </div>
+                <div class="form-group" style="margin-bottom: 15px; display: flex; flex-direction: column;">
+                    <label style="font-weight: bold; margin-bottom: 5px;">Cuerpo:</label>
+                    <textarea id="editTalleristaCuerpo" rows="5" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;"></textarea>
+                </div>
 
-            <div style="margin-top: 20px; display: flex; justify-content: flex-end; gap: 10px;">
-                <button type="submit" class="btn btn-primary" style="background:#27ae60; color:white; border:none; padding: 10px 16px; border-radius:6px; cursor:pointer; font-weight:bold;">🚀 Volver a Mandar</button>
-                <button type="button" class="btn btn-secondary" onclick="cerrarModalTallerista()" style="padding: 10px 16px; border-radius:6px; cursor:pointer;">Cancelar</button>
-            </div>
-        </form>
+                <div style="margin-top: 20px; display: flex; justify-content: flex-end; gap: 10px;">
+                    <button type="submit" class="btn btn-primary" style="background:#27ae60; color:white; border:none; padding: 10px 16px; border-radius:6px; cursor:pointer; font-weight:bold;">🚀 Volver a Mandar</button>
+                    <button type="button" class="btn btn-secondary" onclick="cerrarModalTallerista()" style="padding: 10px 16px; border-radius:6px; cursor:pointer;">Cancelar</button>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
+
+    <!-- Modal para Editar Noticia -->
+    <div id="editNoticiaModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>✏️ Editar Noticia</h3>
+                <button type="button" class="btn-cerrar-modal" onclick="cerrarModalEditar()">&times;</button>
+            </div>
+            
+            <form id="editarNoticiaForm">
+                <!-- Campos Ocultos -->
+                <input type="hidden" id="editNoticiaId">
+                <input type="hidden" id="editImagenIdActual">
+
+                <div class="form-group">
+                    <label for="editNoticiaTitulo">Título</label>
+                    <input type="text" id="editNoticiaTitulo" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="editNoticiaResumen">Resumen</label>
+                    <textarea id="editNoticiaResumen" class="form-control" rows="3" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="editNoticiaCuerpo">Cuerpo de la noticia</label>
+                    <textarea id="editNoticiaCuerpo" class="form-control" rows="6" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="editNoticiaCategoria">Categoría</label>
+                    <select id="editNoticiaCategoria" class="form-control">
+                        <option value="reflexiones">Reflexiones</option>
+                        <option value="talleres">Talleres</option>
+                        <option value="eventos">Eventos</option>
+                        <option value="comunidad">Comunidad</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="editNoticiaImagen">Actualizar imagen (.webp opcional)</label>
+                    <input type="file" id="editNoticiaImagen" accept="image/webp" class="form-control">
+                </div>
+
+                <div class="form-checkboxes">
+                    <label>
+                        <input type="checkbox" id="editNoticiaPublicado"> Publicado
+                    </label>
+                    <label>
+                        <input type="checkbox" id="editNoticiaDestacada"> ⭐ Destacada
+                    </label>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn-tabla btn-editar" onclick="cerrarModalEditar()">Cancelar</button>
+                    <button type="submit" class="btn-tabla btn-publicar">Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../filesjs/js-login/supabase-config.js"></script>    

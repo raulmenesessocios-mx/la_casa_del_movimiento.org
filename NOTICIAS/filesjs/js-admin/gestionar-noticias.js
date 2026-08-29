@@ -139,20 +139,44 @@ async function cambiarEstadoNoticia(noticiaId, nuevoEstado, esPublicado) {
 }
 
 // 7. Modal de edición
+// 7. Modal de edición seguro
 function abrirEditarNoticia(noticiaId) {
     const noticia = window.noticiasAdminCache.find(n => n.id === noticiaId);
-    if (!noticia) return;
+    if (!noticia) {
+        console.error('No se encontró la noticia en caché:', noticiaId);
+        return;
+    }
 
-    document.getElementById('editNoticiaId').value = noticia.id;
-    document.getElementById('editImagenIdActual').value = noticia.imagen_id || '';
-    document.getElementById('editNoticiaTitulo').value = noticia.titulo;
-    document.getElementById('editNoticiaResumen').value = noticia.resumen;
-    document.getElementById('editNoticiaCuerpo').value = noticia.cuerpo;
-    document.getElementById('editNoticiaCategoria').value = noticia.categorias?.slug || 'reflexiones';
-    document.getElementById('editNoticiaPublicado').checked = noticia.publicado;
-    document.getElementById('editNoticiaDestacada').checked = noticia.destacada;
+    // Funciones auxiliares para asignar valores sin romper si falta un ID en el HTML
+    const setVal = (id, val) => {
+        const el = document.getElementById(id);
+        if (el) el.value = val ?? '';
+        else console.warn(`⚠️ Faltante en HTML: input con id="${id}"`);
+    };
 
-    document.getElementById('editNoticiaModal').style.display = 'flex';
+    const setChecked = (id, val) => {
+        const el = document.getElementById(id);
+        if (el) el.checked = Boolean(val);
+        else console.warn(`⚠️ Faltante en HTML: checkbox con id="${id}"`);
+    };
+
+    // Asignación de datos
+    setVal('editNoticiaId', noticia.id);
+    setVal('editImagenIdActual', noticia.imagen_id);
+    setVal('editNoticiaTitulo', noticia.titulo);
+    setVal('editNoticiaResumen', noticia.resumen);
+    setVal('editNoticiaCuerpo', noticia.cuerpo);
+    setVal('editNoticiaCategoria', noticia.categorias?.slug || 'reflexiones');
+    setChecked('editNoticiaPublicado', noticia.publicado);
+    setChecked('editNoticiaDestacada', noticia.destacada);
+
+    // Abrir modal
+    const modal = document.getElementById('editNoticiaModal');
+    if (modal) {
+        modal.style.display = 'flex';
+    } else {
+        alert('❌ Error: No se encontró el modal #editNoticiaModal en el HTML');
+    }
 }
 
 function cerrarModalEditar() {

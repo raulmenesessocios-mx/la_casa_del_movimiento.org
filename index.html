@@ -11,33 +11,21 @@
 </head>
 <body>
 
-
-    <!-- SECCIÓN 1: HEADER -->
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inicio - La Casa del Movimiento</title>
-    <link rel="stylesheet" href="styles.css">
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;700&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
-</head>
-<body>
-
     <!-- ========================================
         HEADER / NAVBAR (CORRECCIÓN DE NAVEGACIÓN)
         ======================================== -->
     <header>
-        <a href="#" class="brand-logo">La Casa del Movimiento</a>
+        <a href="#" class="brand-logo" >
+            <img src="https://ilmkmivwhfjlvznrsgoc.supabase.co/storage/v1/object/public/IMAGENES/logo-icon.webp" alt="logo" class="ico-imagen">
+            <span>La Casa del Movimiento</span>
+        </a>
         <nav>
             <ul>
                 <li><a href="#inicio" class="nav-item-active">Inicio</a></li>
                 <li><a href="talleres.html">Talleres</a></li>
                 <li><a href="eventos.html">Eventos</a></li>
                 <li><a href="noticias.html">Noticias</a></li>
+                <LI><a href="NOTICIAS/indexlog.html"><img src="https://ilmkmivwhfjlvznrsgoc.supabase.co/storage/v1/object/public/IMAGENES/inicio%20secion.png" alt="inicio secion" class="log-icono"></a></LI>
                 <!-- Contacto se mudó al footer -->
             </ul>
         </nav>
@@ -50,8 +38,11 @@
         <!-- Overlay oscuro + contenido -->
         <div class="hero-content">
             <h1 class="hero-title">Casa de Cultura</h1>
-            <p class="hero-subtitle">Un espacio donde la comunidad aprende, crea y transforma la realidad a través del arte y el movimiento.</p>
-            <a href="#talleres" class="btn btn-cta">Explorar Talleres</a>
+            <p class="hero-subtitle">
+                La cultura es la forma de vivir que se transmite de generación en generación. 
+                Somos creadores y destinatarios de la cultura.
+            </p>
+            <a href="talleres.html" class="btn btn-cta">Explorar Talleres</a>
         </div>
     </section>
 
@@ -83,7 +74,13 @@
 
         <!-- Párrafo corporativo debajo de los contadores -->
         <div class="about-text" style="max-width: 800px; margin: 4rem auto 0; text-align: center;">
-            <p>Somos el núcleo del desarrollo artístico local. Provemos infraestructura, talento y espacios seguros para transformar el entorno comunitario. En La Casa del Movimiento, creemos que cada persona tiene algo valioso que crear y compartir.</p>
+            <p>
+                Conocimientos, valores, creencias, 
+                costumbres, tradiciones, prácticas materiales, 
+                prácticas productivas; todas estas vinculadas entre sí, 
+                son las formas de organización que posee una comunidad en 
+                su vida cotidiana y que se transmiten de generación en generacion.
+            </p>
         </div>
     </section>
 
@@ -98,14 +95,25 @@
             <div class="strategy-card mission-card">
                 <div class="strategy-icon">✈️</div>
                 <h3 class="strategy-heading">Misión</h3>
-                <p>Potenciar a los creadores locales mediante espacios de alto rendimiento, donde la técnica se encuentra con la pasión y la comunidad prospera.</p>
+                <p>
+                    Crear y promover un espacio cultural comunitario que acerque a 
+                    la población a diversas expresiones culturales, rescatando tradiciones 
+                    locales y brindando oportunidades para el desarrollo creativo e integral 
+                    de todas las edades, especialmente niños y jóvenes, mediante talleres, 
+                    eventos y espacios de reflexión colectiva.
+                </p>
             </div>
 
             <!-- TARJETA VISIÓN -->
             <div class="strategy-card vision-card">
                 <div class="strategy-icon">🚀</div>
                 <h3 class="strategy-heading">Visión</h3>
-                <p>Ser el epicentro cultural autogestivo de la región, donde la resistencia de lo hecho a mano desafía la uniformidad del mundo digital.</p>
+                <p>
+                    Ser un referente cultural en Tizayuca que fortalezca la cohesión social, 
+                    la identidad comunitaria y la participación ciudadana, generando espacios 
+                    sin conflictos donde el arte y la cultura sean herramientas para transformar 
+                    realidades y mejorar la calidad de vida de la comunidad.
+                </p>
             </div>
         </div>
     </section>
@@ -174,7 +182,7 @@
                 <div class="event-overlay">
                     <h3 class="event-title">Festival Día de Muertos</h3>
                     <p class="event-date">Octubre 2025</p>
-                    <a href="#" class="event-link">Ver evento →</a>
+                    <a href="eventos.html" class="event-link">Ver evento →</a>
                 </div>
             </div>
 
@@ -184,7 +192,7 @@
                 <div class="event-overlay">
                     <h3 class="event-title">Festival Navidad</h3>
                     <p class="event-date">Diciembre 2025</p>
-                    <a href="#" class="event-link">Ver evento →</a>
+                    <a href="eventos.html" class="event-link">Ver evento →</a>
                 </div>
             </div>
 
@@ -194,7 +202,7 @@
                 <div class="event-overlay">
                     <h3 class="event-title">Café Literario</h3>
                     <p class="event-date">Semanal / Quincenal</p>
-                    <a href="#" class="event-link">Ver evento →</a>
+                    <a href="eventos.html" class="event-link">Ver evento →</a>
                 </div>
             </div>
 
@@ -203,7 +211,7 @@
                 <div class="event-overlay">
                     <h3 class="event-title">Primer Festival del maguay</h3>
                     <p class="event-date">agosto 2026</p>
-                    <a href="#" class="event-link">Ver evento →</a>
+                    <a href="eventos.html" class="event-link">Ver evento →</a>
                 </div>
             </div>
 
@@ -213,7 +221,7 @@
                 <div class="event-overlay">
                     <h3 class="event-title">Exposición Pintura</h3>
                     <p class="event-date">Febrero 2026</p>
-                    <a href="#" class="event-link">Ver evento →</a>
+                    <a href="eventos.html" class="event-link">Ver evento →</a>
                 </div>
             </div>
 
@@ -223,7 +231,7 @@
                 <div class="event-overlay">
                     <h3 class="event-title">Festival Engrane</h3>
                     <p class="event-date">Febrero 2026</p>
-                    <a href="#" class="event-link">Ver evento →</a>
+                    <a href="eventos.html" class="event-link">Ver evento →</a>
                 </div>
             </div>
 
@@ -233,7 +241,7 @@
                 <div class="event-overlay">
                     <h3 class="event-title">Cine Club</h3>
                     <p class="event-date">Mensual</p>
-                    <a href="#" class="event-link">Ver evento →</a>
+                    <a href="eventos.html" class="event-link">Ver evento →</a>
                 </div>
             </div>
 
@@ -243,7 +251,7 @@
                 <div class="event-overlay">
                     <h3 class="event-title">Primer Festival Papalote</h3>
                     <p class="event-date">Marzo 2026</p>
-                    <a href="#" class="event-link">Ver evento →</a>
+                    <a href="eventos.html" class="event-link">Ver evento →</a>
                 </div>
             </div>
 
@@ -253,7 +261,7 @@
                 <div class="event-overlay">
                     <h3 class="event-title">Exposición Cartonería Fina</h3>
                     <p class="event-date">Enero 2026</p>
-                    <a href="#" class="event-link">Ver evento →</a>
+                    <a href="eventos.html" class="event-link">Ver evento →</a>
                 </div>
             </div>
 

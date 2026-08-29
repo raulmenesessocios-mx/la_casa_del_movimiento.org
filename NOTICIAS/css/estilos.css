@@ -24,7 +24,7 @@ body {
     align-items: center;
     justify-content: center;
     min-height: 100vh;
-    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+    background: linear-gradient(135deg, var(--color-border) 0%, var(--color-text) 100%);
 }
 
 .login-container {
@@ -34,7 +34,7 @@ body {
 }
 
 .login-box {
-    background: var(--color-white);
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-alert) 100%);
     border-radius: var(--border-radius-lg);
     padding: var(--spacing-xl);
     box-shadow: var(--shadow-lg);
@@ -56,14 +56,14 @@ body {
     font-family: var(--font-serif);
     font-size: 1.8rem;
     font-weight: 700;
-    color: var(--color-primary);
+    color: var(--color-white);
     margin-bottom: var(--spacing-xs);
     text-align: center;
 }
 
 .subtitle {
     text-align: center;
-    color: var(--color-text-light);
+    color: var(--color-border);
     margin-bottom: var(--spacing-lg);
     font-size: 0.9rem;
 }
@@ -83,7 +83,7 @@ body {
 .form-group label {
     font-weight: 600;
     margin-bottom: var(--spacing-xs);
-    color: var(--color-text);
+    color: var(--color-white);
     font-size: 0.95rem;
 }
 
@@ -94,12 +94,13 @@ body {
     font-family: var(--font-sans);
     font-size: 1rem;
     transition: all 0.3s ease;
-    background-color: var(--color-white);
+    background-color: var(--colr-white);
+    color: var(--color-white);
 }
 
 .form-group input:focus {
     outline: none;
-    border-color: var(--color-primary);
+    border-color: var(--color-accent);
     box-shadow: 0 0 0 3px rgba(158, 27, 34, 0.1);
 }
 
@@ -181,13 +182,13 @@ body {
 
 .loading-message {
     text-align: center;
-    color: var(--color-text-light);
+    color: var(--color-white);
     font-size: 0.9rem;
 }
 
 .login-footer {
     text-align: center;
-    color: var(--color-text-light);
+    color: var(--color-white);
     font-size: 0.8rem;
     margin-top: var(--spacing-lg);
 }
@@ -858,4 +859,8 @@ body {
 .badge-rechazado {
     background-color: rgba(158, 27, 34, 0.15);
     color: var(--color-primary);
+}
+
+.ogin-box{
+    background-color: var(--color-primary);
 }
