@@ -69,8 +69,7 @@ function renderTableAdmin() {
             <button class="admin-tab-btn ${filterEstadoActual === 'publicadas' ? 'active' : ''}" onclick="setFilterNoticias('publicadas')">Publicadas</button>
             <button class="admin-tab-btn ${filterEstadoActual === 'rechazadas' ? 'active' : ''}" onclick="setFilterNoticias('rechazadas')">Rechazadas</button>
         </div>
-        <div class="admin-table-container">
-            <table class="admin-table">
+            <table class="admin-table ">
                 <thead>
                     <tr>
                         <th>Título</th>
@@ -106,7 +105,6 @@ function renderTableAdmin() {
                     }).join('')}
                 </tbody>
             </table>
-        </div>
     `;
 
     container.innerHTML = html;
@@ -138,8 +136,6 @@ async function cambiarEstadoNoticia(noticiaId, nuevoEstado, esPublicado) {
     }
 }
 
-// 7. Modal de edición
-// 7. Modal de edición seguro
 function abrirEditarNoticia(noticiaId) {
     const noticia = window.noticiasAdminCache.find(n => n.id === noticiaId);
     if (!noticia) {
@@ -173,22 +169,116 @@ function abrirEditarNoticia(noticiaId) {
     // Abrir modal
     const modal = document.getElementById('editNoticiaModal');
     if (modal) {
-        modal.style.display = 'flex';
-    } else {
-        alert('❌ Error: No se encontró el modal #editNoticiaModal en el HTML');
+        modal.style.display = 'flex'; // Mantiene la alineación flex del overlay
     }
 }
 
 function cerrarModalEditar() {
-    document.getElementById('editNoticiaModal').style.display = 'none';
-    document.getElementById('editarNoticiaForm').reset();
+    const modal = document.getElementById('editNoticiaModal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+    const form = document.getElementById('editarNoticiaForm');
+    if (form) form.reset();
+}
+
+// 2. Consulta a Supabase (se agregó imagenes(url))
+async function loadAllNoticiasAdmin() {
+    try {
+        const container = document.getElementById('noticiasAdminList');
+        if (!container) return;
+
+        const { data, error } = await window.dbClient
+            .from('noticias')
+            .select(`
+                id, 
+                titulo, 
+                resumen, 
+                cuerpo, 
+                publicado, 
+                estado,
+                destacada, 
+                categoria_id,
+                imagen_id,
+                categorias(slug, nombre),
+                autores(nombre),
+                imagenes(url)
+            `)
+            .order('fecha_publicacion', { ascending: false });
+
+        if (error) throw error;
+        
+        window.noticiasAdminCache = data || [];
+        renderTableAdmin();
+    } catch (error) {
+        console.error('Error al listar noticias admin:', error);
+    }
+}
+
+// 7. Modal de edición con previsualización de imagen
+function abrirEditarNoticia(noticiaId) {
+    const noticia = window.noticiasAdminCache.find(n => n.id === noticiaId);
+    if (!noticia) {
+        console.error('No se encontró la noticia en caché:', noticiaId);
+        return;
+    }
+
+    const setVal = (id, val) => {
+        const el = document.getElementById(id);
+        if (el) el.value = val ?? '';
+        else console.warn(`⚠️ Faltante en HTML: input con id="${id}"`);
+    };
+
+    const setChecked = (id, val) => {
+        const el = document.getElementById(id);
+        if (el) el.checked = Boolean(val);
+        else console.warn(`⚠️ Faltante en HTML: checkbox con id="${id}"`);
+    };
+
+    // Asignación de textos y campos
+    setVal('editNoticiaId', noticia.id);
+    setVal('editImagenIdActual', noticia.imagen_id);
+    setVal('editNoticiaTitulo', noticia.titulo);
+    setVal('editNoticiaResumen', noticia.resumen);
+    setVal('editNoticiaCuerpo', noticia.cuerpo);
+    setVal('editNoticiaCategoria', noticia.categorias?.slug || 'reflexiones');
+    setChecked('editNoticiaPublicado', noticia.publicado);
+    setChecked('editNoticiaDestacada', noticia.destacada);
+
+    // 📸 Carga de imagen previa o placeholder si no existe
+    const imgPreview = document.getElementById('editNoticiaImagenPreview');
+    if (imgPreview) {
+        const defaultPlaceholder = 'https://placehold.co/600x400?text=Sin+Imagen';
+        imgPreview.src = noticia.imagenes?.url || defaultPlaceholder;
+    }
+
+    // Abrir modal
+    const modal = document.getElementById('editNoticiaModal');
+    if (modal) {
+        modal.style.display = 'flex';
+    }
+}
+
+function cerrarModalEditar() {
+    const modal = document.getElementById('editNoticiaModal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+    const form = document.getElementById('editarNoticiaForm');
+    if (form) form.reset();
+
+    // Resetear preview al cerrar
+    const imgPreview = document.getElementById('editNoticiaImagenPreview');
+    if (imgPreview) {
+        imgPreview.src = 'https://placehold.co/600x400?text=Sin+Imagen';
+    }
 }
 
 async function guardarEdicionNoticia(e) {
     e.preventDefault();
 
     const id = document.getElementById('editNoticiaId').value;
-    let imagenId = document.getElementById('editImagenIdActual').value || null;
+    let mimagenId = document.getElementById('editImagenIdActual').value || null; // Cambiado a 'let' para reasignar si subes otra imagen
     const titulo = document.getElementById('editNoticiaTitulo').value.trim();
     const resumen = document.getElementById('editNoticiaResumen').value.trim();
     const cuerpo = document.getElementById('editNoticiaCuerpo').value.trim();
@@ -225,7 +315,7 @@ async function guardarEdicionNoticia(e) {
                 .single();
 
             if (imgErr) throw imgErr;
-            imagenId = imgRecord.id;
+            mimagenId = imgRecord.id;
         }
 
         const { data: catData, error: catErr } = await window.dbClient
@@ -243,7 +333,7 @@ async function guardarEdicionNoticia(e) {
                 resumen,
                 cuerpo,
                 categoria_id: catData.id,
-                imagen_id: imagenId,
+                imagen_id: mimagenId,
                 publicado,
                 estado: publicado ? 'publicado' : 'en_revision',
                 destacada,
@@ -281,4 +371,21 @@ async function deleteNoticia(noticiaId) {
             alert('❌ Error al eliminar noticia');
         }
     }
+}
+
+function previeweditTalleristaImagenImagen(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    if (file.type !== 'image/webp') {
+        alert('⚠️ Solo se permiten imágenes en formato .webp');
+        event.target.value = '';
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        document.getElementById('editTalleristaImagenPreview').src = e.target.result;
+    };
+    reader.readAsDataURL(file);
 }

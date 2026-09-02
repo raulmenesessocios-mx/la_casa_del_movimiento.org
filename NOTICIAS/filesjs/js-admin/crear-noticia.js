@@ -117,3 +117,20 @@ async function createNoticiaAdmin(e) {
         alert('❌ Error al crear noticia: ' + error.message);
     }
 }
+
+function previewcreatenoticiaImagen(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    if (file.type !== 'image/webp') {
+        alert('⚠️ Solo se permiten imágenes en formato .webp');
+        event.target.value = '';
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        document.getElementById('noticiaAdminImagenPreview').src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+}

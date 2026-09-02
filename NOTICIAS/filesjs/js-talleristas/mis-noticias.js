@@ -23,7 +23,7 @@ function escapeHtml(str) {
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&#039;');
 }
-
+// 1. Consulta actualizada con imagenes(url)
 async function loadMisNoticias() {
     try {
         const client = window.supabaseClient || window.dbClient;
@@ -43,9 +43,10 @@ async function loadMisNoticias() {
 
         if (!autor) return;
 
+        // Se agrega imagenes(url) a la consulta
         const { data, error } = await client
             .from('noticias')
-            .select('*, categorias(slug, nombre)')
+            .select('*, categorias(slug, nombre), imagenes(url)')
             .eq('autor_id', autor.id)
             .order('fecha_publicacion', { ascending: false });
 
@@ -139,14 +140,44 @@ function abrirEditarNoticiaTallerista(noticiaId) {
         catSelect.value = noticia.categorias?.slug || 'reflexiones';
     }
 
+    // 📸 Asignar la imagen guardada al preview
+    const imgPreview = document.getElementById('editTalleristaImagenPreview');
+    if (imgPreview) {
+        const defaultPlaceholder = 'https://placehold.co/600x400?text=Sin+Imagen';
+        imgPreview.src = noticia.imagenes?.url || defaultPlaceholder;
+    }
+
     modal.style.display = 'flex';
+}
+
+function previewnwenoticoaImagen(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    if (file.type !== 'image/webp') {
+        alert('⚠️ Solo se permiten imágenes en formato .webp');
+        event.target.value = '';
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        document.getElementById('editTalleristaImagenPreview').src = e.target.result;
+    };
+    reader.readAsDataURL(file);
 }
 
 function cerrarModalTallerista() {
     const modal = document.getElementById('modalEditarNoticiaTallerista');
     if (modal) modal.style.display = 'none';
+    
     const form = document.getElementById('formEditarTallerista');
     if (form) form.reset();
+
+    const imgPreview = document.getElementById('editTalleristaImagenPreview');
+    if (imgPreview) {
+        imgPreview.src = 'https://placehold.co/600x400?text=Sin+Imagen';
+    }
 }
 
 async function volverAMandarNoticia(e) {

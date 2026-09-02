@@ -206,9 +206,38 @@
                             </label>
                         </div>
 
+                        <!--
                         <div class="form-group">
                             <label>Imagen Promocional (.webp)</label>
                             <input type="file" id="noticiaAdminImagen" accept=".webp,image/webp">
+                        </div>-->
+
+                            <div class="form-group">
+                            <label>Imagen del la noticia</label>
+                            
+                            <div class="image-uploader-container">
+                                <!-- Previsualización centrada con ID dinámico -->
+                                <img id="noticiaAdminImagenPreview" 
+                                    src="https://placehold.co/600x400?text=Sin+Imagen"  
+                                    class="image-preview-custom"
+                                    alt="Imagen de la noticia">
+
+                                <!-- Input nativo oculto -->
+                                <input type="file" 
+                                    id="noticiaAdminImagen" 
+                                    class="input-file-hidden" 
+                                    accept="image/webp" 
+                                    onchange="previewcreatenoticiaImagen(event)">
+
+                                <!-- Botón estilizado mediante el label con icono -->
+                                <label for="noticiaAdminImagen" class="btn-upload-label">
+                                    Asignar imagen (.webp)
+                                </label>
+                            </div>
+                            
+                            <p class="avatar-note" style="text-align: center; margin-top: 0.4rem;">
+                                Solo se permiten imágenes en formato <strong>.webp</strong>
+                            </p>
                         </div>
 
                         <button type="submit" class="btn btn-primary">Crear Noticia</button>
@@ -284,11 +313,41 @@
                             <input type="number" id="tallerEje" placeholder="1">
                         </div>
 
-                        <!-- Insertar antes del botón de enviar en #crearTallerForm -->
+
+                        <!-- Insertar antes del botón de enviar en #crearTallerForm
                         <div class="form-group">
                             <label>Imagen Promocional / Gancho</label>
                             <input type="file" id="tallerImagen" accept="image/webp"  onchange="previewAvatar(event)">
+                        </div> -->
+
+                        <div class="form-group">
+                            <label>Imagen del Taller</label>
+                            
+                            <div class="image-uploader-container">
+                                <!-- Previsualización centrada con ID dinámico -->
+                                <img id="tallerImagenreview" 
+                                    src="https://placehold.co/600x400?text=Sin+Imagen"  
+                                    class="image-preview-custom"
+                                    alt="Imagen del taller">
+
+                                <!-- Input nativo oculto -->
+                                <input type="file" 
+                                    id="tallerImagen" 
+                                    class="input-file-hidden" 
+                                    accept="image/webp" 
+                                    onchange="previewtallerImagenImagen(event)">
+
+                                <!-- Botón estilizado mediante el label con icono -->
+                                <label for="tallerImagen" class="btn-upload-label">
+                                    Asignar imagen (.webp)
+                                </label>
+                            </div>
+                            
+                            <p class="avatar-note" style="text-align: center; margin-top: 0.4rem;">
+                                Solo se permiten imágenes en formato <strong>.webp</strong>
+                            </p>
                         </div>
+                        
 
                         <button type="submit" id="btnSubmitTaller" class="btn btn-primary">Crear Taller y Notificar Tallerista</button>
                     </form>
@@ -304,7 +363,96 @@
                         <p>Cargando...</p>
                     </div>
                 </div>
-                
+
+        <!-- MODAL DE EDICIÓN ADMIN -->
+            <div id="editNoticiaModal" class="modal-overlay" style="display: none;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>Editar Noticia (Administración)</h3>
+                        <button type="button" class="btn-cerrar-modal" onclick="cerrarModalEditar()">&times;</button>
+                    </div>
+                    
+                    <form id="editarNoticiaForm" style="display: flex; flex-direction: column; overflow: hidden; height: 100%;">
+                        <div class="modal-body-form">
+                            <!-- Campos Ocultos -->
+                            <input type="hidden" id="editNoticiaId">
+                            <input type="hidden" id="editImagenIdActual">
+
+                            <div class="form-group">
+                                <label for="editNoticiaTitulo">Título</label>
+                                <input type="text" id="editNoticiaTitulo" class="form-control" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="editNoticiaCategoria">Categoría</label>
+                                <select id="editNoticiaCategoria" class="form-control">
+                                    <option value="reflexiones">Reflexiones</option>
+                                    <option value="cronicas-eventos">Crónicas de Eventos</option>
+                                </select>
+                            </div>
+
+                            <!--
+                            <div class="form-group">
+                                <label for="editNoticiaImagen">Actualizar imagen (.webp opcional)</label>
+                                <input type="file" id="editNoticiaImagen" accept="image/webp" class="form-control">
+                            </div>-->
+
+                        <div class="form-group">
+                            <label> Imagen de la Noticia</label>
+                            
+                            <div class="image-uploader-container">
+                                <!-- Previsualización centrada con ID dinámico -->
+                                <img id="editNoticiaImagenPreview" 
+                                    src="https://placehold.co/600x400?text=Sin+Imagen"  
+                                    class="image-preview-custom"
+                                    alt="Imagen del la noticia">
+
+                                <!-- Input nativo oculto -->
+                                <input type="file" 
+                                    id="editNoticiaImagen" 
+                                    class="input-file-hidden" 
+                                    accept="image/webp" 
+                                    onchange="previeweditNoticiaImagenImagen(event)">
+
+                                <!-- Botón estilizado mediante el label con icono -->
+                                <label for="editNoticiaImagen" class="btn-upload-label">
+                                    Remplazar imagen (.webp)
+                                </label>
+                            </div>
+                            
+                            <p class="avatar-note" style="text-align: center; margin-top: 0.4rem;">
+                                Solo se permiten imágenes en formato <strong>.webp</strong>
+                            </p>
+                        </div>
+
+                            <div class="form-group">
+                                <label for="editNoticiaResumen">Resumen</label>
+                                <textarea id="editNoticiaResumen" class="form-control" rows="3" required></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="editNoticiaCuerpo">Cuerpo de la noticia</label>
+                                <textarea id="editNoticiaCuerpo" class="form-control" rows="6" required></textarea>
+                            </div>
+
+                            <div class="form-checkboxes">
+                                <label>
+                                    <input type="checkbox" id="editNoticiaPublicado"> Publicado
+                                </label>
+                                <label>
+                                    <input type="checkbox" id="editNoticiaDestacada"> ⭐ Destacada
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn-tabla btn-editar" onclick="cerrarModalEditar()">Cancelar</button>
+                            <button type="submit" class="btn-tabla btn-publicar">Guardar Cambios</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
             </section>
 
             <!-- GESTIONAR TALLERES -->
@@ -343,8 +491,11 @@
                         </div>
 
                         <div class="form-group">
-                            <label>Contraseña</label>
-                            <input type="password" id="usuarioPassword" placeholder="••••••••" minlength="6" required>
+                            <label>Contraseña </label>
+                            <input type="password" id="usuarioPassword" value="movimiento" minlength="6" required>
+                            <p class="avatar-note" style="text-align: center; margin-top: 0.4rem;">
+                                NOTA. se asigna la Contraseña predeterminada <strong>no tocar</strong>
+                            </p>
                         </div>
 
                         <div class="form-group">
@@ -360,10 +511,38 @@
                             <textarea id="usuarioBiografia" placeholder="Breve descripción o biografía..."></textarea>
                         </div>
 
+                        <!--
                         <div class="form-group">
                             <label for="usuarioFoto">Foto de Perfil del Tallerista</label>
                             <input type="file" id="usuarioFoto" accept="image/webp"  onchange="previewAvatar(event)">
+                        </div>-->
 
+                        <div class="form-group">
+                            <label>Foto de perfil</label>
+                            
+                            <div class="image-uploader-container">
+                                <!-- Previsualización centrada con ID dinámico -->
+                                <img id="usuarioFotoPreview" 
+                                    src="https://placehold.co/600x400?text=Sin+Imagen"  
+                                    class="image-preview-custom"
+                                    alt="Imagen del usuario">
+
+                                <!-- Input nativo oculto -->
+                                <input type="file" 
+                                    id="usuarioFoto" 
+                                    class="input-file-hidden" 
+                                    accept="image/webp" 
+                                    onchange="previewusuarioFotoImagen(event)">
+
+                                <!-- Botón estilizado mediante el label con icono -->
+                                <label for="usuarioFoto" class="btn-upload-label">
+                                    Asignar imagen (.webp)
+                                </label>
+                            </div>
+                            
+                            <p class="avatar-note" style="text-align: center; margin-top: 0.4rem;">
+                                Solo se permiten imágenes en formato <strong>.webp</strong>
+                            </p>
                         </div>
 
                         <button type="submit" id="btnSubmitUsuario" class="btn btn-primary">Crear Usuario</button>
@@ -371,113 +550,12 @@
                 </div>
                 
             </section>
+
         </main>
-    </div>
-    <!-- MODAL DE EDICIÓN PARA EL TALLERISTA -->
-    <div id="modalEditarNoticiaTallerista" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
-        <div class="modal-content card" style="max-width: 550px; width: 90%; background: #fff; padding: 25px; border-radius: 12px; max-height: 90vh; overflow-y: auto;">
-            <h3 class="card-title" style="margin-bottom: 20px;">Editar Noticia para Reenviar</h3>
-            
-            <form id="formEditarTallerista" class="form">
-                <input type="hidden" id="editTalleristaId">
-                <input type="hidden" id="editTalleristaImagenIdActual">
-
-                <div class="form-group" style="margin-bottom: 15px; display: flex; flex-direction: column;">
-                    <label style="font-weight: bold; margin-bottom: 5px;">Título:</label>
-                    <input type="text" id="editTalleristaTitulo" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
-                </div>
-
-                <div class="form-group" style="margin-bottom: 15px; display: flex; flex-direction: column;">
-                    <label style="font-weight: bold; margin-bottom: 5px;">Categoría:</label>
-                    <select id="editTalleristaCategoria" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
-                        <option value="reflexiones">Reflexiones</option>
-                        <option value="cronicas-eventos">Crónicas de Eventos</option>
-                    </select>
-                </div>
-
-                <div class="form-group" style="margin-bottom: 15px; display: flex; flex-direction: column;">
-                    <label style="font-weight: bold; margin-bottom: 5px;">Imagen Promocional (.webp opcional):</label>
-                    <input type="file" id="editTalleristaImagen" accept=".webp,image/webp">
-                    <p class="avatar-note" style="font-size: 0.85em; color: #666; margin-top: 4px;">Solo se permiten imágenes en formato <strong>.webp</strong></p>
-                </div>
-
-                <div class="form-group" style="margin-bottom: 15px; display: flex; flex-direction: column;">
-                    <label style="font-weight: bold; margin-bottom: 5px;">Resumen:</label>
-                    <textarea id="editTalleristaResumen" rows="2" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;"></textarea>
-                </div>
-
-                <div class="form-group" style="margin-bottom: 15px; display: flex; flex-direction: column;">
-                    <label style="font-weight: bold; margin-bottom: 5px;">Cuerpo:</label>
-                    <textarea id="editTalleristaCuerpo" rows="5" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;"></textarea>
-                </div>
-
-                <div style="margin-top: 20px; display: flex; justify-content: flex-end; gap: 10px;">
-                    <button type="submit" class="btn btn-primary" style="background:#27ae60; color:white; border:none; padding: 10px 16px; border-radius:6px; cursor:pointer; font-weight:bold;">🚀 Volver a Mandar</button>
-                    <button type="button" class="btn btn-secondary" onclick="cerrarModalTallerista()" style="padding: 10px 16px; border-radius:6px; cursor:pointer;">Cancelar</button>
-                </div>
-            </form>
-        </div>
     </div>
 
     <!-- Modal para Editar Noticia -->
-    <div id="editNoticiaModal" class="modal-overlay" style="display: none;">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>✏️ Editar Noticia</h3>
-                <button type="button" class="btn-cerrar-modal" onclick="cerrarModalEditar()">&times;</button>
-            </div>
-            
-            <form id="editarNoticiaForm">
-                <!-- Campos Ocultos -->
-                <input type="hidden" id="editNoticiaId">
-                <input type="hidden" id="editImagenIdActual">
 
-                <div class="form-group">
-                    <label for="editNoticiaTitulo">Título</label>
-                    <input type="text" id="editNoticiaTitulo" class="form-control" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="editNoticiaResumen">Resumen</label>
-                    <textarea id="editNoticiaResumen" class="form-control" rows="3" required></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label for="editNoticiaCuerpo">Cuerpo de la noticia</label>
-                    <textarea id="editNoticiaCuerpo" class="form-control" rows="6" required></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label for="editNoticiaCategoria">Categoría</label>
-                    <select id="editNoticiaCategoria" class="form-control">
-                        <option value="reflexiones">Reflexiones</option>
-                        <option value="talleres">Talleres</option>
-                        <option value="eventos">Eventos</option>
-                        <option value="comunidad">Comunidad</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="editNoticiaImagen">Actualizar imagen (.webp opcional)</label>
-                    <input type="file" id="editNoticiaImagen" accept="image/webp" class="form-control">
-                </div>
-
-                <div class="form-checkboxes">
-                    <label>
-                        <input type="checkbox" id="editNoticiaPublicado"> Publicado
-                    </label>
-                    <label>
-                        <input type="checkbox" id="editNoticiaDestacada"> ⭐ Destacada
-                    </label>
-                </div>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn-tabla btn-editar" onclick="cerrarModalEditar()">Cancelar</button>
-                    <button type="submit" class="btn-tabla btn-publicar">Guardar Cambios</button>
-                </div>
-            </form>
-        </div>
-    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../filesjs/js-login/supabase-config.js"></script>    

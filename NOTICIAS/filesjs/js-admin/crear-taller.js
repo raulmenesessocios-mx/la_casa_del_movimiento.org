@@ -134,3 +134,19 @@ async function createTaller(e) {
         }
     }
 }
+function previewtallerImagenImagen(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    if (file.type !== 'image/webp') {
+        alert('⚠️ Solo se permiten imágenes en formato .webp');
+        event.target.value = '';
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        document.getElementById('tallerImagenreview').src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+}

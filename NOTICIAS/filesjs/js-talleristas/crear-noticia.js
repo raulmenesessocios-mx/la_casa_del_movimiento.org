@@ -8,6 +8,23 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+function previewnoticiaImagen(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    if (file.type !== 'image/webp') {
+        alert('⚠️ Solo se permiten imágenes en formato .webp');
+        event.target.value = '';
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        document.getElementById('noticiaImagenPreview').src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+}
+
 async function createNoticiaTallerista() {
     try {
         const client = window.supabaseClient || window.dbClient;
@@ -72,3 +89,4 @@ async function createNoticiaTallerista() {
         alert('❌ Error al enviar noticia: ' + error.message);
     }
 }
+
