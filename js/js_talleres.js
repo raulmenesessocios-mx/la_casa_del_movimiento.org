@@ -125,12 +125,10 @@ function openWorkshopModal(tallerId) {
         document.getElementById('modal-proxima-sesion').textContent = 'Por confirmar';
     }
 
-    // Configurar botón "Inscribirme" para redirigir al formulario
-    const btnInscribir = document.getElementById('modal-btn-inscribir');
+    // --- CAMBIO AQUÍ: Asignar la URL con el ID al botón con clase .btn-inscribirse ---
+    const btnInscribir = document.querySelector('.btn-inscribirse');
     if (btnInscribir) {
-        btnInscribir.onclick = () => {
-            window.location.href = `inscripcion-taller.html?taller_id=${data.id}`;
-        };
+        btnInscribir.href = `inscripcion-taller.html?taller_id=${data.id}`;
     }
 
     const modal = document.getElementById('workshop-modal');

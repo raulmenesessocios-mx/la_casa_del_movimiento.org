@@ -3,7 +3,7 @@ async function loadInteresados(userId) {
     try {
         const { data: talleres, error: tallerError } = await window.supabaseClient
             .from('talleres')
-            .select('id')
+            .select('id, titulo')
             .eq('instructor_id', userId);
 
         if (tallerError || !talleres || talleres.length === 0) {
@@ -11,6 +11,8 @@ async function loadInteresados(userId) {
             return;
         }
 
+        const mapaTalleres = {};
+        talleres.forEach(t => mapaTalleres[t.id] = t.titulo);
         const tallerIds = talleres.map(t => t.id);
 
         const { data, error } = await window.supabaseClient
@@ -30,16 +32,18 @@ async function loadInteresados(userId) {
             <table class="table">
                 <thead>
                     <tr>
+                        <th>Taller</th>
                         <th>Nombre</th>
                         <th>Email</th>
                         <th>Teléfono</th>
-                        <th>Mensaje</th>
+                        <th>Mensaje / Exp.</th>
                         <th>Fecha</th>
                     </tr>
                 </thead>
                 <tbody>
                     ${data.map(i => `
                         <tr>
+                            <td><strong>${mapaTalleres[i.taller_id] || 'Taller'}</strong></td>
                             <td>${i.nombre}</td>
                             <td>${i.email}</td>
                             <td>${i.telefono || 'N/A'}</td>

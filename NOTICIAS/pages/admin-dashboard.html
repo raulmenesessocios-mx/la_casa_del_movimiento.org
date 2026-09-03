@@ -73,23 +73,11 @@
                     <!-- Avatar / Foto de Perfil -->
                     <div class="form-group avatar-group">
                         <label>Foto de Perfil</label>
-
-                        <div class="avatar-uploader">
+                        <div class="avatar-group">
                             <img id="profileAvatarPreview" 
                                 src="https://placehold.co/150x150?text=Sin+Foto" 
                                 alt="Avatar de usuario" 
                                 class="avatar-preview">
-
-                            <div class="avatar-uploader-actions">
-                                <button type="button" class="btn btn-secondary" id="btnCambiarFoto">
-                                    📷 Cambiar foto de perfil
-                                </button>
-                                <p class="avatar-note">Solo se permiten imágenes en formato <strong>.webp</strong></p>
-                            </div>
-
-                            <!-- Input oculto para cargar la foto -->
-                            <input type="file" id="profileAvatarFile" accept=".webp,image/webp" 
-                                onchange="previewAvatar(event)" hidden>
                         </div>
                     </div>
 
@@ -107,6 +95,17 @@
                         <label>Biografía</label>
                         <textarea id="profileBio" placeholder="Cuéntanos sobre ti..."></textarea>
                     </div>
+
+                            <div class="avatar-uploader-actions">
+                                <button type="button" class="btn btn-secondary" id="btnCambiarFoto">
+                                    📷 Cambiar foto de perfil
+                                </button>
+                                <p class="avatar-note">Solo se permiten imágenes en formato <strong>.webp</strong></p>
+                            </div>
+
+                            <!-- Input oculto para cargar la foto -->
+                            <input type="file" id="profileAvatarFile" accept=".webp,image/webp" 
+                                onchange="previewAvatar(event)" hidden>
 
                     <button class="btn btn-primary" onclick="updateProfile()">Guardar Cambios</button>
                 </div>
@@ -468,13 +467,7 @@
 
             <!-- GESTIONAR USUARIOS -->
             <section id="gestionar-usuarios" class="section" style="display: none;">
-                <!-- Tarjeta de Lista de Usuarios -->
-                <div class="card">
-                    <h2 class="card-title">Usuarios Registrados</h2>
-                    <div id="usuariosAdminList">
-                        <p>Cargando...</p>
-                    </div>
-                </div>
+
 
                 <!-- Tarjeta para Crear Usuario -->
                 <div class="card" style="margin-bottom: 2rem;">
@@ -549,6 +542,14 @@
                     </form>
                 </div>
                 
+                <!-- Tarjeta de Lista de Usuarios -->
+                <div class="card">
+                    <h2 class="card-title">Usuarios Registrados</h2>
+                    <div id="usuariosAdminList">
+                        <p>Cargando...</p>
+                    </div>
+                </div>
+
             </section>
 
         </main>

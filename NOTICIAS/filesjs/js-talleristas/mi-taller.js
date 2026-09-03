@@ -1,6 +1,7 @@
-let miTallerActual = null;
+window.misTalleres = window.misTalleres || [];
+window.miTallerActual = window.miTallerActual || null;
 
-async function loadMyTaller(userId) {
+async function loadMyTaller(userId, tallerIdASeleccionar = null) {
     const contenedor = document.getElementById('tallerInfo');
     const form = document.getElementById('editarTallerForm');
 
@@ -18,40 +19,98 @@ async function loadMyTaller(userId) {
         if (!talleres || talleres.length === 0) {
             contenedor.innerHTML = '<p>No tienes talleres asignados por el momento.</p>';
             form.style.display = 'none';
+            misTalleres = [];
+            miTallerActual = null;
             return;
         }
 
-        // Tomamos el primer taller asignado a este instructor
-        miTallerActual = talleres[0];
-        contenedor.innerHTML = '';
+        misTalleres = talleres;
+
+        // Si el instructor tiene más de 1 taller, creamos un selector dinámico
+        if (misTalleres.length > 1) {
+            let optionsHTML = misTalleres.map((t, index) => {
+                const titulo = t.titulo || `Taller #${index + 1}`;
+                return `<option value="${t.id}">${titulo}</option>`;
+            }).join('');
+
+            contenedor.innerHTML = `
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label for="selectTallerInstructor" style="font-weight: bold; display: block; margin-bottom: 0.5rem;">
+                        📑 Selecciona el taller que deseas gestionar:
+                    </label>
+                    <select id="selectTallerInstructor" class="form-control" style="width: 100%; padding: 0.6rem; font-size: 1rem; border-radius: 8px;">
+                        ${optionsHTML}
+                    </select>
+                </div>
+            `;
+
+            // Escuchar el cambio de opción en el selector
+            const selectElem = document.getElementById('selectTallerInstructor');
+            selectElem.addEventListener('change', (e) => {
+                const idSeleccionado = e.target.value;
+                const tallerEncontrado = misTalleres.find(t => t.id == idSeleccionado);
+                if (tallerEncontrado) {
+                    cargarFormularioTaller(tallerEncontrado);
+                }
+            });
+
+            // Si especificamos un ID a seleccionar (p. ej. tras guardar cambios)
+            if (tallerIdASeleccionar) {
+                selectElem.value = tallerIdASeleccionar;
+            }
+        } else {
+            // Si solo tiene 1 taller, limpiamos el contenedor de info/selector
+            contenedor.innerHTML = '';
+        }
+
+        // Determinar qué taller cargar en el formulario
+        let tallerInicial = misTalleres[0];
+        if (tallerIdASeleccionar) {
+            const buscado = misTalleres.find(t => t.id == tallerIdASeleccionar);
+            if (buscado) tallerInicial = buscado;
+        }
+
+        cargarFormularioTaller(tallerInicial);
         form.style.display = 'block';
 
-        // Rellenar el formulario con los datos actuales
-        document.getElementById('miTallerId').value = miTallerActual.id;
-        document.getElementById('miTallerTitulo').value = miTallerActual.titulo || '';
-        document.getElementById('miTallerFraseGancho').value = miTallerActual.frase_gancho || '';
-        document.getElementById('miTallerDescripcion').value = miTallerActual.descripcion || '';
-        document.getElementById('miTallerParaQuien').value = miTallerActual.para_quien || '';
-        document.getElementById('miTallerNivelEdad').value = miTallerActual.nivel_edad || '';
-        document.getElementById('miTallerDias').value = miTallerActual.horarios?.dias || '';
-        document.getElementById('miTallerHoras').value = miTallerActual.horarios?.horario || '';
-        document.getElementById('miTallerCupo').value = miTallerActual.cupo || 0;
-
-        const preview = document.getElementById('miTallerImagenPreview');
-        if (preview) {
-            preview.src = miTallerActual.imagenes?.url || 'https://placehold.co/300x180?text=Sin+Imagen';
-        }
-
-        if (miTallerActual.proxima_sesion) {
-            const fecha = new Date(miTallerActual.proxima_sesion);
-            const local = new Date(fecha.getTime() - fecha.getTimezoneOffset() * 60000);
-            document.getElementById('miTallerProximaSesion').value = local.toISOString().slice(0, 16);
-        }
-
     } catch (error) {
-        console.error('Error cargando taller:', error);
-        contenedor.innerHTML = '<p>❌ Error al cargar la información de tu taller.</p>';
+        console.error('Error cargando talleres:', error);
+        contenedor.innerHTML = '<p>❌ Error al cargar la información de tus talleres.</p>';
         form.style.display = 'none';
+    }
+}
+
+// Función auxiliar para rellenar los inputs del formulario
+function cargarFormularioTaller(taller) {
+    miTallerActual = taller;
+
+    document.getElementById('miTallerId').value = taller.id;
+    document.getElementById('miTallerTitulo').value = taller.titulo || '';
+    document.getElementById('miTallerFraseGancho').value = taller.frase_gancho || '';
+    document.getElementById('miTallerDescripcion').value = taller.descripcion || '';
+    document.getElementById('miTallerParaQuien').value = taller.para_quien || '';
+    document.getElementById('miTallerNivelEdad').value = taller.nivel_edad || '';
+    document.getElementById('miTallerDias').value = taller.horarios?.dias || '';
+    document.getElementById('miTallerHoras').value = taller.horarios?.horario || '';
+    document.getElementById('miTallerCupo').value = taller.cupo || 0;
+
+    // Resetear el selector de archivos por si se había elegido alguna imagen previa
+    const fileInput = document.getElementById('miTallerImagenFile');
+    if (fileInput) fileInput.value = '';
+
+    // Vista previa de la imagen
+    const preview = document.getElementById('miTallerImagenPreview');
+    if (preview) {
+        preview.src = taller.imagenes?.url || 'https://placehold.co/600x400?text=Sin+Imagen';
+    }
+
+    // Formatear la fecha para <input type="datetime-local">
+    if (taller.proxima_sesion) {
+        const fecha = new Date(taller.proxima_sesion);
+        const local = new Date(fecha.getTime() - fecha.getTimezoneOffset() * 60000);
+        document.getElementById('miTallerProximaSesion').value = local.toISOString().slice(0, 16);
+    } else {
+        document.getElementById('miTallerProximaSesion').value = '';
     }
 }
 
@@ -140,8 +199,12 @@ async function updateMyTaller(e) {
         if (error) throw error;
 
         alert('✅ Taller actualizado correctamente');
+        
+        // Recargar los talleres manteniendo seleccionado el taller actual que se acaba de actualizar
         const session = window.getSessionFromLocalStorage();
-        if (session) loadMyTaller(session.userId);
+        if (session) {
+            await loadMyTaller(session.userId, tallerId);
+        }
 
     } catch (error) {
         console.error('Error al actualizar taller:', error);
@@ -158,5 +221,3 @@ document.addEventListener('DOMContentLoaded', () => {
         form.addEventListener('submit', updateMyTaller);
     }
 });
-
-

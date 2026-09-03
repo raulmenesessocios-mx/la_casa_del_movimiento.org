@@ -51,17 +51,6 @@
                             src="https://placehold.co/150x150?text=Sin+Foto" 
                             alt="Avatar del tallerista" 
                             class="avatar-preview">
-
-                        <div class="avatar-uploader-actions">
-                            <button type="button" class="btn btn-secondary" id="btnCambiarFoto">
-                                📷 Cambiar foto de perfil
-                            </button>
-                            <p class="avatar-note">Solo se permiten imágenes en formato <strong>.webp</strong></p>
-                        </div>
-
-                        <!-- Input oculto, se activa con el botón -->
-                        <input type="file" id="profileAvatarFile" accept=".webp,image/webp" 
-                            onchange="previewAvatar(event)" hidden>
                     </div>
                 </div>
 
@@ -79,6 +68,17 @@
                         <label>Biografía</label>
                         <textarea id="profileBio" placeholder="Cuéntanos sobre ti..."></textarea>
                     </div>
+
+                    <div class="avatar-uploader-actions">
+                        <button type="button" class="btn btn-secondary" id="btnCambiarFoto">
+                            📷 Cambiar foto de perfil
+                        </button>
+                        <p class="avatar-note">Solo se permiten imágenes en formato <strong>.webp</strong></p>
+                    </div>
+
+                        <!-- Input oculto, se activa con el botón -->
+                    <input type="file" id="profileAvatarFile" accept=".webp,image/webp" 
+                        onchange="previewAvatar(event)" hidden>
 
                     <button class="btn btn-primary" onclick="updateProfile()">Guardar Cambios</button>
                 </div>

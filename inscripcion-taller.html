@@ -28,53 +28,60 @@
         </nav>
     </header>
 
-    <main class="workshops-section section-padding">
-        <h2 style="color: red; text-align: center;">¡En Desarollo!</h2>
-        <h1 class="section-title">Inscripción al Taller</h1>
-        <p class="workshops-subtitle">Reserva tu cupo completando el siguiente formulario</p>
+<main class="workshops-section section-padding">
+    <h1 class="section-title">Inscripción al Taller</h1>
+    <p class="workshops-subtitle">Reserva tu cupo completando el siguiente formulario</p>
 
-        <!-- Resumen del Taller Seleccionado -->
-        <section class="summary-box" style="margin-bottom: 4rem;">
-            <h3>Danza Contemporánea Avanzada</h3>
-            <p><strong>Horarios:</strong> Martes y Jueves, 18:00 - 20:00 HS</p>
-            <p><strong>Docente:</strong> Martín Benítez</p>
-            <p><strong>Inicio:</strong> Próximo 01 de Octubre</p>
-        </section>
+    <!-- Resumen Dinámico del Taller -->
+    <section class="summary-box" style="margin-bottom: 4rem;">
+        <h3 id="summary-titulo">Seleccionar taller</h3>
+        <p><strong>Horarios:</strong> <span id="summary-horario">-</span></p>
+        <p><strong>Docente:</strong> <span id="summary-docente">-</span></p>
+        <p><strong>Inicio:</strong> <span id="summary-inicio">-</span></p>
+    </section>
 
-        <!-- Formulario de Registro (Contenedor Leads) -->
-        <section class="leads-section" style="padding: 3rem 2rem; border-radius: 8px;">
-            <h2 class="leads-title">Tus Datos de Registro</h2>
-            <p class="leads-subtitle">Asegura tu lugar en la próxima cohorte</p>
+    <!-- Formulario de Registro -->
+    <section class="leads-section" style="padding: 3rem 2rem; border-radius: 8px;">
+        <h2 class="leads-title">Tus Datos de Registro</h2>
+        <p class="leads-subtitle">Asegura tu lugar en la próxima cohorte</p>
 
-            <form class="contact-form" action="#" method="POST">
-                <div class="form-group-wrapper">
-                    <div class="form-group">
-                        <input type="text" name="nombre" placeholder="Nombre completo *" required>
-                    </div>
-                    <div class="form-group">
-                        <input type="email" name="email" placeholder="Correo electrónico *" required>
-                    </div>
-                    <div class="form-group">
-                        <input type="tel" name="telefono" placeholder="Teléfono / WhatsApp *" required>
-                    </div>
-                    <div class="form-group">
-                        <input type="text" name="experiencia" placeholder="Nivel / Experiencia previa (Opcional)">
-                    </div>
-                    <div class="form-group">
-                        <textarea name="comentarios" rows="4" placeholder="¿Tienes alguna consulta o condición médica que debamos considerar?"></textarea>
-                    </div>
+        <form id="formInscripcion" class="contact-form">
+            <div class="form-group-wrapper">
+                <!-- Selector de Taller -->
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label for="tallerSelect" style="display:block; font-weight:600; margin-bottom:0.5rem;">Taller a inscribirse *</label>
+                    <select id="tallerSelect" class="form-control" style="width:100%; padding:0.8rem; border-radius:6px; border:1px solid #ccc; font-size:1rem;" required>
+                        <option value="">-- Seleccionar Taller --</option>
+                    </select>
                 </div>
 
-                <button type="submit" class="btn-submit" >Confirmar Inscripción</button>
-                <p class="form-disclaimer">Recibirás un correo con las instrucciones de dia y hora de los horarios.</p>
-            </form>
-        </section>
+                <div class="form-group">
+                    <input type="text" id="nombre" name="nombre" placeholder="Nombre completo *" required>
+                </div>
+                <div class="form-group">
+                    <input type="email" id="email" name="email" placeholder="Correo electrónico *" required>
+                </div>
+                <div class="form-group">
+                    <input type="tel" id="telefono" name="telefono" placeholder="Teléfono / WhatsApp *" required>
+                </div>
+                <div class="form-group">
+                    <input type="text" id="experiencia" name="experiencia" placeholder="Nivel / Experiencia previa (Opcional)">
+                </div>
+                <div class="form-group">
+                    <textarea id="comentarios" name="comentarios" rows="4" placeholder="¿Tienes alguna consulta o condición médica que debamos considerar?"></textarea>
+                </div>
+            </div>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <h2>La Casa del Movimiento</h2>
-        <p>&copy; 2026 Todos los derechos reservados.</p>
-    </footer>
+            <button type="submit" id="btnSubmit" class="btn-submit">Confirmar Inscripción</button>
+            <p class="form-disclaimer">Recibirás un correo con las instrucciones de día y hora de los horarios.</p>
+        </form>
+    </section>
+</main>
+
+<!-- Inclusión de Scripts al final del body -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="NOTICIAS/filesjs/js-login/supabase-config.js"></script>
+<script src="js/js_inscripcion.js"></script>
 
 </body>
 </html>

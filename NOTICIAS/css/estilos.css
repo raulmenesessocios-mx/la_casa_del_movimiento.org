@@ -407,6 +407,11 @@ body {
     gap: 1.5rem;
     margin-bottom: 1rem;
 }
+.avatar-group{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
 .avatar-preview {
     width: 100px;
