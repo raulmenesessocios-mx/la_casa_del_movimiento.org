@@ -1,20 +1,40 @@
 (function () {
-    const SUPABASE_URL = 'https://ilmkmivwhfjlvznrsgoc.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlsbWttaXZ3aGZqbHZ6bnJzZ29jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc3MTA1NzcsImV4cCI6MjEwMzI4NjU3N30.YXKAm5Zxeb1tm_YiVdc2myntJXDjq62biHY27XSG4-g';
+    // 1. Core Config (Single Source of Truth)
+    const CONFIG = {
+        URL: 'https://ilmkmivwhfjlvznrsgoc.supabase.co',
+        ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlsbWttaXZ3aGZqbHZ6bnJzZ29jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc3MTA1NzcsImV4cCI6MjEwMzI4NjU3N30.YXKAm5Zxeb1tm_YiVdc2myntJXDjq62biHY27XSG4-g'
+    };
 
-    if (!window.supabaseClient) {
-        // Guardamos la función original de la librería antes de sobrescribir el objeto global
-        window.createSupabaseClient = window.supabase ? window.supabase.createClient : null;
+    // Exponer credenciales globalmente de forma controlada para flujos paralelos
+    window.AppConfig = CONFIG;
 
-        const createClient = window.createSupabaseClient;
-        window.supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        window.supabase = window.supabaseClient; // Alias para compatibilidad global
-    }
+    // 2. Inicialización Blindada (Patrón Singleton)
+    window.initSupabase = function() {
+        if (window.supabaseClient) return window.supabaseClient;
 
-    // Obtener perfil del usuario desde DB
+        // Validación de infraestructura (SDK del CDN)
+        if (!window.supabase || typeof window.supabase.createClient !== 'function') {
+            console.error('🚨 Falla de infraestructura: El SDK de Supabase no está inyectado en el DOM.');
+            return null;
+        }
+
+        // ✅ Instanciamos SIN destruir el namespace original de window.supabase
+        window.supabaseClient = window.supabase.createClient(CONFIG.URL, CONFIG.ANON_KEY);
+        window.dbClient = window.supabaseClient; // Alias por retrocompatibilidad para tus otros scripts
+        
+        return window.supabaseClient;
+    };
+
+    // Auto-ejecución controlada
+    initSupabase();
+
+    // 3. Obtener perfil del usuario desde DB
     window.getUserRole = async function (userId) {
         try {
-            const { data, error } = await window.supabaseClient
+            const client = window.supabaseClient;
+            if (!client) throw new Error("Cliente DB no disponible.");
+
+            const { data, error } = await client
                 .from('autores')
                 .select('id, nombre, email, rol')
                 .eq('id', userId)
@@ -23,48 +43,74 @@
             if (error) throw error;
             return data;
         } catch (error) {
-            console.error('Error al obtener perfil:', error.message);
+            console.error('❌ Error en fetch de perfil:', error.message);
             return null;
         }
     };
 
-    // Logout centralizado
+    // 4. Logout Centralizado (Purga total)
     window.logout = async function () {
+        if (window.supabaseClient?.auth) {
+            await window.supabaseClient.auth.signOut();
+        }
+        // Purga agresiva de caché local para evitar sesiones fantasma
         localStorage.clear();
-        await window.supabaseClient.auth.signOut();
-        window.location.href = 'index.html';
+        sessionStorage.clear();
+        window.location.href = '../../index.html';
     };
 
-    // Gestión de Sesión Local
+    // 5. Gestión de Sesión (Caché Unificada)
+    // Se consolida en un solo JSON para evitar accesos múltiples al disco
     window.saveSessionToLocalStorage = function (user, role, userName) {
-        localStorage.setItem('userSession', JSON.stringify(user));
-        localStorage.setItem('userRole', role);
-        localStorage.setItem('userName', userName);
-        localStorage.setItem('userId', user.id);
+        const sessionPayload = {
+            user: user,
+            role: role,
+            userName: userName,
+            userId: user?.id,
+            timestamp: new Date().getTime() // Útil para validaciones de caducidad futuras
+        };
+        localStorage.setItem('app_session_cache', JSON.stringify(sessionPayload));
     };
 
     window.getSessionFromLocalStorage = function () {
-        const session = localStorage.getItem('userSession');
-        if (!session) return null;
-        return {
-            user: JSON.parse(session),
-            role: localStorage.getItem('userRole'),
-            userName: localStorage.getItem('userName'),
-            userId: localStorage.getItem('userId')
-        };
-    };
-
-    window.protectRoute = function (requiredRole = null) {
-        const session = window.getSessionFromLocalStorage();
-        if (!session) {
-            window.location.href = 'index.html';
+        try {
+            const cached = localStorage.getItem('app_session_cache');
+            if (!cached) return null;
+            return JSON.parse(cached);
+        } catch (e) {
+            console.error('⚠️ Corrupción en caché de sesión detectada. Purgando...', e);
+            localStorage.removeItem('app_session_cache');
             return null;
         }
-        if (requiredRole && session.role !== requiredRole) {
-            alert('Acceso no autorizado.');
+    };
+
+    // 6. Firewall de Rutas (Middleware de Frontend)
+    window.protectRoute = function (requiredRole = null) {
+        const session = window.getSessionFromLocalStorage();
+        
+        if (!session) {
+            console.warn("🛡️ Firewall: Intento de acceso sin sesión activa.");
             window.location.href = '../../index.html';
             return null;
         }
+
+        const currentRole = session.role;
+
+        // Override absoluto: Management tiene pase libre
+        if (currentRole === 'superior') {
+            return session;
+        }
+
+        // Validación estricta de Roles (RBAC)
+        if (requiredRole) {
+            const allowedRoles = Array.isArray(requiredRole) ? requiredRole : [requiredRole];
+            if (!allowedRoles.includes(currentRole)) {
+                alert('⛔ Privilegios insuficientes para este módulo.');
+                window.location.href = '../../index.html'; 
+                return null;
+            }
+        }
+
         return session;
     };
 })();

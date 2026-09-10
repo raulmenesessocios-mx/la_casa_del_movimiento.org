@@ -1,36 +1,32 @@
+// Validación e inicialización directa del Dashboard Administrativo
 document.addEventListener('DOMContentLoaded', () => {
     loadDashboardStats();
 });
 
 async function loadDashboardStats() {
     try {
-        const { count: eventosCount } = await window.dbClient
-            .from('eventos')
-            .select('*', { count: 'exact', head: true });
+        const client = window.supabaseClient || window.dbClient;
+        if (!client) throw new Error("Cliente Supabase no inicializado.");
 
-        const { count: noticiasCount } = await window.dbClient
-            .from('noticias')
-            .select('*', { count: 'exact', head: true });
+        // Consultas concurrentes en paralelo para optimizar la latencia de red
+        const [eventos, noticias, talleres, talleristas] = await Promise.all([
+            client.from('eventos').select('*', { count: 'exact', head: true }),
+            client.from('noticias').select('*', { count: 'exact', head: true }),
+            client.from('talleres').select('*', { count: 'exact', head: true }),
+            client.from('autores').select('*', { count: 'exact', head: true }).in('rol', ['tallerista', 'superior'])
+        ]);
 
-        const { count: talleresCount } = await window.dbClient
-            .from('talleres')
-            .select('*', { count: 'exact', head: true });
+        const updateElem = (id, val) => {
+            const el = document.getElementById(id);
+            if (el) el.textContent = val || 0;
+        };
 
-        const { count: talleristasCount } = await window.dbClient
-            .from('autores')
-            .select('*', { count: 'exact', head: true })
-            .eq('rol', 'tallerista');
+        updateElem('totalEventos', eventos.count);
+        updateElem('totalNoticias', noticias.count);
+        updateElem('totalTalleres', talleres.count);
+        updateElem('totalTalleristas', talleristas.count);
 
-        const elEventos = document.getElementById('totalEventos');
-        const elNoticias = document.getElementById('totalNoticias');
-        const elTalleres = document.getElementById('totalTalleres');
-        const elTalleristas = document.getElementById('totalTalleristas');
-
-        if (elEventos) elEventos.textContent = eventosCount || 0;
-        if (elNoticias) elNoticias.textContent = noticiasCount || 0;
-        if (elTalleres) elTalleres.textContent = talleresCount || 0;
-        if (elTalleristas) elTalleristas.textContent = talleristasCount || 0;
     } catch (error) {
-        console.error('Error cargando stats:', error);
+        console.error('❌ Error al cargar métricas del Dashboard:', error.message);
     }
 }

@@ -48,7 +48,9 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function redirectByRole(role) {
-    if (role === 'administrativo') {
+    if (role === 'superior') {
+        window.location.href = 'pages/perfil-superior.html';
+    } else if (role === 'administrativo') {
         window.location.href = 'pages/admin-dashboard.html';
     } else if (role === 'tallerista') {
         window.location.href = 'pages/perfil-tallerista.html';

@@ -11,8 +11,8 @@ async function loadTalleristasDropdown() {
     try {
         const { data, error } = await window.dbClient
             .from('autores')
-            .select('id, nombre, email')
-            .eq('rol', 'tallerista')
+            .select('id, nombre, email, rol')
+            .in('rol', ['tallerista', 'superior'])
             .order('nombre');
 
         if (error) throw error;
@@ -20,14 +20,15 @@ async function loadTalleristasDropdown() {
         const select = document.getElementById('tallerInstructor');
         if (!select) return;
 
-        select.innerHTML = '<option value="">Selecciona un tallerista</option>';
+        select.innerHTML = '<option value="">Selecciona un tallerista / superior</option>';
 
         if (data) {
             data.forEach(tallerista => {
                 const option = document.createElement('option');
                 option.value = tallerista.id;
                 option.dataset.email = tallerista.email;
-                option.textContent = `${tallerista.nombre} (${tallerista.email})`;
+                const tagRol = tallerista.rol === 'superior' ? ' [Superior]' : '';
+                option.textContent = `${tallerista.nombre}${tagRol} (${tallerista.email})`;
                 select.appendChild(option);
             });
         }

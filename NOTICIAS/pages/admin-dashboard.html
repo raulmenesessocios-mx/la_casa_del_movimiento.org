@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - La Casa del Movimiento</title>
+
+    <!-- Carga síncrona prioritaria en HEAD -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../filesjs/js-login/supabase-config.js"></script>
+
     <link rel="stylesheet" href="../css/variables.css">
     <link rel="stylesheet" href="../css/estilos.css">
     <link rel="icon" type="image/png" href="https://ilmkmivwhfjlvznrsgoc.supabase.co/storage/v1/object/public/IMAGENES/logo.ico">
@@ -494,8 +499,9 @@
                         <div class="form-group">
                             <label>Rol del Usuario</label>
                             <select id="usuarioRol" required>
-                                <option value="tallerista">👨‍🏫 Tallerista</option>
-                                <option value="administrativo">🔐 Administrativo (Admin)</option>
+                                <option value="tallerista">Tallerista</option>
+                                <option value="administrativo">Administrativo (Admin)</option>
+                                <option value="superior">Superior</option>
                             </select>
                         </div>
 
@@ -558,9 +564,10 @@
     <!-- Modal para Editar Noticia -->
 
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../filesjs/js-login/supabase-config.js"></script>    
-    <script src="../filesjs/js-admin/panel-admin.js"></script>
+    
+
     <script src="../filesjs/js-admin/dashboard.js"></script>    
     <script src="../filesjs/js-admin/gestion-perfil.js"></script>
     <script src="../filesjs/js-admin/crear-evento.js"></script>
@@ -569,6 +576,7 @@
     <script src="../filesjs/js-admin/gestionar-noticias.js"></script>
     <script src="../filesjs/js-admin/gestionar-talleres.js"></script>
     <script src="../filesjs/js-admin/gestionar-usuarios.js"></script>
-
+    
+<script src="../filesjs/js-admin/panel-admin.js"></script>
 </body>
 </html>

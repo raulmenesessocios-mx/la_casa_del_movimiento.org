@@ -2,18 +2,35 @@ document.addEventListener('DOMContentLoaded', () => {
     loadAllUsuarios();
 
     const form = document.getElementById('crearUsuarioForm');
-    if (form) {
+    if (form && !form.dataset.listenerAttached) {
         form.addEventListener('submit', createUsuario);
+        form.dataset.listenerAttached = 'true';
     }
 });
 
-// 1. Cargar y listar todos los usuarios
-async function loadAllUsuarios() {
-    try {
-        const container = document.getElementById('usuariosAdminList');
-        if (!container) return;
+function getAdminClient() {
+    return window.supabaseClient || window.dbClient;
+}
 
-        const { data, error } = await window.dbClient
+function escapeHtmlAdmin(str) {
+    if (!str) return '';
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
+async function loadAllUsuarios() {
+    const container = document.getElementById('usuariosAdminList');
+    if (!container) return;
+
+    try {
+        const client = getAdminClient();
+        if (!client) throw new Error("Cliente Supabase no inicializado en el contexto global.");
+
+        const { data, error } = await client
             .from('autores')
             .select('id, nombre, email, rol, biografia')
             .order('nombre');
@@ -21,8 +38,14 @@ async function loadAllUsuarios() {
         if (error) throw error;
         if (!data) return;
 
-        const html = `
-            <table class="table">
+        const getRolBadge = (rol) => {
+            if (rol === 'administrativo') return 'Admin';
+            if (rol === 'superior') return 'Superior';
+            return 'Tallerista';
+        };
+
+        container.innerHTML = `
+            <table class="table" style="width: 100%; border-collapse: collapse;">
                 <thead>
                     <tr>
                         <th>Nombre</th>
@@ -35,12 +58,12 @@ async function loadAllUsuarios() {
                 <tbody>
                     ${data.map(u => `
                         <tr>
-                            <td><strong>${u.nombre}</strong></td>
-                            <td>${u.email}</td>
-                            <td>${u.rol === 'administrativo' ? '🔐 Admin' : '👨‍🏫 Tallerista'}</td>
-                            <td>${u.biografia || '<span style="color: #888;">Sin biografía</span>'}</td>
+                            <td><strong>${escapeHtmlAdmin(u.nombre)}</strong></td>
+                            <td>${escapeHtmlAdmin(u.email)}</td>
+                            <td>${getRolBadge(u.rol)}</td>
+                            <td>${escapeHtmlAdmin(u.biografia) || '<span style="color: #888;">Sin biografía</span>'}</td>
                             <td>
-                                <button class="btn btn-secondary" style="background-color: #dc3545; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;" onclick="deleteUsuario('${u.id}', '${u.nombre.replace(/'/g, "\\'")}')">
+                                <button class="btn btn-secondary" style="background-color: #dc3545; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;" onclick="deleteUsuario('${u.id}', '${escapeHtmlAdmin(u.nombre).replace(/'/g, "\\'")}')">
                                     Eliminar
                                 </button>
                             </td>
@@ -49,51 +72,62 @@ async function loadAllUsuarios() {
                 </tbody>
             </table>
         `;
-
-        container.innerHTML = html;
     } catch (error) {
-        console.error('Error al listar usuarios:', error);
+        console.error('❌ Error al listar usuarios:', error);
     }
 }
 
-// 2. Crear un nuevo usuario
 async function createUsuario(e) {
-    e.preventDefault();
+    if (e) e.preventDefault();
 
     const submitBtn = document.getElementById('btnSubmitUsuario');
     if (submitBtn) {
         submitBtn.disabled = true;
-        submitBtn.textContent = 'Guardando usuario...';
+        submitBtn.textContent = 'Procesando registro...';
     }
 
-    const nombre = document.getElementById('usuarioNombre').value.trim();
-    const email = document.getElementById('usuarioEmail').value.trim();
-    const password = document.getElementById('usuarioPassword').value;
-    const rol = document.getElementById('usuarioRol').value;
-    const biografia = document.getElementById('usuarioBiografia').value.trim();
+    const client = getAdminClient();
+    const nombre = document.getElementById('usuarioNombre')?.value.trim();
+    const email = document.getElementById('usuarioEmail')?.value.trim();
+    const password = document.getElementById('usuarioPassword')?.value;
+    const rol = document.getElementById('usuarioRol')?.value;
+    const biografia = document.getElementById('usuarioBiografia')?.value.trim();
     const fotoInput = document.getElementById('usuarioFoto');
 
     let fotoId = null;
 
     try {
-        // 1. Subir la Foto de Perfil si el usuario seleccionó un archivo
+        if (!nombre || !email || !password || !rol) {
+            alert('⚠️ Todos los campos principales son obligatorios.');
+            return;
+        }
+
+        if (!client) {
+            throw new Error('El cliente principal de Supabase no está instanciado.');
+        }
+
+        // 1. Manejo de Assets (Foto de Perfil en Bucket)
         if (fotoInput && fotoInput.files.length > 0) {
             const file = fotoInput.files[0];
-            const fileExt = file.name.split('.').pop();
-            const fileName = `perfil-${Date.now()}.${fileExt}`;
+            if (file.type !== 'image/webp') {
+                alert('⚠️ La foto de perfil debe ser en formato .webp');
+                return;
+            }
+
+            const fileName = `perfil-${Date.now()}.webp`;
             const filePath = `perfiles/${fileName}`;
 
-            const { error: uploadError } = await window.dbClient.storage
+            const { error: uploadError } = await client.storage
                 .from('IMAGENES')
-                .upload(filePath, file);
+                .upload(filePath, file, { contentType: 'image/webp' });
 
             if (uploadError) throw uploadError;
 
-            const { data: urlData } = window.dbClient.storage
+            const { data: urlData } = client.storage
                 .from('IMAGENES')
                 .getPublicUrl(filePath);
 
-            const { data: imgRecord, error: imgError } = await window.dbClient
+            const { data: imgRecord, error: imgError } = await client
                 .from('imagenes')
                 .insert({
                     url: urlData.publicUrl,
@@ -106,15 +140,20 @@ async function createUsuario(e) {
             fotoId = imgRecord.id;
         }
 
-        // 2. Crear Auth en Supabase
-        const createClientFn = window.createSupabaseClient || (window.supabase && window.supabase.createClient);
-        if (!createClientFn) throw new Error('No se encontró el cliente de Supabase.');
+        // 2. Extracción limpia de credenciales desde la instancia sin exponer strings
+        const supabaseUrl = client.supabaseUrl;
+        const supabaseKey = client.supabaseKey;
 
-        const tempSupabase = createClientFn(
-            'https://ilmkmivwhfjlvznrsgoc.supabase.co',
-            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlsbWttaXZ3aGZqbHZ6bnJzZ29jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc3MTA1NzcsImV4cCI6MjEwMzI4NjU3N30.YXKAm5Zxeb1tm_YiVdc2myntJXDjq62biHY27XSG4-g',
-            { auth: { persistSession: false } }
-        );
+        // Verificación de constructor global de Supabase SDK
+        const createClientFn = window.supabase?.createClient || window.Supabase?.createClient;
+        if (!createClientFn) {
+            throw new Error('La librería Supabase SDK no fue detectada. Verifica que el CDN esté cargado en el <head> antes que este script.');
+        }
+
+        // Instancia aislada para no romper la sesión activa del administrador
+        const tempSupabase = createClientFn(supabaseUrl, supabaseKey, {
+            auth: { persistSession: false, autoRefreshToken: false }
+        });
 
         const { data: authData, error: authError } = await tempSupabase.auth.signUp({
             email,
@@ -123,31 +162,33 @@ async function createUsuario(e) {
         });
 
         if (authError) throw authError;
-        const userId = authData.user.id;
+        if (!authData.user) throw new Error("Registro Auth fallido: No se generó UUID de usuario.");
 
-        await new Promise(resolve => setTimeout(resolve, 350));
-
-        // 3. Actualizar la tabla 'autores' incluyendo biografia y foto_id
-        const { error: dbError } = await window.dbClient
+        // 3. Persistencia relacional en base de datos
+        const { error: dbError } = await client
             .from('autores')
             .upsert({
-                id: userId,
+                id: authData.user.id,
                 nombre,
                 email,
                 rol,
-                biografia: biografia || null,  
+                biografia: biografia || null,
                 foto_id: fotoId
             });
+
         if (dbError) throw dbError;
 
-        alert(` El ${rol} "${nombre}" ha registrado correctamente.`);
-        document.getElementById('crearUsuarioForm').reset();
+        alert(`✅ El ${rol} "${nombre}" se ha creado con éxito.`);
+        document.getElementById('crearUsuarioForm')?.reset();
 
-        loadAllUsuarios();
-        if (typeof loadTalleristasDropdown === 'function') loadTalleristasDropdown();
+        const preview = document.getElementById('usuarioFotoPreview');
+        if (preview) preview.src = 'https://placehold.co/150x150?text=Foto';
+
+        await loadAllUsuarios();
+        if (typeof loadDashboardStats === 'function') loadDashboardStats();
 
     } catch (error) {
-        console.error('Error al crear usuario:', error);
+        console.error('❌ Error en el flujo de creación de usuario:', error);
         alert('❌ Error al crear usuario: ' + error.message);
     } finally {
         if (submitBtn) {
@@ -157,46 +198,25 @@ async function createUsuario(e) {
     }
 }
 
-// 3. Eliminar usuario
 async function deleteUsuario(userId, nombre) {
-    if (!confirm(`¿Estás seguro de que deseas eliminar al usuario "${nombre}"?\nEsta acción eliminará tanto su perfil como su cuenta de inicio de sesión.`)) {
-        return;
-    }
+    if (!confirm(`¿Confirmas la baja del usuario "${nombre}"?`)) return;
 
     try {
-        const { error } = await window.dbClient
+        const client = getAdminClient();
+        const { error } = await client
             .from('autores')
             .delete()
             .eq('id', userId);
 
         if (error) throw error;
 
-        alert(`✅ El usuario "${nombre}" ha sido eliminado totalmente.`);
+        alert(`✅ Usuario "${nombre}" eliminado.`);
 
-        loadAllUsuarios();
+        await loadAllUsuarios();
         if (typeof loadDashboardStats === 'function') loadDashboardStats();
-        if (typeof loadTalleristasDropdown === 'function') loadTalleristasDropdown();
-        if (typeof loadTalleristasForSelect === 'function') loadTalleristasForSelect();
 
     } catch (error) {
-        console.error('Error al eliminar usuario:', error);
-        alert('❌ Error al eliminar el usuario: ' + error.message);
+        console.error('❌ Error en baja de usuario:', error);
+        alert('❌ Error al eliminar usuario: ' + error.message);
     }
-}
-
-function previewusuarioFotoImagen(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-
-    if (file.type !== 'image/webp') {
-        alert('⚠️ Solo se permiten imágenes en formato .webp');
-        event.target.value = '';
-        return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = (e) => {
-        document.getElementById('usuarioFotoPreview').src = e.target.result;
-    };
-    reader.readAsDataURL(file);
 }

@@ -1,4 +1,4 @@
-async function loadProfileData(userId) {
+async function loadProfileDataSuperior(userId) {
     try {
         const { data, error } = await window.supabaseClient
             .from('autores')
@@ -22,12 +22,12 @@ async function loadProfileData(userId) {
             preview.src = data.foto?.url || 'https://placehold.co/150x150?text=Sin+Foto';
         }
     } catch (error) {
-        console.error('Error cargando perfil:', error);
+        console.error('Error cargando perfil del usuario Superior:', error);
     }
 }
 
-async function updateProfile() {
-    const { data: { user }, error: userError } = await window.supabaseClient.auth.getUser();
+async function updateProfileSuperior() {
+        const { data: { user }, error: userError } = await window.supabaseClient.auth.getUser();
 if (userError || !user) throw new Error("No hay una sesión activa de usuario.");
 const userId = user.id;
     const bio = document.getElementById('profileBio').value;
@@ -43,7 +43,7 @@ const userId = user.id;
                 return;
             }
 
-            const fileName = `perfil-${Date.now()}.webp`;
+            const fileName = `perfil-superior-${Date.now()}.webp`;
             const filePath = `perfiles/${fileName}`;
 
             const { error: uploadError } = await window.supabaseClient.storage
@@ -58,7 +58,7 @@ const userId = user.id;
 
             const { data: imgRecord, error: imgError } = await window.supabaseClient
                 .from('imagenes')
-                .insert({ url: publicUrlData.publicUrl, alt_texto: `Avatar de usuario ${userId}` })
+                .insert({ url: publicUrlData.publicUrl, alt_texto: `Avatar de usuario Superior ${userId}` })
                 .select('id')
                 .single();
 
@@ -77,17 +77,14 @@ const userId = user.id;
             .eq('id', userId);
 
         if (error) throw error;
-        alert('✅ Perfil actualizado correctamente');
+        alert('✅ Perfil Superior actualizado correctamente');
     } catch (error) {
-        console.error('Error al actualizar perfil:', error);
+        console.error('Error al actualizar perfil Superior:', error);
         alert('❌ Error al actualizar perfil: ' + error.message);
     }
 }
 
-// ============================
-// PREVISUALIZAR NUEVA FOTO
-// ============================
-function previewAvatar(event) {
+function previewAvatarSuperior(event) {
     const file = event.target.files[0];
     if (!file) return;
 
@@ -104,9 +101,6 @@ function previewAvatar(event) {
     reader.readAsDataURL(file);
 }
 
-// ============================
-// CONECTAR BOTÓN "CAMBIAR FOTO" CON EL INPUT OCULTO
-// ============================
 document.addEventListener('DOMContentLoaded', () => {
     const btnCambiarFoto = document.getElementById('btnCambiarFoto');
     const fileInput = document.getElementById('profileAvatarFile');
@@ -116,16 +110,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-async function solicitarRestablecimiento() {
+async function solicitarRestablecimientoSuperior() {
     const confirmacion = confirm("¿Estás seguro de restablecer la contraseña? Te llegará un correo para confirmar que eres tú.");
     if (!confirmacion) return;
 
     try {
-        // 1. Obtener el cliente activo de Supabase de forma segura
         const client = window.supabaseClient || window.dbClient || window.supabase;
         if (!client) throw new Error("No se encontró el cliente de Supabase cargado.");
 
-        // 2. Obtener el usuario de la sesión actual
         const { data: { user }, error: userError } = await client.auth.getUser();
         if (userError || !user) throw new Error("No se pudo identificar la sesión activa.");
 
