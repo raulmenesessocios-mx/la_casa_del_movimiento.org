@@ -57,7 +57,7 @@ async function loadTalleresPublicGrid() {
         gridContainer.innerHTML = talleresCache.map(taller => {
             const imgUrl = taller.imagenes?.url || 'https://placehold.co/400x280?text=Taller';
             return `
-                <div class="workshop-card">
+                <div class="workshop-card" onclick="openWorkshopModal('${taller.id}')">
                     <div class="workshop-card-image">
                         <img src="${imgUrl}" alt="${taller.titulo}" loading="lazy">
                     </div>
@@ -147,12 +147,19 @@ function renderRandomHook(talleres) {
     const titleEl = document.querySelector('.hook-title');
     const descEl = document.querySelector('.hook-description');
     const imgEl = document.querySelector('.hook-image img');
+    const btnOpen = document.getElementById('btn-hook-open') || document.querySelector('.btn-workshop-open');
 
     if (titleEl) titleEl.textContent = `"${tallerAzar.frase_gancho || tallerAzar.titulo}"`;
     if (descEl) descEl.textContent = tallerAzar.descripcion || 'Cada taller es un viaje hacia la creatividad sin límites.';
     if (imgEl && tallerAzar.imagenes?.url) {
         imgEl.src = tallerAzar.imagenes.url;
         imgEl.alt = tallerAzar.titulo || 'Imagen del taller destacado';
+    }
+
+    if (btnOpen) {
+        btnOpen.onclick = function() {
+            openWorkshopModal(tallerAzar.id);
+        };
     }
 }
 

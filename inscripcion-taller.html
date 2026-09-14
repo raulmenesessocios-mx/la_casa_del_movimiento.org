@@ -33,7 +33,7 @@
     <p class="workshops-subtitle">Reserva tu cupo completando el siguiente formulario</p>
 
     <!-- Resumen Dinámico del Taller -->
-    <section class="summary-box" style="margin-bottom: 4rem;">
+    <section class="summary-box">
         <h3 id="summary-titulo">Seleccionar taller</h3>
         <p><strong>Horarios:</strong> <span id="summary-horario">-</span></p>
         <p><strong>Docente:</strong> <span id="summary-docente">-</span></p>
@@ -41,16 +41,16 @@
     </section>
 
     <!-- Formulario de Registro -->
-    <section class="leads-section" style="padding: 3rem 2rem; border-radius: 8px;">
+    <section class="leads-section">
         <h2 class="leads-title">Tus Datos de Registro</h2>
         <p class="leads-subtitle">Asegura tu lugar en la próxima cohorte</p>
 
         <form id="formInscripcion" class="contact-form">
             <div class="form-group-wrapper">
                 <!-- Selector de Taller -->
-                <div class="form-group" style="margin-bottom: 1.5rem;">
-                    <label for="tallerSelect" style="display:block; font-weight:600; margin-bottom:0.5rem;">Taller a inscribirse *</label>
-                    <select id="tallerSelect" class="form-control" style="width:100%; padding:0.8rem; border-radius:6px; border:1px solid #ccc; font-size:1rem;" required>
+                <div class="form-group form-group-register">
+                    <label for="tallerSelect" class="taller-label">Taller a inscribirse </label>
+                    <select id="tallerSelect" class="form-control taller-selec"  required>
                         <option value="">-- Seleccionar Taller --</option>
                     </select>
                 </div>
