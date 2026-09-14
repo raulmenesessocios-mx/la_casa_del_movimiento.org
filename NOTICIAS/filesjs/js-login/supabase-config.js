@@ -2,7 +2,7 @@
     // 1. Core Config (Single Source of Truth)
     const CONFIG = {
         URL: 'https://ilmkmivwhfjlvznrsgoc.supabase.co',
-        ANON_KEY: import.meta.env.VITE_ANON_KEY
+        ANON_KEY: 'sb_publishable_r-6JS3UAiN2Wat2mJIiMSQ_hPuuERaO'
     };
 
     // Exponer credenciales globalmente de forma controlada para flujos paralelos

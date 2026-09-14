@@ -12,8 +12,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const email = document.getElementById('email').value.trim();
         const password = document.getElementById('password').value;
 
-        errorDiv.style.display = 'none';
-        loadingDiv.style.display = 'block';
+        errorDiv.classList.toggle('is-hidden', !hayError);
+        loadingDiv.classList.toggle('is-hidden', !hayError);
         submitBtn.disabled = true;
 
         try {
@@ -39,9 +39,9 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) {
             console.error('Login Error:', error);
             errorDiv.textContent = '❌ ' + (error.message || 'Error al iniciar sesión');
-            errorDiv.style.display = 'block';
+            errorDiv.classList.toggle('is-hidden', !hayError);
         } finally {
-            loadingDiv.style.display = 'none';
+            loadingDiv.classList.toggle('is-hidden', !hayError);
             submitBtn.disabled = false;
         }
     });

@@ -5,6 +5,7 @@
     <title>Actualizar Contraseña</title>
     <link rel="stylesheet" href="../css/variables.css">
     <link rel="stylesheet" href="../css/estilos.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
     <div class="login-container">
@@ -12,11 +13,11 @@
         <form id="updatePasswordForm">
             <div class="form-group">
                 <label>Nueva Contraseña</label>
-                <input type="password" id="newPassword" required minlength="6">
+                <input aria-label="Nueva contraseña" type="password" id="newPassword" required minlength="6">
             </div>
             <div class="form-group">
                 <label>Confirmar Contraseña</label>
-                <input type="password" id="confirmPassword" required minlength="6">
+                <input aria-label="confirmar contraseña" type="password" id="confirmPassword" required minlength="6">
             </div>
             <button type="submit" class="btn btn-primary" id="btnGuardar">Guardar Contraseña</button>
         </form>

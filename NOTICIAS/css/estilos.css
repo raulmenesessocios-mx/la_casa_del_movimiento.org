@@ -493,7 +493,7 @@ body {
         left: 0 !important;
         width: 100% !important;
         height: auto !important;
-        min-height: auto !important;
+        min-height: 0 !important;
         padding: 1rem !important;
         box-shadow: var(--shadow-sm);
         z-index: 10;
@@ -602,7 +602,7 @@ body {
 #interesadosList {
     width: 100%;
     overflow-x: auto;
-    -webkit-overflow-scrolling: touch; /* Scroll suave en iOS */
+    overflow-y: auto;
     border-radius: var(--border-radius);
 }
 
@@ -915,6 +915,7 @@ body {
     width: 100vw;
     height: 100vh;
     background-color: rgba(0, 0, 0, 0.65);
+   -webkit-backdrop-filter: blur(4px);
     backdrop-filter: blur(4px);
     z-index: 2000; /* Asegura quedar sobre la sidebar */
     display: flex;
@@ -1089,6 +1090,7 @@ body {
     font-size: 0.9rem;
     cursor: pointer;
     transition: all 0.25s ease;
+    -webkit-user-select: none;
     user-select: none;
 }
 
@@ -1096,4 +1098,7 @@ body {
     background-color: var(--color-alert, #d47a7ae1);
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+.is-hidden {
+    display: none;
 }
