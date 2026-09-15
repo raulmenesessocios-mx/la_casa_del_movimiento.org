@@ -12,8 +12,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const email = document.getElementById('email').value.trim();
         const password = document.getElementById('password').value;
 
-        errorDiv.style.display = 'none';
-        loadingDiv.style.display = 'block';
+        errorDiv.classList.add('is-hidden');
+        loadingDiv.classList.remove('is-hidden');
         submitBtn.disabled = true;
 
         try {
@@ -23,13 +23,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 password
             });
 
-            if (authError) throw authError;
+            // Manejo de error de credenciales sin lanzar excepción (evita ensuciar el stack trace)
+            if (authError) {
+                errorDiv.textContent = 'Email o contraseña incorrectos.';
+                errorDiv.classList.remove('is-hidden');
+                return;
+            }
 
             // 2. Obtener rol desde la tabla 'autores'
             const userProfile = await getUserRole(authData.user.id);
 
             if (!userProfile) {
-                throw new Error('El perfil de usuario no está registrado en la base de datos.');
+                errorDiv.textContent = 'El perfil de usuario no está registrado en la base de datos.';
+                errorDiv.classList.remove('is-hidden');
+                return;
             }
 
             // 3. Guardar estado y redirigir
@@ -37,11 +44,11 @@ document.addEventListener('DOMContentLoaded', () => {
             redirectByRole(userProfile.rol);
 
         } catch (error) {
-            console.error('Login Error:', error);
-            errorDiv.textContent = '❌ ' + (error.message || 'Error al iniciar sesión');
-            errorDiv.style.display = 'block';
+            // Este bloque ahora solo procesará fallos críticos de red o sintaxis insalvables
+            errorDiv.textContent = 'Ocurrió un error inesperado al procesar la solicitud.';
+            errorDiv.classList.remove('is-hidden');
         } finally {
-            loadingDiv.style.display = 'none';
+            loadingDiv.classList.add('is-hidden');
             submitBtn.disabled = false;
         }
     });

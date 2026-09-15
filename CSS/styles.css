@@ -353,6 +353,9 @@ nav a:hover { color: var(--color-primary); }
     font-size: 1.1rem;
     line-height: 1.8;
     color: var(--color-text-neutral);
+    max-width: 800px; 
+    margin: 4rem auto 0; 
+    text-align: center;
 }
 
 /* =========================================
@@ -519,6 +522,8 @@ nav a:hover { color: var(--color-primary); }
     margin: 0 auto;
     text-align: center;
     box-shadow: var(--shadow-medium);
+    margin-top: 4rem;
+    margin-bottom: 4rem;
 }
 
 .summary-box h3 {
@@ -1055,6 +1060,8 @@ nav a:hover { color: var(--color-primary); }
 .leads-section {
     background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-hover) 100%);
     color: #FFFFFF;
+    padding: 3rem 2rem; 
+    border-radius: 8px;
 }
 .leads-title {
     font-family: var(--font-brand);
@@ -1210,9 +1217,7 @@ nav a:hover { color: var(--color-primary); }
     .footer-banner-title { font-size: 1.6rem; }
 }
 
-/* =========================================
-   13. UTILITIES & ANIMACIONES
-   ========================================= */
+/* 13. UTILITIES & ANIMACIONES */
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 .no-scroll { overflow: hidden; }
 html { scroll-behavior: smooth; }
@@ -1260,7 +1265,8 @@ html { scroll-behavior: smooth; }
 @media (min-width: 768px) { .border-end-md { border-right: 1px solid rgba(0,0,0,0.08) !important; } }
 
 .news-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1000; }
-.news-modal-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.65); backdrop-filter: blur(4px); }
+.news-modal-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.65); -webkit-backdrop-filter: blur(10px);
+backdrop-filter: blur(10px); }
 .news-modal-container {
     position: relative; background: #ffffff; width: 90%; max-width: 800px;
     max-height: 90vh; border-radius: 12px; overflow-y: auto; padding: 30px;
@@ -1282,3 +1288,191 @@ html { scroll-behavior: smooth; }
 .author-info p { margin: 0; font-size: 0.9rem; color: #555; line-height: 1.4; }
 
 .btn-open-modal { background: none; border: none; cursor: pointer; padding: 0; font: inherit; }
+
+.metric-card-link-event {
+    text-decoration: none; 
+    color: inherit;            
+}
+.metric-card-link {
+    text-decoration: none; 
+    color: inherit;        
+    display: block;        
+}
+/* =========================================
+   ESTRUCURA DEL FOOTER PRINCIPAL
+   ========================================= */
+.footer-site {
+    background-color: #FAFAFA;
+    color: var(--color-text-neutral);
+    font-family: var(--font-ui);
+    padding: 4rem 0 0 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    margin-top: 4rem;
+}
+
+.footer-site-container {
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 0 5%;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 2.5rem;
+}
+
+/* Columna de Marca */
+.footer-site-title {
+    font-family: var(--font-brand);
+    font-weight: 700;
+    color: var(--color-primary);
+    font-size: 1.35rem;
+    margin-bottom: 0.75rem;
+}
+
+.footer-site-desc {
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+    opacity: 0.9;
+}
+
+.footer-site-address {
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+/* Títulos de sección */
+.footer-site-heading {
+    font-family: var(--font-ui);
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--color-text-neutral);
+    margin-bottom: 1.25rem;
+}
+
+/* Listas de enlaces */
+.footer-site-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-site-links li {
+    margin-bottom: 0.6rem;
+}
+
+.footer-site-links a {
+    color: var(--color-primary);
+    font-weight: 600;
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: var(--transition-ease);
+}
+
+.footer-site-links a:hover {
+    color: var(--color-primary-hover);
+    transform: translateX(3px);
+    display: inline-block;
+}
+
+/* Botones de contacto dentro del footer */
+.footer-contact-item {
+    margin-bottom: 0.8rem;
+}
+
+.footer-contact-item .btn {
+    width: 100%;
+    justify-content: center;
+}
+
+/* Redes */
+.footer-social-links {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.footer-social-links a {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background-color: #EFEFEF;
+    color: var(--color-text-neutral);
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: var(--transition-ease);
+}
+
+.footer-social-links a:hover {
+    background-color: var(--color-primary);
+    color: #FFFFFF;
+}
+
+/* Barra inferior legales */
+.footer-site-bottom {
+    margin-top: 3.5rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+    padding: 1.5rem 0;
+    font-size: 0.85rem;
+    background-color: #F0F0EE;
+}
+
+.footer-site-bottom-container {
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 0 5%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.footer-legal-links {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.footer-legal-links a {
+    color: var(--color-text-neutral);
+    text-decoration: none;
+}
+
+.footer-legal-links a:hover {
+    color: var(--color-primary);
+}
+
+/* Ajustes Responsive */
+@media (max-width: 768px) {
+    .footer-site-bottom-container {
+        flex-direction: column;
+        text-align: center;
+    }
+}
+.btn .btn-cta{
+    display: inline-block; 
+    margin-top: 1.5rem;
+}
+.leads-section-register {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-hover) 100%);
+    color: #FFFFFF;
+    padding: 3rem 2rem; 
+    border-radius: 8px;
+}
+
+.form-group-register{
+    margin-bottom: 1.5rem; 
+}
+.taller-label {
+    display:block; 
+    font-weight:600; 
+    margin-bottom:0.5rem;
+}
+.taller-selec{
+    width:100%; 
+    padding:0.8rem; 
+    border-radius:6px; 
+    border:1px solid #ccc; 
+    font-size:1rem;
+}

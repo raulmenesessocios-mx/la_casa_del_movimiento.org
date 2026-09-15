@@ -5,19 +5,100 @@
     <title>Actualizar Contraseña</title>
     <link rel="stylesheet" href="../css/variables.css">
     <link rel="stylesheet" href="../css/estilos.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="https://ilmkmivwhfjlvznrsgoc.supabase.co/storage/v1/object/public/IMAGENES/logo.ico">
+    <script src="../filesjs/main.js"></script>
+    <style>
+        /* Contenedor Responsive de Login/Password */
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 1rem;
+    box-sizing: border-box;
+}
+
+.login-container {
+    width: 100%;
+    max-width: 420px;
+    padding: 2rem;
+    box-sizing: border-box;
+}
+
+/* Wrapper del Input de Contraseña con el Botón */
+.password-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.password-input-wrapper input {
+    width: 100%;
+    padding-right: 2.75rem; /* Espacio reservado para que el texto no se monte sobre el icono */
+    box-sizing: border-box;
+}
+
+.btn-toggle-password {
+    position: absolute;
+    right: 0.5rem;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0.4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-text-muted, #666);
+    border-radius: 4px;
+    transition: color 0.2s ease;
+}
+
+.btn-toggle-password:hover {
+    color: var(--color-primary, #000);
+}
+
+/* Ajuste Responsive para pantallas pequeñas */
+@media (max-width: 480px) {
+    .login-container {
+        padding: 1.25rem;
+    }
+}
+    </style>
 </head>
 <body>
     <div class="login-container">
         <h2>Ingresa tu nueva contraseña</h2>
         <form id="updatePasswordForm">
+            
             <div class="form-group">
-                <label>Nueva Contraseña</label>
-                <input type="password" id="newPassword" required minlength="6">
+                <label for="newPassword">Nueva Contraseña</label>
+                <div class="password-input-wrapper">
+                    <input aria-label="Nueva contraseña" type="password" id="newPassword" required minlength="6" placeholder="Mínimo 6 caracteres">
+                    <button type="button" class="btn-toggle-password" onclick="togglePasswordVisibility('newPassword', this)" aria-label="Mostrar u ocultar contraseña">
+                        <svg class="icon-eye" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                    </button>
+                </div>
             </div>
+
             <div class="form-group">
-                <label>Confirmar Contraseña</label>
-                <input type="password" id="confirmPassword" required minlength="6">
+                <label for="confirmPassword">Confirmar Contraseña</label>
+                <div class="password-input-wrapper">
+                    <input aria-label="Confirmar contraseña" type="password" id="confirmPassword" required minlength="6" placeholder="Repite tu contraseña">
+                    <button type="button" class="btn-toggle-password" onclick="togglePasswordVisibility('confirmPassword', this)" aria-label="Mostrar u ocultar confirmación de contraseña">
+                        <svg class="icon-eye" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                    </button>
+                </div>
             </div>
+
             <button type="submit" class="btn btn-primary" id="btnGuardar">Guardar Contraseña</button>
         </form>
     </div>
@@ -27,6 +108,31 @@
     <script src="../filesjs/js-login/supabase-config.js"></script>
     
     <script>
+        // Función para mostrar/ocultar contraseña
+        function togglePasswordVisibility(inputId, btn) {
+            const input = document.getElementById(inputId);
+            if (!input) return;
+
+            const isPassword = input.type === 'password';
+            input.type = isPassword ? 'text' : 'password';
+
+            // SVG del ojo tachado cuando la contraseña es visible
+            const eyeOffSvg = `
+                <svg class="icon-eye" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                    <line x1="1" y1="1" x2="23" y2="23"></line>
+                </svg>`;
+
+            // SVG del ojo abierto cuando está oculta
+            const eyeSvg = `
+                <svg class="icon-eye" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                </svg>`;
+
+            btn.innerHTML = isPassword ? eyeOffSvg : eyeSvg;
+        }
+
         document.getElementById('updatePasswordForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const pass1 = document.getElementById('newPassword').value;
@@ -37,10 +143,11 @@
                 return;
             }
 
-            document.getElementById('btnGuardar').textContent = "Guardando...";
+            const btnGuardar = document.getElementById('btnGuardar');
+            btnGuardar.textContent = "Guardando...";
+            btnGuardar.disabled = true;
 
             try {
-                // Supabase ya detecta el token de la URL automáticamente y sabe a qué usuario actualizar
                 const { error } = await window.supabaseClient.auth.updateUser({
                     password: pass1
                 });
@@ -48,12 +155,13 @@
                 if (error) throw error;
 
                 alert("✅ Contraseña actualizada correctamente. Inicia sesión con tu nueva contraseña.");
-                window.location.href = '../indexlog.html'; // Redirigir al login
+                window.location.href = '../indexlog.html';
                 
             } catch (error) {
                 console.error(error);
                 alert("❌ Error al actualizar: " + error.message);
-                document.getElementById('btnGuardar').textContent = "Guardar Contraseña";
+                btnGuardar.textContent = "Guardar Contraseña";
+                btnGuardar.disabled = false;
             }
         });
     </script>

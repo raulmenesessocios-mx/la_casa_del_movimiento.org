@@ -2,14 +2,14 @@
     // 1. Core Config (Single Source of Truth)
     const CONFIG = {
         URL: 'https://ilmkmivwhfjlvznrsgoc.supabase.co',
-        ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlsbWttaXZ3aGZqbHZ6bnJzZ29jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc3MTA1NzcsImV4cCI6MjEwMzI4NjU3N30.YXKAm5Zxeb1tm_YiVdc2myntJXDjq62biHY27XSG4-g'
+        ANON_KEY: 'sb_publishable_r-6JS3UAiN2Wat2mJIiMSQ_hPuuERaO'
     };
 
     // Exponer credenciales globalmente de forma controlada para flujos paralelos
     window.AppConfig = CONFIG;
 
     // 2. Inicialización Blindada (Patrón Singleton)
-    window.initSupabase = function() {
+    window.initSupabase = function () {
         if (window.supabaseClient) return window.supabaseClient;
 
         // Validación de infraestructura (SDK del CDN)
@@ -21,7 +21,7 @@
         // ✅ Instanciamos SIN destruir el namespace original de window.supabase
         window.supabaseClient = window.supabase.createClient(CONFIG.URL, CONFIG.ANON_KEY);
         window.dbClient = window.supabaseClient; // Alias por retrocompatibilidad para tus otros scripts
-        
+
         return window.supabaseClient;
     };
 
@@ -87,7 +87,7 @@
     // 6. Firewall de Rutas (Middleware de Frontend)
     window.protectRoute = function (requiredRole = null) {
         const session = window.getSessionFromLocalStorage();
-        
+
         if (!session) {
             console.warn("🛡️ Firewall: Intento de acceso sin sesión activa.");
             window.location.href = '../../index.html';
@@ -106,7 +106,7 @@
             const allowedRoles = Array.isArray(requiredRole) ? requiredRole : [requiredRole];
             if (!allowedRoles.includes(currentRole)) {
                 alert('⛔ Privilegios insuficientes para este módulo.');
-                window.location.href = '../../index.html'; 
+                window.location.href = '../../index.html';
                 return null;
             }
         }

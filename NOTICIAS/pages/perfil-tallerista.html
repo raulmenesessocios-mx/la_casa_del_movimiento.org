@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="../css/variables.css">
     <link rel="stylesheet" href="../css/estilos.css">
     <link rel="icon" type="image/png" href="https://ilmkmivwhfjlvznrsgoc.supabase.co/storage/v1/object/public/IMAGENES/logo.ico">
+    <script src="../filesjs/main.js"></script>
 </head>
 <body>
     <div class="dashboard-layout">
@@ -23,12 +24,14 @@
             </div>
 
             <nav class="sidebar-nav">
-                <li><a href="#perfil" class="nav-link active">Mi Perfil</a></li>
-                <li><a href="#mi-taller" class="nav-link">Mi Taller</a></li>
-                <li><a href="#interesados" class="nav-link">Interesados</a></li>
-                <li><a href="#mis-noticias" class="nav-link">Mis Noticias</a></li>
-                <li><a href="#crear-noticia" class="nav-link">Crear Noticia</a></li>
-                <li><button class="logout-btn" onclick="logout()">Cerrar Sesión</button></li>
+                <ul class="sin-puntos">
+                    <li><a href="#perfil" class="nav-link active">Mi Perfil</a></li>
+                    <li><a href="#mi-taller" class="nav-link">Mi Taller</a></li>
+                    <li><a href="#interesados" class="nav-link">Interesados</a></li>
+                    <li><a href="#mis-noticias" class="nav-link">Mis Noticias</a></li>
+                    <li><a href="#crear-noticia" class="nav-link">Crear Noticia</a></li>
+                    <li><button class="logout-btn" onclick="logout()">Cerrar Sesión</button></li>
+                </ul>
             </nav>
         </aside>
 
@@ -56,12 +59,12 @@
 
                     <div class="form-group">
                         <label>Nombre</label>
-                        <input type="text" id="profileName" readonly>
+                        <input aria-label="Nombre" type="text" id="profileName" readonly>
                     </div>
 
                     <div class="form-group">
                         <label>Email</label>
-                        <input type="email" id="profileEmail" readonly>
+                        <input aria-label="Email" type="email" id="profileEmail" readonly>
                     </div>
 
                     <div class="form-group">

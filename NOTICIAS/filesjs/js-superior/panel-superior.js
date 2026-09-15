@@ -83,10 +83,13 @@ function initSuperiorModules(userId) {
 }
 
 function showSection(sectionId) {
-    document.querySelectorAll('.section').forEach(s => s.style.display = 'none');
+    // 1. Ocultar TODAS las secciones agregando la clase 'is-hidden'
+    document.querySelectorAll('.section').forEach(s => s.classList.add('is-hidden'));
+    
+    // 2. Mostrar únicamente la sección seleccionada removiendo 'is-hidden'
     const targetSection = document.getElementById(sectionId);
     if (targetSection) {
-        targetSection.style.display = 'block';
+        targetSection.classList.remove('is-hidden');
     }
 }
 
