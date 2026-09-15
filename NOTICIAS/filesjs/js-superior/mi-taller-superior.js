@@ -1,6 +1,9 @@
 window.misTalleresSuperior = window.misTalleresSuperior || [];
 window.miTallerActualSuperior = window.miTallerActualSuperior || null;
 
+// Variable de control global para evitar envíos múltiples en milisegundos
+let isSubmittingTaller = false;
+
 async function loadMyTallerSuperior(userId, tallerIdASeleccionar = null) {
     const contenedor = document.getElementById('tallerInfoContainerSuperior');
     const form = document.getElementById('editarTallerFormSuperior');
@@ -40,7 +43,7 @@ async function loadMyTallerSuperior(userId, tallerIdASeleccionar = null) {
                 selectorContainer.innerHTML = `
                     <div class="form-group" style="margin-bottom: 1.5rem;">
                         <label for="selectTallerInstructorSuperior" style="font-weight: bold; display: block; margin-bottom: 0.5rem;">
-                            📑 Selecciona el taller que deseas gestionar:
+                            Selecciona el taller que deseas gestionar:
                         </label>
                         <select id="selectTallerInstructorSuperior" class="form-control" style="width: 100%; padding: 0.6rem; font-size: 1rem; border-radius: 8px;">
                             ${optionsHTML}
@@ -136,19 +139,25 @@ function previewTallerImagenSuperior(event) {
 async function updateTallerSuperior(e) {
     if (e) e.preventDefault();
 
-    const btn = document.getElementById('btnGuardarTallerSuperior');
-    if (btn) {
-        btn.disabled = true;
-        btn.textContent = 'Guardando...';
-    }
+    // 1. Bloqueo inmediato para evitar doble submit
+    if (isSubmittingTaller) return;
 
-    const client = window.supabaseClient || window.dbClient;
-    const tallerIdElem = document.getElementById('miTallerIdSuperior');
-    const tallerId = tallerIdElem ? tallerIdElem.value : window.miTallerActualSuperior?.id;
-    const fileInput = document.getElementById('tallerImagenFileSuperior');
-    const file = fileInput ? fileInput.files[0] : null;
+    const btn = document.getElementById('btnGuardarTallerSuperior');
+    const originalBtnText = btn ? btn.textContent : 'Guardar Cambios del Taller';
 
     try {
+        isSubmittingTaller = true;
+        if (btn) {
+            btn.disabled = true;
+            btn.textContent = 'Guardando...';
+        }
+
+        const client = window.supabaseClient || window.dbClient;
+        const tallerIdElem = document.getElementById('miTallerIdSuperior');
+        const tallerId = tallerIdElem ? tallerIdElem.value : window.miTallerActualSuperior?.id;
+        const fileInput = document.getElementById('tallerImagenFileSuperior');
+        const file = fileInput ? fileInput.files[0] : null;
+
         let imagenGanchoId = window.miTallerActualSuperior?.imagen_gancho_id || null;
 
         if (file) {
@@ -219,9 +228,10 @@ async function updateTallerSuperior(e) {
         console.error('Error al actualizar taller (Superior):', error);
         alert('❌ Error al actualizar el taller: ' + error.message);
     } finally {
+        isSubmittingTaller = false;
         if (btn) {
             btn.disabled = false;
-            btn.textContent = 'Guardar Cambios del Taller';
+            btn.textContent = originalBtnText;
         }
     }
 }

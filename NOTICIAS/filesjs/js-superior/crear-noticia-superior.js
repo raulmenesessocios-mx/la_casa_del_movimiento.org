@@ -1,3 +1,6 @@
+// Variable de control global para evitar doble ejecución en milisegundos
+let isSubmittingNoticia = false;
+
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('crearNoticiaFormSuperior');
     if (form && !form.dataset.listenerAttached) {
@@ -9,26 +12,45 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+// --- AQUÍ ESTÁ TU PREVISUALIZACIÓN RESTAURADA ---
 function previewNoticiaImagenSuperior(event) {
     const file = event.target.files[0];
     if (!file) return;
 
     if (file.type !== 'image/webp') {
         alert('⚠️ Solo se permiten imágenes en formato .webp');
-        event.target.value = '';
+        event.target.value = ''; // Resetea el input
         return;
     }
 
     const reader = new FileReader();
     reader.onload = (e) => {
         const preview = document.getElementById('noticiaImagenPreviewSuperior');
-        if (preview) preview.src = e.target.result;
+        if (preview) {
+            preview.src = e.target.result;
+            preview.style.display = 'block'; // Asegura que se vea
+        }
     };
     reader.readAsDataURL(file);
 }
+// ------------------------------------------------
 
 async function createNoticiaSuperior() {
+    // 1. Bloqueo inmediato síncrono si ya hay un envío en curso
+    if (isSubmittingNoticia) return;
+
+    const form = document.getElementById('crearNoticiaFormSuperior');
+    const submitBtn = form?.querySelector('button[type="submit"]');
+    const originalBtnText = submitBtn ? submitBtn.innerText : 'Publicar Noticia';
+
     try {
+        // Activamos el flag y bloqueamos el botón INMEDIATAMENTE
+        isSubmittingNoticia = true;
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.innerText = 'Publicando noticia...';
+        }
+
         const client = window.supabaseClient || window.dbClient;
         if (!client) throw new Error("Cliente de Supabase no disponible.");
 
@@ -38,7 +60,7 @@ async function createNoticiaSuperior() {
             return;
         }
 
-        // 1. Obtener la ficha de autor vinculada al correo del usuario
+        // Obtener la ficha de autor vinculada al correo del usuario
         const { data: autor, error: autorErr } = await client
             .from('autores')
             .select('id')
@@ -58,12 +80,14 @@ async function createNoticiaSuperior() {
         const fileInput = document.getElementById('noticiaImagenFileSuperior');
         const file = fileInput ? fileInput.files[0] : null;
 
+        // Validaciones básicas antes de procesar imagen
         if (!titulo || !resumen || !cuerpo || !categorySlug) {
             alert('⚠️ Por favor completa todos los campos requeridos.');
-            return;
+            // En validaciones manuales, reactivamos manualmente aquí o dejamos que finally lo haga
+            return; 
         }
 
-        // 2. Obtener la categoría por su slug
+        // Obtener la categoría por su slug
         const { data: catData, error: catErr } = await client
             .from('categorias')
             .select('id')
@@ -72,12 +96,11 @@ async function createNoticiaSuperior() {
 
         if (catErr) throw catErr;
 
-        // 3. Procesamiento de imagen en .webp
+        // 2. Procesamiento de imagen en .webp
         let imagenId = null;
         if (file) {
             if (file.type !== 'image/webp') {
-                alert('⚠️ La imagen debe estar en formato .webp');
-                return;
+                throw new Error('La imagen debe estar en formato .webp');
             }
 
             const fileName = `noticia-superior-${Date.now()}.webp`;
@@ -103,7 +126,7 @@ async function createNoticiaSuperior() {
             imagenId = imgRecord.id;
         }
 
-        // 4. Inserción con estado publicado (Rol Superior publica directamente)
+        // 3. Inserción con estado publicado (Rol Superior publica directamente)
         const insertPayload = {
             titulo,
             resumen,
@@ -126,21 +149,33 @@ async function createNoticiaSuperior() {
 
         if (insertErr) throw insertErr;
 
+        // ÚNICA ALERTA DE ÉXITO
         alert('🚀 ¡Noticia publicada con éxito!');
 
-        const form = document.getElementById('crearNoticiaFormSuperior');
+        // 4. Limpieza del formulario
         if (form) form.reset();
         if (fileInput) fileInput.value = '';
 
+        // Resetear la previsualización al estado por defecto
         const preview = document.getElementById('noticiaImagenPreviewSuperior');
-        if (preview) preview.src = 'https://placehold.co/600x300?text=Previsualizaci%C3%B3n+de+Imagen';
+        if (preview) {
+            preview.src = 'https://placehold.co/600x300?text=Previsualizaci%C3%B3n+de+Imagen';
+        }
 
+        // 5. Recargar la tabla (si existe la función)
         if (typeof loadMisNoticiasSuperior === 'function') {
-            loadMisNoticiasSuperior();
+            await loadMisNoticiasSuperior();
         }
 
     } catch (error) {
         console.error('Error al crear noticia (Superior):', error);
         alert('❌ Error al publicar la noticia: ' + error.message);
+    } finally {
+        // Desbloquear bandera y botón SIEMPRE al finalizar (éxito o error)
+        isSubmittingNoticia = false;
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerText = originalBtnText;
+        }
     }
 }

@@ -9,7 +9,7 @@
     window.AppConfig = CONFIG;
 
     // 2. Inicialización Blindada (Patrón Singleton)
-    window.initSupabase = function() {
+    window.initSupabase = function () {
         if (window.supabaseClient) return window.supabaseClient;
 
         // Validación de infraestructura (SDK del CDN)
@@ -21,7 +21,7 @@
         // ✅ Instanciamos SIN destruir el namespace original de window.supabase
         window.supabaseClient = window.supabase.createClient(CONFIG.URL, CONFIG.ANON_KEY);
         window.dbClient = window.supabaseClient; // Alias por retrocompatibilidad para tus otros scripts
-        
+
         return window.supabaseClient;
     };
 
@@ -87,7 +87,7 @@
     // 6. Firewall de Rutas (Middleware de Frontend)
     window.protectRoute = function (requiredRole = null) {
         const session = window.getSessionFromLocalStorage();
-        
+
         if (!session) {
             console.warn("🛡️ Firewall: Intento de acceso sin sesión activa.");
             window.location.href = '../../index.html';
@@ -106,7 +106,7 @@
             const allowedRoles = Array.isArray(requiredRole) ? requiredRole : [requiredRole];
             if (!allowedRoles.includes(currentRole)) {
                 alert('⛔ Privilegios insuficientes para este módulo.');
-                window.location.href = '../../index.html'; 
+                window.location.href = '../../index.html';
                 return null;
             }
         }

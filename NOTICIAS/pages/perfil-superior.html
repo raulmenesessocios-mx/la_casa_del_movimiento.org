@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="../css/variables.css">
     <link rel="stylesheet" href="../css/estilos.css">
     <link rel="icon" type="image/png" href="https://ilmkmivwhfjlvznrsgoc.supabase.co/storage/v1/object/public/IMAGENES/logo.ico">
+    <script src="../filesjs/main.js"></script>
 </head>
 <body>
     <div class="dashboard-layout">
@@ -19,11 +20,11 @@
             
             <div class="sidebar-user">
                 <strong id="userName">Cargando...</strong>
-                <span class="role-badge" style="background-color: var(--color-primary);">Superior</span>
+                <span class="role-badge" >Superior</span>
             </div>
 
             <nav class="sidebar-nav">
-                <ul>
+                <ul class="sin-puntos">
                     <!-- Secciones de Gestión Personal -->
                     <li><a href="#perfil" class="nav-link active">Mi Perfil</a></li>
                     <li><a href="#taller" class="nav-link">Mi Taller</a></li>
@@ -79,7 +80,7 @@
 
                     <div class="avatar-uploader-actions">
                         <button type="button" class="btn btn-secondary" id="btnCambiarFoto">
-                            📷 Cambiar foto de perfil
+                            Cambiar foto de perfil
                         </button>
                         <p class="avatar-note">Solo se permiten imágenes en formato <strong>.webp</strong></p>
                     </div>
@@ -92,15 +93,15 @@
                 </div>
 
                 <!-- Restablecer contraseña -->
-                <div class="form-group" style="margin-top: 1.5rem;">
-                    <button type="button" class="btn btn-secondary" onclick="solicitarRestablecimientoSuperior()" style="background-color: var(--color-accent); border: none; color: var(--color-white);">
+                <div class="form-group" >
+                    <button type="button" class="btn btn-secondary btn-pasword" onclick="solicitarRestablecimientoSuperior()" >
                         Restablecer contraseña
                     </button>
                 </div>
             </section>
 
             <!-- SECCIÓN: MI TALLER -->
-            <section id="taller" class="section" style="display: none;">
+            <section id="taller" class="section is-hidden" >
                 <div class="card">
                     <h2 class="card-title">Mi Taller a Cargo</h2>
                     
@@ -113,7 +114,7 @@
 
                         <div class="form-group">
                             <label>Nombre del Taller</label>
-                            <input type="text" id="tallerNombreSuperior" required>
+                            <input aria-label="nombre taller" type="text" id="tallerNombreSuperior" required>
                         </div>
 
                         <div class="form-group">
@@ -123,7 +124,7 @@
 
                         <div class="form-group">
                             <label>Descripción Detallada</label>
-                            <textarea id="tallerDescripcionSuperior" rows="4" required></textarea>
+                            <textarea aria-label="descripcion detallada" id="tallerDescripcionSuperior" rows="4" type="text" required></textarea>
                         </div>
 
                         <div class="form-group">
@@ -133,12 +134,12 @@
 
                         <div class="form-group">
                             <label>Nivel / Edad</label>
-                            <input type="text" id="tallerNivelEdadSuperior" placeholder="Ej: Principiantes / +15 años">
+                            <input aria-label="nuvel edad" type="text" id="tallerNivelEdadSuperior" placeholder="Ej: Principiantes / +15 años">
                         </div>
 
                         <div class="form-group">
-                            <label>Días de Impartición</label>
-                            <input type="text" id="tallerDiasSuperior" placeholder="Ej: Lunes y Miércoles">
+                            <label>Días de Clase</label>
+                            <input aria-label="dias de clase" type="text" id="tallerDiasSuperior" placeholder="Ej: Lunes y Miércoles">
                         </div>
 
                         <div class="form-group">
@@ -147,13 +148,13 @@
                         </div>
 
                         <div class="form-group">
-                            <label>Próxima Sesión</label>
-                            <input type="datetime-local" id="tallerProximaSesionSuperior">
+                            <label>Inicio en:..</label>
+                            <input aria-label="Inicio en" type="datetime-local" id="tallerProximaSesionSuperior">
                         </div>
 
                         <div class="form-group">
                             <label>Cupo Máximo</label>
-                            <input type="number" id="tallerCupoSuperior" min="1" required>
+                            <input aria-label="cupo maximo" type="number" id="tallerCupoSuperior" min="1" required>
                         </div>
 
                         <div class="form-group">
@@ -171,10 +172,10 @@
                                     onchange="previewTallerImagenSuperior(event)">
 
                                 <label for="tallerImagenFileSuperior" class="btn-upload-label">
-                                    🖼️ Reemplazar imagen (.webp)
+                                    Reemplazar imagen (.webp)
                                 </label>
                             </div>
-                            <p class="avatar-note" style="text-align: center; margin-top: 0.4rem;">
+                            <p class="avatar-note" >
                                 Solo se permiten imágenes en formato <strong>.webp</strong>
                             </p>
                         </div>
@@ -185,7 +186,7 @@
             </section>
 
             <!-- SECCIÓN: INTERESADOS -->
-            <section id="interesados" class="section" style="display: none;">
+            <section id="interesados" class="section is-hidden" >
                 <div class="card">
                     <h2 class="card-title">Personas Interesadas en mis Talleres</h2>
                     <div id="interesadosList">
@@ -200,7 +201,7 @@
                                 </tr>
                             </thead>
                             <tbody id="interesadosTablaBodySuperior">
-                                <tr><td colspan="5" style="text-align: center;">Cargando interesados...</td></tr>
+                                <tr><td colspan="5" >Cargando interesados...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -208,7 +209,7 @@
             </section>
 
             <!-- SECCIÓN: CREAR NOTICIA -->
-            <section id="crear-noticia" class="section" style="display: none;">
+            <section id="crear-noticia" class="section is-hidden">
                 <div class="card">
                     <h2 class="card-title">Crear Noticia (Publicación Directa)</h2>
                     <form id="crearNoticiaFormSuperior" class="form">
@@ -240,21 +241,21 @@
                             <label>Imagen de la Noticia</label>
                             <div class="image-uploader-container">
                                 <img id="noticiaImagenPreviewSuperior" 
-                                     src="https://placehold.co/600x400?text=Sin+Imagen" 
-                                     class="image-preview-custom" 
-                                     alt="Previsualización de Noticia">
+                                    src="https://placehold.co/600x400?text=Sin+Imagen" 
+                                    class="image-preview-custom" 
+                                    alt="Previsualización de Noticia">
                                 
                                 <input type="file" 
-                                       id="noticiaImagenFileSuperior" 
-                                       class="input-file-hidden"
-                                       accept=".webp,image/webp" 
-                                       onchange="previewNoticiaImagenSuperior(event)">
+                                    id="noticiaImagenFileSuperior" 
+                                    class="input-file-hidden"
+                                    accept=".webp,image/webp" 
+                                    onchange="previewNoticiaImagenSuperior(event)">
                                 
                                 <label for="noticiaImagenFileSuperior" class="btn-upload-label">
                                     Asignar imagen (.webp)
                                 </label>
                             </div>
-                            <p class="avatar-note" style="text-align: center; margin-top: 0.4rem;">
+                            <p class="avatar-note" >
                                 Solo se permiten imágenes en formato <strong>.webp</strong>
                             </p>
                         </div>
@@ -271,7 +272,7 @@
             </section>
 
             <!-- SECCIÓN: MIS NOTICIAS -->
-            <section id="mis-noticias" class="section" style="display: none;">
+            <section id="mis-noticias" class="section is-hidden">
                 <div class="card">
                     <h2 class="card-title">Mis Noticias Publicadas</h2>
                     <div id="misNoticiasContainerSuperior" class="card-grid">
@@ -281,13 +282,13 @@
             </section>
 
             <!-- SECCIÓN SUPERIOR: GESTIONAR NOTICIAS -->
-            <section id="gestionar-noticias" class="section" style="display: none;">
+            <section id="gestionar-noticias" class="section is-hidden" >
                 <div class="card">
                     <h2 class="card-title">Revisión y Gestión de Noticias</h2>
                     <div id="noticiasAdminList">
                         <table class="table">
                             <tbody id="gestionarNoticiasTablaBodySuperior">
-                                <tr><td colspan="5" style="text-align: center;">Cargando noticias del sistema...</td></tr>
+                                <tr><td colspan="5" >Cargando noticias del sistema...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -295,7 +296,7 @@
             </section>
 
             <!-- SECCIÓN SUPERIOR: GESTIONAR USUARIOS -->
-            <section id="gestionar-usuarios" class="section" style="display: none;">
+            <section id="gestionar-usuarios" class="section is-hidden" >
                 <div class="card">
                     <h2 class="card-title">Registrar Nuevo Tallerista</h2>
                     <form id="formCrearTalleristaSuperior" class="form">
@@ -316,7 +317,7 @@
                     <div id="usuariosAdminList">
                         <table class="table">
                             <tbody id="usuariosTablaBodySuperior">
-                                <tr><td colspan="4" style="text-align: center;">Cargando usuarios...</td></tr>
+                                <tr><td colspan="4" >Cargando usuarios...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -324,13 +325,13 @@
             </section>
 
             <!-- SECCIÓN SUPERIOR: VER TALLERES -->
-            <section id="ver-talleres" class="section" style="display: none;">
+            <section id="ver-talleres" class="section is-hidden" >
                 <div class="card">
                     <h2 class="card-title">Oferta Académica de Talleres</h2>
                     <div id="talleresAdminList">
                         <table class="table">
                             <tbody id="verTalleresTablaBodySuperior">
-                                <tr><td colspan="5" style="text-align: center;">Cargando oferta de talleres...</td></tr>
+                                <tr><td colspan="5" >Cargando oferta de talleres...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -341,14 +342,14 @@
     </div>
 
     <!-- MODAL DE EDICIÓN DE NOTICIA SUPERIOR -->
-    <div id="modalEditarNoticiaSuperior" class="modal-overlay" style="display: none;">
+    <div id="modalEditarNoticiaSuperior" class="modal-overlay is-hidden" >
         <div class="modal-content">
             <div class="modal-header">
                 <h3>Editar Noticia (Superior)</h3>
                 <button type="button" class="btn-cerrar-modal" onclick="cerrarModalEditarNoticiaSuperior()">&times;</button>
             </div>
             
-            <form id="editarNoticiaFormSuperior" onsubmit="guardarEdicionNoticiaSuperior(event)" style="display: flex; flex-direction: column; overflow: hidden; height: 100%;">
+            <form id="editarNoticiaFormSuperior" onsubmit="guardarEdicionNoticiaSuperior(event)" class="edit-not-title">
                 <div class="modal-body-form">
                     <div class="form-group">
                         <label for="editNoticiaTituloSuperior">Título</label>

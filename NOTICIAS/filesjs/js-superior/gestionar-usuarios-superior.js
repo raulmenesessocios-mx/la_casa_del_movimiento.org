@@ -62,7 +62,6 @@ function renderUsuariosTablaSuperior(lista) {
         return 'Tallerista';
     };
 
-    // Renderizado estrictamente Informativo (Solo lectura / Sin botones de eliminación)
     container.innerHTML = `
         <table class="table" style="width: 100%; border-collapse: collapse;">
             <thead>
@@ -88,19 +87,30 @@ function renderUsuariosTablaSuperior(lista) {
 }
 
 async function registrarTalleristaSuperior() {
+    const form = document.getElementById('formCrearTalleristaSuperior');
+    const submitBtn = form?.querySelector('button[type="submit"]');
+    
+    // Obtener texto original del botón para restaurarlo al finalizar
+    const originalBtnText = submitBtn ? submitBtn.innerText : '';
+
     const client = getClientSuperior();
     const nombre = document.getElementById('nuevoTalleristaNombreSuperior')?.value.trim();
     const email = document.getElementById('nuevoTalleristaEmailSuperior')?.value.trim();
     const password = "movimiento";
     const biografia = document.getElementById('nuevoTalleristaBiografiaSuperior')?.value.trim();
 
-    // BLOQUEO HARDCODED: El rol está forzado a 'tallerista' a nivel de backend/script
     const ROL_OBLIGATORIO = 'tallerista';
 
     try {
-        if (!nombre || !email ) {
+        if (!nombre || !email) {
             alert('⚠️ Los campos Nombre y Email son requeridos.');
             return;
+        }
+
+        // Bloquear el botón durante la operación
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.innerText = 'Creando usuario...';
         }
 
         // 1. Extraer la constructora del SDK global
@@ -109,7 +119,7 @@ async function registrarTalleristaSuperior() {
             throw new Error('SDK de Supabase no detectado. Valida la inyección del CDN.');
         }
 
-        // 2. Extraer credenciales dinámicas (evita hardcodeo y acoplamiento)
+        // 2. Extraer credenciales dinámicas
         const supabaseUrl = window.AppConfig?.URL || client?.supabaseUrl;
         const supabaseKey = window.AppConfig?.ANON_KEY || client?.supabaseKey;
 
@@ -117,12 +127,12 @@ async function registrarTalleristaSuperior() {
             throw new Error('Variables de entorno de base de datos no encontradas.');
         }
 
-        // 3. FIX: Instanciar la máquina en un entorno aislado temporal
+        // 3. Instanciar en un entorno aislado temporal
         const tempSupabase = createClientFn(supabaseUrl, supabaseKey, {
             auth: { persistSession: false, autoRefreshToken: false }
         });
 
-        // 4. Procesar el registro (ahora sí, tempSupabase existe en memoria)
+        // 4. Procesar el registro en Auth
         const { data: authData, error: authError } = await tempSupabase.auth.signUp({
             email,
             password,
@@ -137,11 +147,7 @@ async function registrarTalleristaSuperior() {
 
         if (authError) throw authError;
 
-        alert(`✅ Tallerista "${nombre}" dado de alta con éxito en el sistema.`);
-        document.getElementById('formCrearTalleristaSuperior')?.reset();
-        await loadUsuariosSuperior();;
-
-        // 5. Persistencia relacional
+        // 5. Persistencia relacional en la tabla 'autores'
         const { error: dbError } = await client
             .from('autores')
             .upsert({
@@ -154,13 +160,19 @@ async function registrarTalleristaSuperior() {
 
         if (dbError) throw dbError;
 
-        alert(`✅ Tallerista "${nombre}" registrado exitosamente en el framework.`);
-        document.getElementById('formCrearTalleristaSuperior')?.reset();
+        // Alerta única de éxito al finalizar todo el proceso
+        alert(`✅ Tallerista "${nombre}" registrado exitosamente en el sistema.`);
+        form?.reset();
         await loadUsuariosSuperior();
 
     } catch (err) {
         console.error('❌ Error operacional al registrar tallerista:', err);
         alert('❌ Error al crear tallerista: ' + err.message);
+    } finally {
+
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerText = originalBtnText;
+        }
     }
 }
-
