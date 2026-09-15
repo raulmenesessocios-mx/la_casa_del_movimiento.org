@@ -1259,7 +1259,7 @@ ul.sin-puntos {
 .admin-table-scroll-container {
     width: 100%;
     overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
+    overflow-y: auto;
     margin-bottom: 1rem;
 }
 
@@ -1306,3 +1306,4 @@ ul.sin-puntos {
     justify-content: flex-end;
     flex-wrap: wrap;
 }
+
