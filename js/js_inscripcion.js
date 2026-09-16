@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     let listaTalleres = [];
 
+    
     try {
         // 1. Obtener talleres de Supabase con información de instructores
         const { data, error } = await window.supabaseClient
