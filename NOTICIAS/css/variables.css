@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Lora:wght@400;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
 :root {
     /* Paleta de colores - Manual de Estilos */
     --color-primary: #9E1B22;           /* Rojo profundo */
@@ -40,4 +42,3 @@
 }
 
 /* Importar fuentes */
-@import url('https://fonts.googleapis.com/css2?family=Lora:wght@400;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');

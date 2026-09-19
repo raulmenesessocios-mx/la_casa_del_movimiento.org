@@ -1473,3 +1473,150 @@ backdrop-filter: blur(10px); }
     border:1px solid #ccc; 
     font-size:1rem;
 }
+
+/* ========================================
+   ESTILOS PARA PÁGINAS LEGALES
+   (Términos de Uso / Aviso de Privacidad)
+   Usa las variables ya definidas en styles.css
+   ======================================== */
+
+
+.legal-content {
+    max-width: 850px;
+    margin: 0 auto;
+}
+
+.legal-updated {
+    text-align: center;
+    font-size: 0.9rem;
+    color: var(--color-text-neutral);
+    opacity: 0.7;
+    margin-top: -2rem;
+    margin-bottom: 3rem;
+}
+
+.legal-content h2 {
+    font-family: var(--font-ui);
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid rgba(158, 27, 34, 0.1);
+}
+
+.legal-content h2:first-of-type {
+    margin-top: 0;
+}
+
+.legal-content p {
+    font-size: 1rem;
+    line-height: 1.8;
+    color: var(--color-text-neutral);
+    margin-bottom: 1.2rem;
+}
+
+.legal-content ul {
+    margin: 0 0 1.2rem 1.5rem;
+}
+
+.legal-content li {
+    font-size: 1rem;
+    line-height: 1.8;
+    color: var(--color-text-neutral);
+    margin-bottom: 0.5rem;
+}
+
+.legal-content strong {
+    color: var(--color-primary);
+}
+
+.legal-content a {
+    color: var(--color-primary);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.legal-content a:hover {
+    color: var(--color-primary-hover);
+    text-decoration: underline;
+}
+
+.legal-toc {
+    background-color: var(--color-canvas);
+    border: 1px solid rgba(158, 27, 34, 0.1);
+    border-radius: 8px;
+    padding: 1.5rem 2rem;
+    margin-bottom: 3rem;
+}
+
+.legal-toc h3 {
+    font-family: var(--font-ui);
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--color-text-neutral);
+    margin-bottom: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.legal-toc ol {
+    margin-left: 1.2rem;
+}
+
+.legal-toc li {
+    font-size: 0.95rem;
+    margin-bottom: 0.4rem;
+}
+
+.legal-toc a {
+    color: var(--color-text-neutral);
+    font-weight: 500;
+}
+
+.legal-toc a:hover {
+    color: var(--color-primary);
+}
+
+.legal-contact-box {
+    background: linear-gradient(135deg, rgba(158, 27, 34, 0.06) 0%, rgba(224, 167, 47, 0.06) 100%);
+    border-left: 4px solid var(--color-primary);
+    padding: 1.5rem 2rem;
+    border-radius: 6px;
+    margin-top: 2.5rem;
+}
+
+.legal-contact-box p {
+    margin-bottom: 0.4rem;
+}
+
+.legal-contact-box p:last-child {
+    margin-bottom: 0;
+}
+
+/* Links a Términos/Privacidad dentro del footer oscuro existente */
+.footer-legal-links {
+    margin-top: 0.5rem;
+}
+
+
+.footer-legal-links a:hover {
+    opacity: 1;
+}
+
+@media (max-width: 768px) {
+    .legal-content h2 {
+        font-size: 1.2rem;
+    }
+
+    .legal-toc,
+    .legal-contact-box {
+        padding: 1.25rem 1.5rem;
+    }
+}
+
+.avatar-note{
+    text-align: center; 
+    margin-top: 0.4rem;
+}
