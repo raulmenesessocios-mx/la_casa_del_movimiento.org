@@ -77,7 +77,7 @@ const userId = user.id;
             .eq('id', userId);
 
         if (error) throw error;
-        alert('✅ Perfil Superior actualizado correctamente');
+        await Modal.alert("el perfil se ha actializado con éxito.", "¡Éxito!");
     } catch (error) {
         console.error('Error al actualizar perfil Superior:', error);
         alert('❌ Error al actualizar perfil: ' + error.message);
