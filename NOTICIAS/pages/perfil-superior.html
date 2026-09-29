@@ -36,8 +36,9 @@
                     <li><a href="#gestionar-noticias" class="nav-link">Gestionar Noticias</a></li>
                     <li><a href="#gestionar-usuarios" class="nav-link">Gestionar Usuarios</a></li>
                     <li><a href="#ver-talleres" class="nav-link">Ver Talleres</a></li>
+                    <il><a href="#postulados" class="nav-link">postulados</a></il>
 
-                    <li><button class="logout-btn" onclick="logout()">Cerrar Sesión</button></li>
+                    <li><a class="logout-btn" onclick="logout()">Cerrar Sesión<a></li>
                 </ul>
             </nav>
         </aside>
@@ -338,6 +339,28 @@
                 </div>
             </section>
 
+            <section id="postulados"  class="section is-hidden">
+                <table class="postulaciones-table">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Postulante</th>
+                            <th>Taller Propuesto</th>
+                            <th>Disciplina</th>
+                            <th>Teléfono / Email</th>
+                            <th>Estado</th>
+                            <th>Curriculum</th> <!-- Nueva Columna -->
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabla-postulaciones-body">
+                        <tr>
+                            <td colspan="8" class="text-center">Cargando postulaciones...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
         </main>
     </div>
 
@@ -388,6 +411,7 @@
     <script src="../filesjs/js-superior/gestionar-noticias-superior.js"></script>
     <script src="../filesjs/js-superior/gestionar-usuarios-superior.js"></script>
     <script src="../filesjs/js-superior/ver-talleres-superior.js"></script>
+    <script src="../filesjs/js-superior/postulados-superior.js"></script>
 
     <!-- ORQUESTADOR PRINCIPAL -->
     <script src="../filesjs/js-superior/panel-superior.js"></script>
