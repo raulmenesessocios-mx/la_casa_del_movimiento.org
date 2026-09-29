@@ -1,11 +1,15 @@
-const headerStyle = "color: red; font-size: 36px; font-weight: bold; -webkit-text-stroke: 1px black;";
-const bodyStyle = "font-size: 14px; font-weight: bold;";
 
-console.log("%c¡Detente!", headerStyle);
-console.log(
-  "%cEsta función del navegador está pensada para desarrolladores. Si alguien te pidió copiar y pegar código aquí, se trata de una estafa.",
-  bodyStyle
-);
+if (typeof headerStyle === 'undefined') {
+  var headerStyle = "color: red; font-size: 36px; font-weight: bold; -webkit-text-stroke: 1px black;";
+  var bodyStyle = "font-size: 14px; font-weight: bold;";
+
+  console.log("%c¡Detente!", headerStyle);
+  console.log(
+    "%cEsta función del navegador está pensada para desarrolladores. Si alguien te pidió copiar y pegar código aquí, se trata de una estafa.",
+    bodyStyle
+  );
+}
+
 
 
 // noticias/filesjs/main.js

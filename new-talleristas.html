@@ -1,24 +1,29 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vacantes  | La Casa del Movimiento</title>
+    <title>Vacantes | La Casa del Movimiento</title>
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="icon" type="image/png" href="https://ilmkmivwhfjlvznrsgoc.supabase.co/storage/v1/object/public/IMAGENES/logo.ico">
-    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png"
+        href="https://ilmkmivwhfjlvznrsgoc.supabase.co/storage/v1/object/public/IMAGENES/logo.ico">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="CSS/styles.css">
-    <link rel="stylesheet" href=".css">
     <script src="NOTICIAS/filesjs/main.js"></script>
 </head>
+
 <body>
 
     <!-- Header / Navbar -->
     <header>
-        <a href="#" class="brand-logo" >
-            <img src="https://ilmkmivwhfjlvznrsgoc.supabase.co/storage/v1/object/public/IMAGENES/logo-icon.webp" alt="logo" class="ico-imagen">
+        <a href="index.html" class="brand-logo">
+            <img src="https://ilmkmivwhfjlvznrsgoc.supabase.co/storage/v1/object/public/IMAGENES/logo-icon.webp"
+                alt="logo" class="ico-imagen">
             <span>La Casa del Movimiento</span>
         </a>
         <nav>
@@ -29,149 +34,174 @@
     </header>
 
     <section class="leads-section section-padding">
-  <h2 class="leads-title">Bolsa de Trabajo para Talleristas</h2>
-  <p class="leads-subtitle">Únete a nuestro equipo docente y contribuye al desarrollo cultural de la comunidad.</p>
+        <h2 class="leads-title">Postulate como Talleristas</h2>
+        <p class="leads-subtitle">Únete a nuestro equipo docente y contribuye al desarrollo cultural de la comunidad.
+        </p>
 
-  <!-- Formulario configurado para envío multipart (Archivos PDF) -->
-  <form id="bolsa-trabajo-form" class="contact-form" action="/api/bolsa-trabajo" method="POST" enctype="multipart/form-data">
+        <!-- Formulario configurado para envío multipart (Archivos PDF) -->
+        <form id="bolsa-trabajo-form" class="contact-form" action="/api/bolsa-trabajo" method="POST"
+            enctype="multipart/form-data">
 
-    <!-- SECCIÓN 1: DATOS PERSONALES Y DE CONTACTO -->
-    <fieldset class="form-group-wrapper" style="border: none; margin-bottom: 2rem;">
-      <legend class="brand-heading" style="color: #FFFFFF; font-size: 1.25rem; font-weight: 700; margin-bottom: 1.5rem; width: 100%; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 0.5rem;">
-        1. Datos Personales
-      </legend>
+            <!-- SECCIÓN 1: DATOS PERSONALES Y DE CONTACTO -->
+            <fieldset class="form-group-wrapper" style="border: none; margin-bottom: 2rem;">
+                <legend class="brand-heading"
+                    style="color: #FFFFFF; font-size: 1.25rem; font-weight: 700; margin-bottom: 1.5rem; width: 100%; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 0.5rem;">
+                    1. Datos Personales
+                </legend>
 
-      <div class="form-group">
-        <label for="nombre_completo" class="taller-label">Nombre Completo *</label>
-        <input type="text" id="nombre_completo" name="nombre_completo" required placeholder="Ej. Ana Martínez">
-      </div>
+                <div class="form-group">
+                    <label for="nombre_completo" class="taller-label">Nombre Completo *</label>
+                    <input type="text" id="nombre_completo" name="nombre_completo" required
+                        placeholder="Ej. Ana Martínez">
+                </div>
 
-      <div class="form-group">
-        <label for="email" class="taller-label">Correo Electrónico *</label>
-        <input type="email" id="email" name="email" required placeholder="ejemplo@correo.com">
-      </div>
+                <div class="form-group">
+                    <label for="email" class="taller-label">Correo Electrónico *</label>
+                    <input type="email" id="email" name="email" required placeholder="ejemplo@correo.com">
+                </div>
 
-      <div class="form-group">
-        <label for="telefono" class="taller-label">Teléfono / WhatsApp *</label>
-        <input type="tel" id="telefono" name="telefono" required placeholder="5512345678">
-      </div>
+                <div class="form-group">
+                    <label for="telefono" class="taller-label">Teléfono / WhatsApp *</label>
+                    <input type="tel" id="telefono" name="telefono" required placeholder="5512345678">
+                </div>
 
-      <div class="form-group">
-        <label for="redes_sociales" class="taller-label">Portafolio / Redes Sociales</label>
-        <input type="url" id="redes_sociales" name="redes_sociales" placeholder="https://instagram.com/tu_usuario">
-      </div>
-    </fieldset>
+                <div class="form-group">
+                    <label for="redes_sociales" class="taller-label">Portafolio / Redes Sociales</label>
+                    <input type="url" id="redes_sociales" name="redes_sociales"
+                        placeholder="https://instagram.com/tu_usuario">
+                </div>
+            </fieldset>
 
-    <!-- SECCIÓN 2: PROPUESTA DEL TALLER Y EXPERIENCIA -->
-    <fieldset class="form-group-wrapper" style="border: none; margin-bottom: 2rem;">
-      <legend class="brand-heading" style="color: #FFFFFF; font-size: 1.25rem; font-weight: 700; margin-bottom: 1.5rem; width: 100%; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 0.5rem;">
-        2. Propuesta Formativa
-      </legend>
+            <!-- SECCIÓN 2: PROPUESTA DEL TALLER Y EXPERIENCIA -->
+            <fieldset class="form-group-wrapper" style="border: none; margin-bottom: 2rem;">
+                <legend class="brand-heading"
+                    style="color: #FFFFFF; font-size: 1.25rem; font-weight: 700; margin-bottom: 1.5rem; width: 100%; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 0.5rem;">
+                    2. Propuesta Formativa
+                </legend>
 
-      <div class="form-group">
-        <label for="titulo_taller" class="taller-label">Nombre del Taller Propuesto *</label>
-        <input type="text" id="titulo_taller" name="titulo_taller" required placeholder="Ej. Taller de Cerámica Tradicional">
-      </div>
+                <div class="form-group">
+                    <label for="titulo_taller" class="taller-label">Nombre del Taller Propuesto *</label>
+                    <input type="text" id="titulo_taller" name="titulo_taller" required
+                        placeholder="Ej. Taller de Cerámica Tradicional">
+                </div>
 
-      <div class="form-group">
-        <label for="area_cultural" class="taller-label">Disciplina Cultural *</label>
-        <select id="area_cultural" name="area_cultural" class="taller-selec" required style="color: var(--color-text-neutral);">
-          <option value="">-- Selecciona una disciplina --</option>
-          <option value="artes_visuales">Artes Visuales</option>
-          <option value="musica">Música</option>
-          <option value="danza">Danza</option>
-          <option value="teatro">Teatro</option>
-          <option value="literatura">Literatura / Escritura</option>
-          <option value="oficios">Oficios y Artesanías</option>
-        </select>
-      </div>
+                <div class="form-group">
+                    <label for="area_cultural" class="taller-label">Disciplina Cultural *</label>
+                    <select id="area_cultural" name="area_cultural" class="taller-selec" required
+                        style="color: var(--color-text-neutral);">
+                        <option value="">-- Selecciona una disciplina --</option>
+                        <option value="artes_visuales">Artes Visuales</option>
+                        <option value="musica">Música</option>
+                        <option value="danza">Danza</option>
+                        <option value="teatro">Teatro</option>
+                        <option value="literatura">Literatura / Escritura</option>
+                        <option value="oficios">Oficios y Artesanías</option>
+                    </select>
+                </div>
 
-      <div class="form-group">
-        <label for="nivel_taller" class="taller-label">Nivel *</label>
-        <select id="nivel_taller" name="nivel_taller" class="taller-selec" required style="color: var(--color-text-neutral);">
-          <option value="">-- Selecciona el nivel --</option>
-          <option value="principiante">Principiante / Introductorio</option>
-          <option value="intermedio">Intermedio</option>
-          <option value="avanzado">Avanzado</option>
-          <option value="multinivel">Multinivel / Todo público</option>
-        </select>
-      </div>
+                <div class="form-group">
+                    <label for="nivel_taller" class="taller-label">Nivel *</label>
+                    <select id="nivel_taller" name="nivel_taller" class="taller-selec" required
+                        style="color: var(--color-text-neutral);">
+                        <option value="">-- Selecciona el nivel --</option>
+                        <option value="principiante">Principiante / Introductorio</option>
+                        <option value="intermedio">Intermedio</option>
+                        <option value="avanzado">Avanzado</option>
+                        <option value="multinivel">Multinivel / Todo público</option>
+                    </select>
+                </div>
 
-      <div class="form-group">
-        <label for="anios_experiencia" class="taller-label">Años de Experiencia *</label>
-        <input type="number" id="anios_experiencia" name="anios_experiencia" min="0" max="50" required placeholder="Ej. 3">
-      </div>
+                <div class="form-group">
+                    <label for="anios_experiencia" class="taller-label">Años de Experiencia *</label>
+                    <input type="number" id="anios_experiencia" name="anios_experiencia" min="0" max="50" required
+                        placeholder="Ej. 3">
+                </div>
 
-      <div class="form-group" style="grid-column: span 2;">
-        <label for="descripcion_taller" class="taller-label">Objetivos del Taller *</label>
-        <textarea id="descripcion_taller" name="descripcion_taller" rows="3" required placeholder="Resume de forma breve los temas clave y metas del taller..."></textarea>
-      </div>
+                <div class="form-group" style="grid-column: span 2;">
+                    <label for="descripcion_taller" class="taller-label">Objetivos del Taller *</label>
+                    <textarea id="descripcion_taller" name="descripcion_taller" rows="3" required
+                        placeholder="Resume de forma breve los temas clave y metas del taller..."></textarea>
+                </div>
 
-      <div class="form-group" style="grid-column: span 2;">
-        <label for="requerimientos" class="taller-label">Requerimientos de Espacio y Materiales</label>
-        <textarea id="requerimientos" name="requerimientos" rows="2" placeholder="Ej. Mesas amplias, proyector, espejos, toma de agua..."></textarea>
-      </div>
-    </fieldset>
+                <div class="form-group" style="grid-column: span 2;">
+                    <label for="requerimientos" class="taller-label">Requerimientos de Espacio y Materiales</label>
+                    <textarea id="requerimientos" name="requerimientos" rows="2"
+                        placeholder="Ej. Mesas amplias, proyector, espejos, toma de agua..."></textarea>
+                </div>
+            </fieldset>
 
-    <!-- SECCIÓN 3: APOYO COMUNITARIO (STAFF Y EVENTOS) -->
-    <fieldset class="form-group-wrapper" style="border: none; margin-bottom: 2rem;">
-      <legend class="brand-heading" style="color: #FFFFFF; font-size: 1.25rem; font-weight: 700; margin-bottom: 1.5rem; width: 100%; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 0.5rem;">
-        3. Apoyo a Eventos Comunitarios
-      </legend>
+            <!-- SECCIÓN 3: APOYO COMUNITARIO (STAFF Y EVENTOS) -->
+            <fieldset class="form-group-wrapper" style="border: none; margin-bottom: 2rem;">
+                <legend class="brand-heading"
+                    style="color: #FFFFFF; font-size: 1.25rem; font-weight: 700; margin-bottom: 1.5rem; width: 100%; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 0.5rem;">
+                    3. Apoyo a Eventos Comunitarios
+                </legend>
 
-      <div class="form-group" style="grid-column: span 2;">
-        <label class="taller-label">¿Disponibilidad para colaborar como Staff en eventos culturales?</label>
-        <div style="display: flex; gap: 2rem; margin-top: 0.5rem; font-size: 0.95rem;">
-          <label style="cursor: pointer; display: flex; align-items: center; gap: 0.5rem;">
-            <input type="radio" id="apoyo_si" name="disponibilidad_apoyo" value="si" required> Sí, con gusto
-          </label>
-          <label style="cursor: pointer; display: flex; align-items: center; gap: 0.5rem;">
-            <input type="radio" id="apoyo_no" name="disponibilidad_apoyo" value="no"> No por el momento
-          </label>
-        </div>
-      </div>
+                <div class="form-group" style="grid-column: span 2;">
+                    <label class="taller-label">¿Disponibilidad para colaborar como Staff en eventos culturales?</label>
+                    <div style="display: flex; gap: 2rem; margin-top: 0.5rem; font-size: 0.95rem;">
+                        <label style="cursor: pointer; display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="radio" id="apoyo_si" name="disponibilidad_apoyo" value="si" required> Sí, con
+                            gusto
+                        </label>
+                        <label style="cursor: pointer; display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="radio" id="apoyo_no" name="disponibilidad_apoyo" value="no"> No por el momento
+                        </label>
+                    </div>
+                </div>
 
-      <div class="form-group" style="grid-column: span 2;">
-        <label class="taller-label">Áreas de interés para apoyo:</label>
-        <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.5rem;">
-          <label style="cursor: pointer; font-weight: normal; display: flex; align-items: center; gap: 0.5rem;">
-            <input type="checkbox" name="areas_apoyo[]" value="logistica"> Logística y montaje de eventos
-          </label>
-          <label style="cursor: pointer; font-weight: normal; display: flex; align-items: center; gap: 0.5rem;">
-            <input type="checkbox" name="areas_apoyo[]" value="administracion"> Registro y atención al público
-          </label>
-          <label style="cursor: pointer; font-weight: normal; display: flex; align-items: center; gap: 0.5rem;">
-            <input type="checkbox" name="areas_apoyo[]" value="difusion"> Difusión y registro audiovisual
-          </label>
-        </div>
-      </div>
-    </fieldset>
+                <div class="form-group" style="grid-column: span 2;">
+                    <label class="taller-label">Áreas de interés para apoyo:</label>
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.5rem;">
+                        <label
+                            style="cursor: pointer; font-weight: normal; display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" name="areas_apoyo[]" value="logistica"> Logística y montaje de
+                            eventos
+                        </label>
+                        <label
+                            style="cursor: pointer; font-weight: normal; display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" name="areas_apoyo[]" value="administracion"> Registro y atención al
+                            público
+                        </label>
+                        <label
+                            style="cursor: pointer; font-weight: normal; display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" name="areas_apoyo[]" value="difusion"> Difusión y registro
+                            audiovisual
+                        </label>
+                    </div>
+                </div>
+            </fieldset>
 
-    <!-- SECCIÓN 4: DOCUMENTACIÓN (.PDF ÚNICAMENTE) -->
-    <fieldset class="form-group-wrapper" style="border: none; margin-bottom: 2rem;">
-      <legend class="brand-heading" style="color: #FFFFFF; font-size: 1.25rem; font-weight: 700; margin-bottom: 1.5rem; width: 100%; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 0.5rem;">
-        4. Documentos (Solo formato PDF)
-      </legend>
+            <!-- SECCIÓN 4: DOCUMENTACIÓN (.PDF ÚNICAMENTE) -->
+            <fieldset class="form-group-wrapper" style="border: none; margin-bottom: 2rem;">
+                <legend class="brand-heading"
+                    style="color: #FFFFFF; font-size: 1.25rem; font-weight: 700; margin-bottom: 1.5rem; width: 100%; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 0.5rem;">
+                    4. Documentos (Solo formato PDF)
+                </legend>
 
-      <div class="form-group">
-        <label for="cv_pdf" class="taller-label">Curriculum Vitae (.pdf) *</label>
-        <input type="file" id="cv_pdf" name="cv_pdf" accept="application/pdf" class="taller-selec" required style="background: #FFFFFF;">
-        <p class="avatar-note" style="color: rgba(255,255,255,0.8); text-align: left; font-size: 0.8rem;">Obligatorio. Máx 10MB.</p>
-      </div>
+                <div class="form-group">
+                    <label for="cv_pdf" class="taller-label">Curriculum Vitae (.pdf) *</label>
+                    <input type="file" id="cv_pdf" name="cv_pdf" accept="application/pdf" class="taller-selec" required
+                        style="background: #FFFFFF;">
+                    <p class="avatar-note" style="color: rgba(255,255,255,0.8); text-align: left; font-size: 0.8rem;">
+                        Obligatorio. Máx 10MB.</p>
+                </div>
+            </fieldset>
 
-      <div class="form-group">
-        <label for="propuesta_pdf" class="taller-label">Propuesta o Portafolio (.pdf)</label>
-        <input type="file" id="propuesta_pdf" name="propuesta_pdf" accept="application/pdf" class="taller-selec" style="background: #FFFFFF;">
-        <p class="avatar-note" style="color: rgba(255,255,255,0.8); text-align: left; font-size: 0.8rem;">Opcional. Sílabo o programa de clase.</p>
-      </div>
-    </fieldset>
+            <!-- ACCIÓN DE ENVÍO -->
+            <button type="submit" class="btn btn-submit">Enviar Postulación</button>
+            <p class="form-disclaimer">Tus datos serán tratados conforme a nuestro aviso de privacidad de La Casa del
+                Movimiento.</p>
+        </form>
+    </section>
 
-    <!-- ACCIÓN DE ENVÍO -->
-    <button type="submit" class="btn btn-submit">Enviar Postulación</button>
-    <p class="form-disclaimer">Tus datos serán tratados conforme a nuestro aviso de privacidad de La Casa del Movimiento.</p>
-  </form>
-</section>
-
-
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <script src="NOTICIAS/filesjs/js-login/supabase-config.js"></script>
+    
+    <script src="NOTICIAS/filesjs/main.js"></script>
+    
+    <script src="js/jsprincipal/new-tallerista.js"></script>
 </body>
+
 </html>
