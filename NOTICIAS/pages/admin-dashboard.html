@@ -41,6 +41,7 @@
                     <li><a href="#crear-taller" class="nav-link">Crear Taller</a></li>
                     <li><a href="#gestionar-noticias" class="nav-link">Gestionar Noticias</a></li>
                     <li><a href="#gestionar-talleres" class="nav-link">Gestionar Talleres</a></li>
+                    <li><a href="#interesados" class="nav-link" >interesados</a></li>
                     <li><a href="#gestionar-usuarios" class="nav-link">Gestionar Usuarios</a></li>
                     <li><a href="#postulados" class="nav-link">Postulaciones</a></li>
                     <li><button class="logout-btn" onclick="logout()">Cerrar Sesión</button></li>
@@ -358,13 +359,41 @@
                 </div>
             </section>
 
-            <!-- GESTIONAR NOTICIAS -->
+            <!--GESTIONAR NOTICIAS-->
             <section id="gestionar-noticias" class="section" style="display: none;">
                 <div class="card">
-                    <h2 class="card-title">Gestionar Noticias</h2>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <h2 class="card-title" style="margin: 0;">Gestionar Noticias</h2>
+                        <!-- BOTÓN PARA ABRIR MODAL DE NUEVA CATEGORÍA -->
+                        <button type="button" class="btn-tabla btn-publicar" onclick="abrirModalCategoria()">
+                            + Nueva Categoría
+                        </button>
+                    </div>
 
                     <div id="noticiasAdminList">
                         <p>Cargando...</p>
+                    </div>
+                </div>
+
+                <!-- MODAL PARA AGREGAR NUEVA CATEGORÍA -->
+                <div id="nuevaCategoriaModal" class="modal-overlay" style="display: none;">
+                    <div class="modal-content" style="max-width: 450px;">
+                        <div class="modal-header">
+                            <h3>Agregar Nueva Categoría</h3>
+                            <button type="button" class="btn-cerrar-modal" onclick="cerrarModalCategoria()">&times;</button>
+                        </div>
+
+                        <form id="nuevaCategoriaForm" style="display: flex; flex-direction: column; gap: 1rem; padding: 1rem;">
+                            <div class="form-group">
+                                <label for="nombreNuevaCategoria">Nombre de la Categoría</label>
+                                <input type="text" id="nombreNuevaCategoria" class="form-control" placeholder="Ej. Teatro y Literatura" required>
+                            </div>
+
+                            <div class="modal-footer" style="margin-top: 1rem;">
+                                <button type="button" class="btn-tabla btn-editar" onclick="cerrarModalCategoria()">Cancelar</button>
+                                <button type="submit" class="btn-tabla btn-publicar">Guardar Categoria</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
 
@@ -373,14 +402,11 @@
                     <div class="modal-content">
                         <div class="modal-header">
                             <h3>Editar Noticia (Administración)</h3>
-                            <button type="button" class="btn-cerrar-modal"
-                                onclick="cerrarModalEditar()">&times;</button>
+                            <button type="button" class="btn-cerrar-modal" onclick="cerrarModalEditar()">&times;</button>
                         </div>
 
-                        <form id="editarNoticiaForm"
-                            style="display: flex; flex-direction: column; overflow: hidden; height: 100%;">
+                        <form id="editarNoticiaForm" style="display: flex; flex-direction: column; overflow: hidden; height: 100%;">
                             <div class="modal-body-form">
-                                <!-- Campos Ocultos -->
                                 <input type="hidden" id="editNoticiaId">
                                 <input type="hidden" id="editImagenIdActual">
 
@@ -391,40 +417,20 @@
 
                                 <div class="form-group">
                                     <label for="editNoticiaCategoria">Categoría</label>
-                                    <select id="editNoticiaCategoria" class="form-control">
-                                        <option value="reflexiones">Reflexiones</option>
-                                        <option value="cronicas-eventos">Crónicas de Eventos</option>
+                                    <!-- SELECT DINÁMICO (Carga IDs reales de la DB) -->
+                                    <select id="editNoticiaCategoria" class="form-control" required>
+                                        <option value="">Cargando categorías...</option>
                                     </select>
                                 </div>
 
-                                <!--
-                            <div class="form-group">
-                                <label for="editNoticiaImagen">Actualizar imagen (.webp opcional)</label>
-                                <input type="file" id="editNoticiaImagen" accept="image/webp" class="form-control">
-                            </div>-->
-
                                 <div class="form-group">
-                                    <label> Imagen de la Noticia</label>
-
+                                    <label>Imagen de la Noticia</label>
                                     <div class="image-uploader-container">
-                                        <!-- Previsualización centrada con ID dinámico -->
-                                        <img id="editNoticiaImagenPreview"
-                                            src="https://placehold.co/600x400?text=Sin+Imagen"
-                                            class="image-preview-custom" alt="Imagen del la noticia">
-
-                                        <!-- Input nativo oculto -->
-                                        <input type="file" id="editNoticiaImagen" class="input-file-hidden"
-                                            accept="image/webp" onchange="previeweditNoticiaImagenImagen(event)">
-
-                                        <!-- Botón estilizado mediante el label con icono -->
-                                        <label for="editNoticiaImagen" class="btn-upload-label">
-                                            Remplazar imagen (.webp)
-                                        </label>
+                                        <img id="editNoticiaImagenPreview" src="https://placehold.co/600x400?text=Sin+Imagen" class="image-preview-custom" alt="Imagen de la noticia">
+                                        <input type="file" id="editNoticiaImagen" class="input-file-hidden" accept="image/webp" onchange="previeweditNoticiaImagenImagen(event)">
+                                        <label for="editNoticiaImagen" class="btn-upload-label">Reemplazar imagen (.webp)</label>
                                     </div>
-
-                                    <p class="avatar-note text-center" >
-                                        Solo se permiten imágenes en formato <strong>.webp</strong>
-                                    </p>
+                                    <p class="avatar-note text-center">Solo se permiten imágenes en formato <strong>.webp</strong></p>
                                 </div>
 
                                 <div class="form-group">
@@ -438,24 +444,18 @@
                                 </div>
 
                                 <div class="form-checkboxes">
-                                    <label>
-                                        <input type="checkbox" id="editNoticiaPublicado"> Publicado
-                                    </label>
-                                    <label>
-                                        <input type="checkbox" id="editNoticiaDestacada"> ⭐ Destacada
-                                    </label>
+                                    <label><input type="checkbox" id="editNoticiaPublicado"> Publicado</label>
+                                    <label><input type="checkbox" id="editNoticiaDestacada"> ⭐ Destacada</label>
                                 </div>
                             </div>
 
                             <div class="modal-footer">
-                                <button type="button" class="btn-tabla btn-editar"
-                                    onclick="cerrarModalEditar()">Cancelar</button>
+                                <button type="button" class="btn-tabla btn-editar" onclick="cerrarModalEditar()">Cancelar</button>
                                 <button type="submit" class="btn-tabla btn-publicar">Guardar Cambios</button>
                             </div>
                         </form>
                     </div>
                 </div>
-
             </section>
 
             <!-- GESTIONAR TALLERES -->
@@ -465,6 +465,29 @@
 
                     <div id="talleresAdminList">
                         <p>Cargando...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECCIÓN: INTERESADOS -->
+            <section id="interesados" class="section" style="display: none;" >
+                <div class="card">
+                    <h2 class="card-title">Personas Interesadas a los talleres</h2>
+                    <div id="interesadosList">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Nombre</th>
+                                    <th>Email</th>
+                                    <th>Teléfono</th>
+                                    <th>Taller</th>
+                                </tr>
+                            </thead>
+                            <tbody id="interesadosTablaBodyadmin">
+                                <tr><td colspan="5" >Cargando interesados...</td></tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </section>
@@ -549,7 +572,8 @@
                 </div>
 
             </section>
-
+        
+            <!--gestiom de postulaciones-->
             <section id="postulados"  class="section" style="display: none;">
                 <table class="postulaciones-table">
                     <thead>
@@ -589,6 +613,7 @@
     <script src="../filesjs/js-admin/crear-taller.js"></script>
     <script src="../filesjs/js-admin/gestionar-noticias.js"></script>
     <script src="../filesjs/js-admin/gestionar-talleres.js"></script>
+    <script src="../filesjs/js-admin/interesados.js"></script>
     <script src="../filesjs/js-admin/gestionar-usuarios.js"></script>
     <script src="../filesjs/js-admin/postulaciones.js"></script>
 

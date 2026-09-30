@@ -28,8 +28,8 @@
                     <li><a href="#perfil" class="nav-link active">Mi Perfil</a></li>
                     <li><a href="#mi-taller" class="nav-link">Mi Taller</a></li>
                     <li><a href="#interesados" class="nav-link">Interesados</a></li>
-                    <li><a href="#mis-noticias" class="nav-link">Mis Noticias</a></li>
                     <li><a href="#crear-noticia" class="nav-link">Crear Noticia</a></li>
+                    <li><a href="#mis-noticias" class="nav-link">Mis Noticias</a></li>
                     <li><button class="logout-btn" onclick="logout()">Cerrar Sesión</button></li>
                 </ul>
             </nav>
@@ -148,7 +148,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label>Próxima Sesión</label>
+                            <label>Inicio del taller</label>
                             <input type="datetime-local" id="miTallerProximaSesion" required>
                         </div>
 
@@ -210,16 +210,6 @@
                 </div>
             </section>
 
-            <!-- SECCIÓN: MIS NOTICIAS -->
-            <section id="mis-noticias" class="section" style="display: none;">
-                <div class="card">
-                    <h2 class="card-title">Mis Noticias</h2>
-                    <div id="noticiasGrid" class="card-grid">
-                        <p>Cargando...</p>
-                    </div>
-                </div>
-            </section>
-
             <!-- SECCIÓN: CREAR NOTICIA -->
             <section id="crear-noticia" class="section" style="display: none;">
                 <div class="card">
@@ -227,54 +217,42 @@
                     
                     <form id="crearNoticiaForm" class="form">
                         <div class="form-group">
-                            <label>Título</label>
+                            <label for="noticiaTitle">Título</label>
                             <input type="text" id="noticiaTitle" placeholder="Título de la noticia" required>
                         </div>
 
                         <div class="form-group">
-                            <label>Resumen (preview)</label>
+                            <label for="noticiaResumen">Resumen (preview)</label>
                             <textarea id="noticiaResumen" placeholder="Breve resumen..." required></textarea>
                         </div>
 
                         <div class="form-group">
-                            <label>Contenido</label>
+                            <label for="noticiaCuerpo">Contenido</label>
                             <textarea id="noticiaCuerpo" placeholder="Contenido completo..." required></textarea>
                         </div>
 
                         <div class="form-group">
-                            <label>Categoría</label>
-                            <select id="noticiaCategoria" required>
-                                <option value="">Selecciona una categoría</option>
-                                <option value="reflexiones">Reflexiones</option>
-                                <option value="cronicas-eventos">Crónicas de Eventos</option>
+                            <label for="noticiaCategoria">Categoría</label>
+                            <!-- SELECT DINÁMICO: Se puebla directamente desde la base de datos -->
+                            <select id="noticiaCategoria" class="form-control" required>
+                                <option value="">Cargando categorías...</option>
                             </select>
                         </div>
 
-                        <!--
                         <div class="form-group">
-                            <label>Imagen Promocional (.webp)</label>
-                            <input type="file" id="noticiaImagen" accept=".webp,image/webp">
-                            <p class="avatar-note">Solo se permiten imágenes en formato <strong>.webp</strong></p>
-                        </div>-->
-
-                        <div class="form-group">
-                            <label>Imagen de la  Noticia</label>
-                            
+                            <label>Imagen de la Noticia</label>
                             <div class="image-uploader-container">
-                                <!-- Previsualización centrada con ID dinámico -->
                                 <img id="noticiaImagenPreview" 
                                     src="https://placehold.co/600x400?text=Sin+Imagen"  
                                     class="image-preview-custom"
                                     alt="Imagen de la noticia">
 
-                                <!-- Input nativo oculto -->
                                 <input type="file" 
                                     id="noticiaImagenFile" 
                                     class="input-file-hidden" 
                                     accept="image/webp" 
                                     onchange="previewnoticiaImagen(event)">
 
-                                <!-- Botón estilizado mediante el label con icono -->
                                 <label for="noticiaImagenFile" class="btn-upload-label">
                                     Asignar imagen (.webp)
                                 </label>
@@ -296,6 +274,17 @@
                     </form>
                 </div>
             </section>
+
+            <!-- SECCIÓN: MIS NOTICIAS -->
+            <section id="mis-noticias" class="section" style="display: none;">
+                <div class="card">
+                    <h2 class="card-title">Mis Noticias</h2>
+                    <div id="noticiasGrid" class="card-grid">
+                        <p>Cargando...</p>
+                    </div>
+                </div>
+            </section>
+
         </main>
     </div>
 

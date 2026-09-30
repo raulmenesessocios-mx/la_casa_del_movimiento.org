@@ -220,7 +220,9 @@ async function deleteUsuario(userId, nombre) {
         alert('❌ Error al eliminar usuario: ' + error.message);
     }
 }
-function previewcreatenoticiaImagen(event) {
+
+
+function previewusuarioFotoImagen(event) {
     const file = event.target.files[0];
     if (!file) return;
 
