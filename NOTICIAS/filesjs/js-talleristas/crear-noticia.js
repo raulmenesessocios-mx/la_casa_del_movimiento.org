@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Carga inicial de categorías desde DB
     cargarCategoriasCrearNoticia();
 
     const form = document.getElementById('crearNoticiaForm');
@@ -16,7 +15,7 @@ function getSupabaseClient() {
     return window.supabaseClient || window.dbClient;
 }
 
-// 1. CARGA DINÁMICA DE CATEGORÍAS
+// 1. CARGA DINÁMICA DE CATEGORÍAS DE LA DB
 async function cargarCategoriasCrearNoticia() {
     const selectCategoria = document.getElementById('noticiaCategoria');
     const client = getSupabaseClient();
@@ -35,7 +34,7 @@ async function cargarCategoriasCrearNoticia() {
 
         (categorias || []).forEach(cat => {
             const option = document.createElement('option');
-            option.value = cat.id; // Almacenamos el UUID real de la DB
+            option.value = cat.id; // Asigna UUID directo
             option.textContent = cat.nombre;
             selectCategoria.appendChild(option);
         });
@@ -45,13 +44,13 @@ async function cargarCategoriasCrearNoticia() {
     }
 }
 
-// 2. PREVISUALIZACIÓN DE IMAGEN
-function previewnoticiaImagen(event) {
+// 2. PREVISUALIZACIÓN DE IMAGEN LOCAL
+async function previewnoticiaImagen(event) {
     const file = event.target.files[0];
     if (!file) return;
 
     if (file.type !== 'image/webp') {
-        alert('⚠️ Solo se permiten imágenes en formato .webp');
+        await Modal.alert('Solo se permiten imágenes en formato .webp', 'Formato no permitido');
         event.target.value = '';
         return;
     }
@@ -64,7 +63,7 @@ function previewnoticiaImagen(event) {
     reader.readAsDataURL(file);
 }
 
-// 3. PERSISTENCIA DE LA NOTICIA EN REVISIÓN
+// 3. FLUJO COMPLETO DE CREACIÓN (STORAGE + DB)
 async function createNoticiaTallerista() {
     try {
         const client = getSupabaseClient();
@@ -73,11 +72,11 @@ async function createNoticiaTallerista() {
         const { data: { user } } = await client.auth.getUser();
 
         if (!user) {
-            alert('⚠️ Debes iniciar sesión para publicar.');
+            await Modal.alert('Debes iniciar sesión para publicar.', 'Sesión requerida');
             return;
         }
 
-        // Obtener el ID del autor asociado al usuario autenticado
+        // Obtener ID del autor autenticado
         const { data: autor, error: autorErr } = await client
             .from('autores')
             .select('id')
@@ -85,7 +84,7 @@ async function createNoticiaTallerista() {
             .single();
 
         if (autorErr || !autor) {
-            alert('⚠️ No se encontró la ficha de autor asociada a tu cuenta.');
+            await Modal.alert('No se encontró la ficha de autor asociada a tu cuenta.', 'Error de Autor');
             return;
         }
 
@@ -94,13 +93,52 @@ async function createNoticiaTallerista() {
         const cuerpo = document.getElementById('noticiaCuerpo')?.value.trim();
         const categoryVal = document.getElementById('noticiaCategoria')?.value;
         const destacada = document.getElementById('noticiaDedicada')?.checked || false;
+        
+        // Input del archivo
+        const fileInput = document.getElementById('noticiaImagenFile');
+        const file = fileInput ? fileInput.files[0] : null;
 
         if (!titulo || !resumen || !cuerpo || !categoryVal) {
-            alert('⚠️ Por favor completa todos los campos requeridos.');
+            await Modal.alert('Por favor completa todos los campos requeridos.', 'Campos incompletos');
             return;
         }
 
-        // Resolver ID de la Categoría (Maneja UUID directo o Fallback por Slug)
+        // A. PROCESAMIENTO Y SUBIDA DE LA IMAGEN
+        let imagenId = null;
+
+        if (file) {
+            if (file.type !== 'image/webp') {
+                await Modal.alert('La imagen debe estar en formato .webp', 'Formato no permitido');
+                return;
+            }
+
+            const fileName = `noticia-${Date.now()}.webp`;
+            const filePath = `noticias/${fileName}`;
+
+            // 1. Cargar imagen al bucket de Storage
+            const { error: uploadErr } = await client.storage
+                .from('IMAGENES')
+                .upload(filePath, file, { upsert: true, contentType: 'image/webp' });
+
+            if (uploadErr) throw uploadErr;
+
+            // 2. Extraer URL pública
+            const { data: publicUrlData } = client.storage
+                .from('IMAGENES')
+                .getPublicUrl(filePath);
+
+            // 3. Crear registro en la tabla "imagenes" para obtener su UUID
+            const { data: imgRecord, error: imgErr } = await client
+                .from('imagenes')
+                .insert({ url: publicUrlData.publicUrl, alt_texto: `Imagen noticia: ${titulo}` })
+                .select('id')
+                .single();
+
+            if (imgErr) throw imgErr;
+            imagenId = imgRecord.id;
+        }
+
+        // B. RESOLVER CATEGORIA_ID
         let targetCategoriaId = categoryVal;
         const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(categoryVal);
 
@@ -115,7 +153,7 @@ async function createNoticiaTallerista() {
             targetCategoriaId = catData.id;
         }
 
-        // Inserción del registro con estado 'en_revision'
+        // C. INSERCIÓN DE LA NOTICIA VINCULADA AL IMAGEN_ID
         const { error: insertErr } = await client
             .from('noticias')
             .insert({
@@ -124,6 +162,7 @@ async function createNoticiaTallerista() {
                 cuerpo,
                 autor_id: autor.id,
                 categoria_id: targetCategoriaId,
+                imagen_id: imagenId, // Se asigna la clave foránea procesada
                 publicado: false,
                 estado: 'en_revision',
                 destacada
@@ -131,21 +170,20 @@ async function createNoticiaTallerista() {
 
         if (insertErr) throw insertErr;
 
-        alert('📩 Noticia enviada a revisión exitosamente.');
+        await Modal.alert('Noticia enviada a revisión exitosamente.', 'Éxito');
         
-        // Reset de formulario e imagen
+        // Reset de interfaz
         const form = document.getElementById('crearNoticiaForm');
         if (form) form.reset();
 
         const preview = document.getElementById('noticiaImagenPreview');
         if (preview) preview.src = 'https://placehold.co/600x400?text=Sin+Imagen';
 
-        // Recargar el listado propio si existe la función de callback
         if (typeof loadMyNoticias === 'function') {
             loadMyNoticias(autor.id);
         }
     } catch (error) {
         console.error('❌ Error al crear noticia:', error);
-        alert('❌ Error al enviar noticia: ' + error.message);
+        await Modal.alert('Error al enviar noticia: ' + error.message, 'Error');
     }
 }

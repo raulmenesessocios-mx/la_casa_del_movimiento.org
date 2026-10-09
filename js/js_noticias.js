@@ -56,7 +56,7 @@ async function fetchAndRenderPublicNoticias() {
         const imgPrincipal = principal.imagenes?.url || 'https://via.placeholder.com/600x350?text=Noticia';
 
         featuredContainer.innerHTML = `
-            <article class="news-card news-card-featured" data-category="${principal.categorias?.slug || 'reflexiones'}">
+            <article class="news-card news-card-featured" data-id="${principal.id}" data-category="${principal.categorias?.slug || 'reflexiones'}" style="cursor: pointer;">
                 <div class="news-card-image">
                     <img src="${imgPrincipal}" alt="${principal.titulo}" loading="lazy">
                 </div>
@@ -80,7 +80,7 @@ async function fetchAndRenderPublicNoticias() {
             const imgSec = item.imagenes?.url || 'https://via.placeholder.com/300x180?text=Noticia';
 
             return `
-                <article class="news-card news-card-compact" data-category="${item.categorias?.slug || 'reflexiones'}">
+                <article class="news-card news-card-compact" data-id="${item.id}" data-category="${item.categorias?.slug || 'reflexiones'}" style="cursor: pointer;">
                     <div class="news-card-image-small">
                         <img src="${imgSec}" alt="${item.titulo}" loading="lazy">
                     </div>
@@ -101,17 +101,21 @@ async function fetchAndRenderPublicNoticias() {
         console.error('Error cargando noticias:', error);
     }
 }
+
 // Lógica de apertura del Modal
 function setupModalEvents() {
     const modal = document.getElementById('newsDetailModal');
     const closeBtn = document.getElementById('closeNewsModal');
     const overlay = document.querySelector('.news-modal-overlay');
 
-    // Escuchar clics en los botones "Leer más"
+    // Escuchar clics en toda la tarjeta (.news-card)
     document.addEventListener('click', (e) => {
-        if (e.target.classList.contains('btn-open-modal')) {
-            const id = e.target.getAttribute('data-id');
-            openModalWithNews(id);
+        const card = e.target.closest('.news-card');
+        if (card) {
+            const id = card.getAttribute('data-id');
+            if (id) {
+                openModalWithNews(id);
+            }
         }
     });
 

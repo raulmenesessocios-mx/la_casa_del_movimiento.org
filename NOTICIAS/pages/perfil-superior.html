@@ -359,29 +359,57 @@
         </main>
     </div>
 
+
     <!-- MODAL DE EDICIÓN DE NOTICIA SUPERIOR -->
     <div id="modalEditarNoticiaSuperior" class="modal-overlay is-hidden" >
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Editar Noticia (Superior)</h3>
+                <h3>Editar Noticia (Administración Superior)</h3>
                 <button type="button" class="btn-cerrar-modal" onclick="cerrarModalEditarNoticiaSuperior()">&times;</button>
             </div>
-            
-            <form id="editarNoticiaFormSuperior" onsubmit="guardarEdicionNoticiaSuperior(event)" class="edit-not-title">
+
+            <form id="editarNoticiaFormSuperior" onsubmit="guardarEdicionNoticiaSuperior(event)" style="display: flex; flex-direction: column; overflow: hidden; height: 100%;">
                 <div class="modal-body-form">
+                    <!-- CAMPOS OCULTOS -->
+                    <input type="hidden" id="editNoticiaIdSuperior">
+                    <input type="hidden" id="editImagenIdActualSuperior">
+
                     <div class="form-group">
                         <label for="editNoticiaTituloSuperior">Título</label>
-                        <input type="text" id="editNoticiaTituloSuperior" required>
+                        <input type="text" id="editNoticiaTituloSuperior" class="form-control" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="editNoticiaCategoriaSuperior">Categoría</label>
+                        <!-- SELECT DINÁMICO (Carga IDs reales de la DB) -->
+                        <select id="editNoticiaCategoriaSuperior" class="form-control" required>
+                            <option value="">Cargando categorías...</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Imagen de la Noticia</label>
+                        <div class="image-uploader-container">
+                            <img id="editNoticiaImagenPreviewSuperior" src="https://placehold.co/600x400?text=Sin+Imagen" class="image-preview-custom" alt="Imagen de la noticia">
+                            <input type="file" id="editNoticiaImagenSuperior" class="input-file-hidden" accept="image/webp" onchange="previewNoticiaImagenSuperior(event)">
+                            <label for="editNoticiaImagenSuperior" class="btn-upload-label">Reemplazar imagen (.webp)</label>
+                        </div>
+                        <p class="avatar-note text-center">Solo se permiten imágenes en formato <strong>.webp</strong></p>
                     </div>
 
                     <div class="form-group">
                         <label for="editNoticiaResumenSuperior">Resumen</label>
-                        <textarea id="editNoticiaResumenSuperior" rows="3" required></textarea>
+                        <textarea id="editNoticiaResumenSuperior" class="form-control" rows="3" required></textarea>
                     </div>
 
                     <div class="form-group">
-                        <label for="editNoticiaCuerpoSuperior">Cuerpo de la Noticia</label>
-                        <textarea id="editNoticiaCuerpoSuperior" rows="6" required></textarea>
+                        <label for="editNoticiaCuerpoSuperior">Cuerpo de la noticia</label>
+                        <textarea id="editNoticiaCuerpoSuperior" class="form-control" rows="6" required></textarea>
+                    </div>
+
+                    <div class="form-checkboxes">
+                        <label><input type="checkbox" id="editNoticiaPublicadoSuperior"> Publicado</label>
+                        <label><input type="checkbox" id="editNoticiaDestacadaSuperior"> ⭐ Destacada</label>
                     </div>
                 </div>
 

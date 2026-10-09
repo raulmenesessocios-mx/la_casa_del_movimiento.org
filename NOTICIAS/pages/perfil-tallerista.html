@@ -95,7 +95,7 @@
             </section>
 
             <!-- SECCIÓN: MI TALLER -->
-            <section id="mi-taller" class="section" style="display: none;">
+            <section id="mi-taller" class="section is-hidden" >
                 <div class="card">
                     <h2 class="card-title">Mi Taller a Cargo</h2>
                     
@@ -201,7 +201,7 @@
             </section>
 
             <!-- SECCIÓN: INTERESADOS -->
-            <section id="interesados" class="section" style="display: none;">
+            <section id="interesados" class="section is-hidden" >
                 <div class="card">
                     <h2 class="card-title">Personas Interesadas en mi Taller</h2>
                     <div id="interesadosList">
@@ -211,7 +211,7 @@
             </section>
 
             <!-- SECCIÓN: CREAR NOTICIA -->
-            <section id="crear-noticia" class="section" style="display: none;">
+            <section id="crear-noticia" class="section is-hidden" >
                 <div class="card">
                     <h2 class="card-title">Crear Nueva Noticia</h2>
                     
@@ -263,10 +263,14 @@
                             </p>
                         </div>
 
-                        <div class="form-group">
-                            <label>
-                                <input type="checkbox" id="noticiaDedicada">
-                                Marcar como destacada (aparecerá en grande)
+                        <div class="form-group-checkbox">
+                            <label class="checkbox-switch-label" for="noticiaDedicada">
+                                <input type="checkbox" id="noticiaDedicada" class="checkbox-switch-input">
+                                <span class="checkbox-switch-slider"></span>
+                                <span class="checkbox-switch-text">
+                                    <strong>Marcar como destacada</strong>
+                                    <small>Aparecerá en la sección principal</small>
+                                </span>
                             </label>
                         </div>
 
@@ -276,7 +280,7 @@
             </section>
 
             <!-- SECCIÓN: MIS NOTICIAS -->
-            <section id="mis-noticias" class="section" style="display: none;">
+            <section id="mis-noticias" class="section is-hidden" >
                 <div class="card">
                     <h2 class="card-title">Mis Noticias</h2>
                     <div id="noticiasGrid" class="card-grid">
@@ -289,7 +293,7 @@
     </div>
 
     <!-- MODAL DE EDICIÓN TALLERISTA -->
-    <div id="modalEditarNoticiaTallerista" class="modal-overlay" style="display: none;">
+    <div id="modalEditarNoticiaTallerista" class="modal-overlay is-hidden">
         <div class="modal-content">
             <div class="modal-header">
                 <h3>Editar Noticia para Reenviar</h3>

@@ -114,12 +114,12 @@ function cargarFormularioTaller(taller) {
     }
 }
 
-function previewTallerImagen(event) {
+async function previewTallerImagen(event) {
     const file = event.target.files[0];
     if (!file) return;
 
     if (file.type !== 'image/webp') {
-        alert('⚠️ Solo se permiten imágenes en formato .webp');
+        await Modal.alert('Solo se permiten imágenes en formato .webp', 'Formato no permitido');
         event.target.value = '';
         return;
     }
@@ -147,7 +147,7 @@ async function updateMyTaller(e) {
 
         if (file) {
             if (file.type !== 'image/webp') {
-                alert('⚠️ El archivo debe estar en formato .webp');
+                await Modal.alert('El archivo debe estar en formato .webp', 'Formato no permitido');
                 return;
             }
 
@@ -198,7 +198,7 @@ async function updateMyTaller(e) {
 
         if (error) throw error;
 
-        alert('✅ Taller actualizado correctamente');
+        await Modal.alert('Taller actualizado correctamente.', 'Éxito');
         
         // Recargar los talleres manteniendo seleccionado el taller actual que se acaba de actualizar
         const session = window.getSessionFromLocalStorage();
@@ -208,7 +208,7 @@ async function updateMyTaller(e) {
 
     } catch (error) {
         console.error('Error al actualizar taller:', error);
-        alert('❌ Error al actualizar el taller: ' + error.message);
+        await Modal.alert('Error al actualizar el taller: ' + error.message, 'Error');
     } finally {
         btn.disabled = false;
         btn.textContent = 'Guardar Cambios del Taller';

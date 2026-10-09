@@ -1,6 +1,6 @@
 /**
  * EVENTOS - Interacción Agenda + Destacado + Formulario
- */
+*/
 
 document.addEventListener('DOMContentLoaded', function() {
     

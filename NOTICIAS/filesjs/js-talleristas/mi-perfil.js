@@ -39,7 +39,7 @@ const userId = user.id;
 
         if (file) {
             if (file.type !== 'image/webp') {
-                alert('⚠️ El archivo debe estar en formato .webp');
+                await Modal.alert('El archivo debe estar en formato .webp', 'Formato no permitido');
                 return;
             }
 
@@ -77,22 +77,22 @@ const userId = user.id;
             .eq('id', userId);
 
         if (error) throw error;
-        alert('✅ Perfil actualizado correctamente');
+        await Modal.alert('Perfil actualizado correctamente.', 'Éxito');
     } catch (error) {
         console.error('Error al actualizar perfil:', error);
-        alert('❌ Error al actualizar perfil: ' + error.message);
+        await Modal.alert('Error al actualizar perfil: ' + error.message, 'Error');
     }
 }
 
 // ============================
 // PREVISUALIZAR NUEVA FOTO
 // ============================
-function previewAvatar(event) {
+async function previewAvatar(event) {
     const file = event.target.files[0];
     if (!file) return;
 
     if (file.type !== 'image/webp') {
-        alert('⚠️ Solo se permiten imágenes en formato .webp');
+        await Modal.alert('Solo se permiten imágenes en formato .webp', 'Formato no permitido');
         event.target.value = '';
         return;
     }
@@ -117,7 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 async function solicitarRestablecimiento() {
-    const confirmacion = confirm("¿Estás seguro de restablecer la contraseña? Te llegará un correo para confirmar que eres tú.");
+    const confirmacion = await Modal.confirm("¿Estás seguro de restablecer la contraseña? Te llegará un correo para confirmar que eres tú.", "Confirmar restablecimiento");
     if (!confirmacion) return;
 
     try {
@@ -137,10 +137,10 @@ async function solicitarRestablecimiento() {
 
         if (error) throw error;
 
-        alert("✅ ¡Listo! Revisa tu correo electrónico para restablecer tu contraseña.");
+        await Modal.alert("¡Listo! Revisa tu correo electrónico para restablecer tu contraseña.", "Correo enviado");
 
     } catch (error) {
         console.error("Error al enviar correo de restablecimiento:", error);
-        alert("❌ Error: " + error.message);
+        await Modal.alert("Error: " + error.message, "Error");
     }
 }
