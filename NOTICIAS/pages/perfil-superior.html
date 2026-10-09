@@ -213,12 +213,12 @@
                             <input type="text" id="noticiaTitleSuperior" required placeholder="Título de la noticia">
                         </div>
 
+
                         <div class="form-group">
                             <label for="noticiaCategoriaSuperior">Categoría</label>
-                            <select id="noticiaCategoriaSuperior" required>
-                                <option value="">Selecciona una categoría</option>
-                                <option value="reflexiones">Reflexiones</option>
-                                <option value="cronicas-eventos">Crónicas de Eventos</option>
+                            <!-- SELECT DINÁMICO: Se puebla directamente desde la base de datos -->
+                            <select id="noticiaCategoriaSuperior" class="form-control" required>
+                                <option value="">Cargando categorías...</option>
                             </select>
                         </div>
 
@@ -235,18 +235,18 @@
                         <div class="form-group">
                             <label>Imagen de la Noticia</label>
                             <div class="image-uploader-container">
-                                <img id="noticiaImagenPreviewSuperior" 
+                                <img id="noticiaImagenPreviewSuperiorcreate" 
                                     src="https://placehold.co/600x400?text=Sin+Imagen" 
                                     class="image-preview-custom" 
                                     alt="Previsualización de Noticia">
                                 
                                 <input type="file" 
-                                    id="noticiaImagenFileSuperior" 
+                                    id="noticiaImagenFileSuperiorcreate" 
                                     class="input-file-hidden"
                                     accept=".webp,image/webp" 
-                                    onchange="previewNoticiaImagenSuperior(event)">
+                                    onchange="previewNoticiaImagenSuperiorcreate(event)">
                                 
-                                <label for="noticiaImagenFileSuperior" class="btn-upload-label">
+                                <label for="noticiaImagenFileSuperiorcreate" class="btn-upload-label">
                                     Asignar imagen (.webp)
                                 </label>
                             </div>
@@ -255,13 +255,18 @@
                             </p>
                         </div>
 
-                        <div class="form-group">
-                            <label>
-                                <input type="checkbox" id="noticiaDestacadaSuperior"> ⭐ Marcar como destacada
+                        <div class="form-group-checkbox">
+                            <label class="checkbox-switch-label" for="noticiaDestacadaSuperior">
+                                <input type="checkbox" id="noticiaDestacadaSuperior" class="checkbox-switch-input">
+                                <span class="checkbox-switch-slider"></span>
+                                <span class="checkbox-switch-text">
+                                    <strong>Marcar como destacada</strong>
+                                    <small>Aparecerá en la sección principal</small>
+                                </span>
                             </label>
                         </div>
 
-                        <button type="submit" class="btn btn-primary">🚀 Publicar Noticia</button>
+                        <button type="submit" class="btn btn-primary">Publicar Noticia</button>
                     </form>
                 </div>
             </section>
