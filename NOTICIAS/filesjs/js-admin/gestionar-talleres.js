@@ -108,7 +108,7 @@ async function reasignarInstructorDirecto(tallerId, nuevoInstructorId, instructo
     const talleristaElegido = listaTalleristas.find(t => t.id === nuevoInstructorId);
     const nombreMostrar = talleristaElegido ? (talleristaElegido.nombre || talleristaElegido.email) : 'el usuario seleccionado';
 
-    if (!confirm(`¿Deseas reasignar este taller a ${nombreMostrar}?`)) {
+    if (!await Modal.confirm(`¿Deseas reasignar este taller a ${nombreMostrar}?`)) {
         await loadAllTalleres();
         return;
     }
@@ -121,17 +121,17 @@ async function reasignarInstructorDirecto(tallerId, nuevoInstructorId, instructo
 
         if (error) throw error;
 
-        alert(`✅ Taller reasignado correctamente a ${nombreMostrar}`);
+        await Modal.alert(`✅ Taller reasignado correctamente a ${nombreMostrar}`);
         await loadAllTalleres();
     } catch (error) {
         console.error('Error al reasignar instructor:', error);
-        alert('❌ No se pudo reasignar el instructor: ' + error.message);
+        await Modal.alert('❌ No se pudo reasignar el instructor: ' + error.message);
         await loadAllTalleres();
     }
 }
 
 async function eliminarTaller(tallerId, tituloTaller) {
-    if (!confirm(`¿Estás seguro de eliminar el taller "${tituloTaller}"?\nEsta acción no se puede deshacer.`)) return;
+    if (!await Modal.confirm(`¿Estás seguro de eliminar el taller "${tituloTaller}"?\nEsta acción no se puede deshacer.`)) return;
 
     try {
         const client = getAdminClient();
@@ -142,11 +142,11 @@ async function eliminarTaller(tallerId, tituloTaller) {
 
         if (error) throw error;
 
-        alert('✅ Taller eliminado con éxito.');
+        await Modal.alert('✅ Taller eliminado con éxito.');
         await loadAllTalleres();
         if (typeof loadDashboardStats === 'function') loadDashboardStats();
     } catch (error) {
         console.error('Error al eliminar taller:', error);
-        alert('❌ No se pudo eliminar el taller: ' + error.message);
+        await Modal.alert('❌ No se pudo eliminar el taller: ' + error.message);
     }
 }

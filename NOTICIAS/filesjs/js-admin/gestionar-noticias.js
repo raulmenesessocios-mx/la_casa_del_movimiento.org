@@ -76,14 +76,6 @@ async function agregarCategoria(nombreCategoria) {
         const client = getAdminClient();
         if (!client) throw new Error("Cliente Supabase no disponible.");
 
-        // Generar slug limpio
-        const slug = nombreCategoria
-            .toLowerCase()
-            .trim()
-            .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-            .replace(/[^a-z0-9 -]/g, "")
-            .replace(/\s+/g, '-')
-            .replace(/-+/g, '-');
 
         const { data, error } = await client
             .from('categorias')
@@ -92,7 +84,7 @@ async function agregarCategoria(nombreCategoria) {
 
         if (error) throw error;
 
-        alert(`✅ Categoría "${nombreCategoria}" creada con éxito.`);
+        await Modal.alert(`✅ Categoría "${nombreCategoria}" creada con éxito.`);
 
         // Recargar select de categorías y seleccionar automáticamente la nueva
         await cargarCategoriasSelect(data[0].id);
@@ -101,7 +93,7 @@ async function agregarCategoria(nombreCategoria) {
 
     } catch (error) {
         console.error('❌ Error al agregar categoría:', error);
-        alert('❌ Error al agregar categoría. Es posible que el nombre o slug ya existan.');
+        await Modal.alert('❌ Error al agregar categoría. Es posible que el nombre o slug ya existan.');
     }
 }
 
@@ -193,7 +185,7 @@ function renderTableAdmin() {
                 ${filtradas.map(n => {
                     const esPublicado = n.estado === 'publicado';
                     const esRechazado = n.estado === 'rechazado';
-
+                    const nombreseguro = (n.titulo|| '').replace(/'/g, "\\'");
                     return `
                     <tr>
                         <td><strong>${escapeHtmlAdmin(n.titulo)}</strong></td>
@@ -206,7 +198,7 @@ function renderTableAdmin() {
                                 ${!esPublicado ? `<button class="btn-tabla btn-publicar" onclick="cambiarEstadoNoticia('${n.id}', 'publicado', true)">Publicar</button>` : ''}
                                 ${!esPublicado && !esRechazado ? `<button class="btn-tabla btn-regresar" onclick="cambiarEstadoNoticia('${n.id}', 'rechazado', false)">Rechazar</button>` : ''}
                                 <button class="btn-tabla btn-editar" onclick="abrirEditarNoticia('${n.id}')">Editar</button>
-                                <button class="btn-tabla btn-eliminar" onclick="deleteNoticia('${n.id}')">🗑️</button>
+                                <button class="btn-tabla btn-eliminar" onclick="deleteNoticia('${n.id}','${nombreseguro}')">Eliminar</button>
                             </div>
                         </td>
                     </tr>
@@ -241,15 +233,15 @@ async function cambiarEstadoNoticia(noticiaId, nuevoEstado, esPublicado) {
 
         await loadAllNoticiasAdmin();
     } catch (err) {
-        console.error('❌ Error cambiando estado de noticia:', err);
-        alert('Error al cambiar el estado: ' + err.message);
+        console.error('Error cambiando estado de noticia:', err);
+        await Modal.alert('Error al cambiar el estado: ' + err.message);
     }
 }
 
 async function abrirEditarNoticia(noticiaId) {
     const noticia = (window.noticiasAdminCache || []).find(n => n.id === noticiaId);
     if (!noticia) {
-        console.error('❌ No se encontró la noticia en caché:', noticiaId);
+        console.error('No se encontró la noticia en caché:', noticiaId);
         return;
     }
 
@@ -312,13 +304,13 @@ async function guardarEdicionNoticia(e) {
 
     try {
         if (!titulo || !resumen || !cuerpo || !categoryVal) {
-            alert('⚠️ Por favor completa los campos obligatorios.');
+            await Modal.alert('⚠️ Por favor completa los campos obligatorios.');
             return;
         }
 
         if (file) {
             if (file.type !== 'image/webp') {
-                alert('⚠️ La imagen debe estar en formato .webp');
+                await Modal.alert('⚠️ La imagen debe estar en formato .webp');
                 return;
             }
 
@@ -377,17 +369,17 @@ async function guardarEdicionNoticia(e) {
 
         if (updateErr) throw updateErr;
 
-        alert('✅ Noticia actualizada con éxito');
+        await Modal.alert('Noticia actualizada con éxito');
         cerrarModalEditar();
         await loadAllNoticiasAdmin();
     } catch (error) {
-        console.error('❌ Error al actualizar noticia:', error);
-        alert('❌ Error al actualizar: ' + error.message);
+        console.error('Error al actualizar noticia:', error);
+        await Modal.alert('Error al actualizar: ' + error.message);
     }
 }
 
-async function deleteNoticia(noticiaId) {
-    if (!confirm('¿Estás seguro de que quieres eliminar esta noticia?')) return;
+async function deleteNoticia(noticiaId, titulo) {
+    if (!await Modal.confirm(`¿Estás seguro de que quieres eliminar esta noticia "$titulo}" ?`)) return;
 
     try {
         const client = getAdminClient();
@@ -398,11 +390,11 @@ async function deleteNoticia(noticiaId) {
 
         if (error) throw error;
 
-        alert('✅ Noticia eliminada');
+        await Modal.alert('Noticia eliminada');
         await loadAllNoticiasAdmin();
         if (typeof loadDashboardStats === 'function') loadDashboardStats();
     } catch (error) {
-        console.error('❌ Error al eliminar noticia:', error);
-        alert('❌ Error al eliminar la noticia');
+        console.error('Error al eliminar noticia:', error);
+        await Modal.alert('Error al eliminar la noticia');
     }
 }

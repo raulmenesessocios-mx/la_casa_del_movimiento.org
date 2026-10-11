@@ -83,7 +83,7 @@ async function updateProfile() {
 
         if (file) {
             if (file.type !== 'image/webp') {
-                alert('⚠️ El archivo debe estar en formato .webp');
+                await Modal.alert('⚠️ El archivo debe estar en formato .webp');
                 return;
             }
 
@@ -124,12 +124,12 @@ async function updateProfile() {
             .eq('id', user.id);
 
         if (error) throw error;
-        alert('✅ Perfil actualizado correctamente');
+        await Modal.alert('✅ Perfil actualizado correctamente');
         await loadUserProfile();
 
     } catch (error) {
         console.error('❌ Error al actualizar perfil:', error);
-        alert('❌ Error al actualizar perfil: ' + error.message);
+        await Modal.alert('❌ Error al actualizar perfil: ' + error.message);
     } finally {
         if (submitBtn) {
             submitBtn.disabled = false;
@@ -143,7 +143,7 @@ function previewAvatar(event) {
     if (!file) return;
 
     if (file.type !== 'image/webp') {
-        alert('⚠️ Solo se permiten imágenes en formato .webp');
+         Modal.alert('⚠️ Solo se permiten imágenes en formato .webp');
         event.target.value = '';
         return;
     }
@@ -157,7 +157,7 @@ function previewAvatar(event) {
 }
 
 async function solicitarRestablecimiento() {
-    if (!confirm("¿Estás seguro de restablecer la contraseña? Te llegará un correo para confirmar que eres tú.")) return;
+    if (!await Modal.confirm("¿Estás seguro de restablecer la contraseña? Te llegará un correo para confirmar que eres tú.")) return;
 
     try {
         const client = getAdminClient();
@@ -175,10 +175,10 @@ async function solicitarRestablecimiento() {
 
         if (error) throw error;
 
-        alert("✅ ¡Listo! Revisa tu correo electrónico para restablecer tu contraseña.");
+        await Modal.alert("✅ ¡Listo! Revisa tu correo electrónico para restablecer tu contraseña.");
 
     } catch (error) {
         console.error("❌ Error al enviar correo de restablecimiento:", error);
-        alert("❌ Error: " + error.message);
+        await Modal.alert("❌ Error: " + error.message);
     }
 }

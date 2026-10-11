@@ -123,7 +123,7 @@ function previewTallerImagenSuperior(event) {
     if (!file) return;
 
     if (file.type !== 'image/webp') {
-        alert('⚠️ Solo se permiten imágenes en formato .webp');
+        await Modal.alert('⚠️ Solo se permiten imágenes en formato .webp');
         event.target.value = '';
         return;
     }
@@ -162,7 +162,7 @@ async function updateTallerSuperior(e) {
 
         if (file) {
             if (file.type !== 'image/webp') {
-                alert('⚠️ El archivo debe estar en formato .webp');
+                await Modal.alert('⚠️ El archivo debe estar en formato .webp');
                 return;
             }
 
@@ -219,14 +219,14 @@ async function updateTallerSuperior(e) {
 
         if (error) throw error;
 
-        alert('✅ Taller actualizado correctamente');
+        await Modal.alert('✅ Taller actualizado correctamente');
         
         const { data: { user } } = await client.auth.getUser();
         if (user) await loadMyTallerSuperior(user.id, tallerId);
 
     } catch (error) {
         console.error('Error al actualizar taller (Superior):', error);
-        alert('❌ Error al actualizar el taller: ' + error.message);
+        await Modal.alert('❌ Error al actualizar el taller: ' + error.message);
     } finally {
         isSubmittingTaller = false;
         if (btn) {

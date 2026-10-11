@@ -129,8 +129,9 @@
                 </div>
             </section>
 
-            <!-- CREAR EVENTO -->
+            <!-- CREAR Y GESTIONAR EVENTOS -->
             <section id="crear-evento" class="section" style="display: none;">
+                <!-- Formulario Crear Evento -->
                 <div class="card">
                     <h2 class="card-title">Crear Nuevo Evento</h2>
 
@@ -146,7 +147,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label>Fecha y Hora</label>
+                            <label>Fecha y Hora de Inicio</label>
                             <input type="datetime-local" id="eventoFecha" required>
                         </div>
 
@@ -157,8 +158,7 @@
 
                         <div class="form-group">
                             <label>Ubicación</label>
-                            <input type="text" id="eventoUbicacion" placeholder="Juárez 86, Tizayuca"
-                                value="Juárez 86, Tizayuca">
+                            <input type="text" id="eventoUbicacion" placeholder="Juárez 86, Tizayuca" value="Juárez 86, Tizayuca">
                         </div>
 
                         <div class="form-group">
@@ -168,8 +168,29 @@
                             </select>
                         </div>
 
-                        <button type="submit" class="btn btn-primary">Crear Evento</button>
+                        <!-- Imagen del Evento (WebP) -->
+                        <div class="form-group">
+                            <label>Imagen Promocional del Evento</label>
+                            <div class="image-uploader-container">
+                                <img id="eventoImagenPreview" src="https://placehold.co/600x400?text=Sin+Imagen" class="image-preview-custom" alt="Imagen del evento">
+                                <input type="file" id="eventoImagen" class="input-file-hidden" accept="image/webp" onchange="previewEventoImagen(event)">
+                                <label for="eventoImagen" class="btn-upload-label">
+                                    Asignar imagen (.webp)
+                                </label>
+                            </div>
+                            <p class="avatar-note text-center">Solo se permiten imágenes en formato <strong>.webp</strong></p>
+                        </div>
+
+                        <button type="submit" id="btnSubmitEvento" class="btn btn-primary">Crear Evento</button>
                     </form>
+                </div>
+
+                <!-- Lista / Tabla para Gestionar Eventos Existentes -->
+                <div class="card">
+                    <h2 class="card-title">Eventos Registrados</h2>
+                    <div id="eventosAdminList">
+                        <p>Cargando eventos...</p>
+                    </div>
                 </div>
             </section>
 
@@ -202,18 +223,21 @@
                         </div>
 
                         <div class="form-group">
-                            <label>Categoría</label>
-                            <select id="noticiaAdminCategoria" required>
-                                <option value="">Selecciona una categoría</option>
-                                <option value="reflexiones">Reflexiones</option>
-                                <option value="cronicas-eventos">Crónicas de Eventos</option>
+                            <label for="noticiaCategoriaAdmin">Categoría</label>
+                            <!-- SELECT DINÁMICO: Se puebla directamente desde la base de datos -->
+                            <select id="noticiaCategoriaAdmin" class="form-control" required>
+                                <option value="">Cargando categorías...</option>
                             </select>
                         </div>
 
-                        <div class="form-group">
-                            <label>
-                                <input type="checkbox" id="noticiaAdminDestacada">
-                                Destacada
+                        <div class="form-group-checkbox">
+                            <label class="checkbox-switch-label" for="noticiaAdminDestacada">
+                                <input type="checkbox" id="noticiaAdminDestacada" class="checkbox-switch-input">
+                                <span class="checkbox-switch-slider"></span>
+                                <span class="checkbox-switch-text">
+                                    <strong>Marcar como destacada</strong>
+                                    <small>Aparecerá en la sección principal</small>
+                                </span>
                             </label>
                         </div>
 
@@ -443,11 +467,27 @@
                                     <textarea id="editNoticiaCuerpo" class="form-control" rows="6" required></textarea>
                                 </div>
 
-                                <div class="form-checkboxes">
-                                    <label><input type="checkbox" id="editNoticiaPublicado"> Publicado</label>
-                                    <label><input type="checkbox" id="editNoticiaDestacada"> ⭐ Destacada</label>
+                                <div class="form-group-checkbox">
+                                    <label class="checkbox-switch-label" for="editNoticiaPublicado">
+                                        <input type="checkbox" id="editNoticiaPublicado" class="checkbox-switch-input">
+                                        <span class="checkbox-switch-slider"></span>
+                                        <span class="checkbox-switch-text">
+                                            <strong>Publicada</strong>
+                                            <small>Visible para todos en la sección principal</small>
+                                        </span>
+                                    </label>
                                 </div>
-                            </div>
+
+                                <div class="form-group-checkbox">
+                                    <label class="checkbox-switch-label" for="editNoticiaDestacada">
+                                        <input type="checkbox" id="editNoticiaDestacada" class="checkbox-switch-input">
+                                        <span class="checkbox-switch-slider"></span>
+                                        <span class="checkbox-switch-text">
+                                            <strong>Marcar como destacada</strong>
+                                            <small>Aparecerá en la sección principal</small>
+                                        </span>
+                                    </label>
+                                </div>
 
                             <div class="modal-footer">
                                 <button type="button" class="btn-tabla btn-editar" onclick="cerrarModalEditar()">Cancelar</button>

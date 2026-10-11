@@ -118,7 +118,7 @@ async function createTaller(e) {
 
         if (tallerError) throw tallerError;
 
-        alert(`✅ Taller "${titulo}" creado con éxito.`);
+        await Modal.alert(`✅ Taller "${titulo}" creado con éxito.`);
         document.getElementById('crearTallerForm').reset();
         
         if (typeof loadDashboardStats === 'function') loadDashboardStats();
@@ -127,7 +127,7 @@ async function createTaller(e) {
 
     } catch (error) {
         console.error('Error al crear taller:', error);
-        alert('❌ Fallo al registrar el taller: ' + error.message);
+        await Modal.alert('❌ Fallo al registrar el taller: ' + error.message);
     } finally {
         if (submitBtn) {
             submitBtn.disabled = false;
@@ -140,7 +140,7 @@ function previewtallerImagenImagen(event) {
     if (!file) return;
 
     if (file.type !== 'image/webp') {
-        alert('⚠️ Solo se permiten imágenes en formato .webp');
+        Modal.alert('Solo se permiten imágenes en formato .webp');
         event.target.value = '';
         return;
     }

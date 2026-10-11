@@ -72,7 +72,7 @@
                         <label>Biografía</label>
                         <textarea id="profileBio" placeholder="Cuéntanos sobre ti..."></textarea>
                     </div>
-
+                    <br>
                     <div class="avatar-uploader-actions">
                         <button type="button" class="btn btn-secondary" id="btnCambiarFoto">
                             Cambiar foto de perfil
@@ -412,11 +412,27 @@
                         <textarea id="editNoticiaCuerpoSuperior" class="form-control" rows="6" required></textarea>
                     </div>
 
-                    <div class="form-checkboxes">
-                        <label><input type="checkbox" id="editNoticiaPublicadoSuperior"> Publicado</label>
-                        <label><input type="checkbox" id="editNoticiaDestacadaSuperior"> ⭐ Destacada</label>
-                    </div>
-                </div>
+                        <div class="form-group-checkbox">
+                            <label class="checkbox-switch-label" for="editNoticiaDestacadaSuperior">
+                                <input type="checkbox" id="editNoticiaDestacadaSuperior" class="checkbox-switch-input">
+                                <span class="checkbox-switch-slider"></span>
+                                <span class="checkbox-switch-text">
+                                    <strong>Marcar como destacada</strong>
+                                    <small>Aparecerá en Grande en la sección principal</small>
+                                </span>
+                            </label>
+                        </div>
+
+                        <div class="form-group-checkbox">
+                            <label class="checkbox-switch-label" for="editNoticiaPublicadoSuperior">
+                                <input type="checkbox" id="editNoticiaPublicadoSuperior" class="checkbox-switch-input">
+                                <span class="checkbox-switch-slider"></span>
+                                <span class="checkbox-switch-text">
+                                    <strong>publicada</strong>
+                                    <small>Visible para todos en la sección principal </small>
+                                </span>
+                            </label>
+                        </div>
 
                 <div class="modal-footer">
                     <button type="button" class="btn-tabla btn-editar" onclick="cerrarModalEditarNoticiaSuperior()">Cancelar</button>

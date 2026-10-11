@@ -39,7 +39,7 @@ const userId = user.id;
 
         if (file) {
             if (file.type !== 'image/webp') {
-                alert('⚠️ El archivo debe estar en formato .webp');
+                await Modal.alert('⚠️ El archivo debe estar en formato .webp');
                 return;
             }
 
@@ -80,7 +80,7 @@ const userId = user.id;
         await Modal.alert("el perfil se ha actializado con éxito.", "¡Éxito!");
     } catch (error) {
         console.error('Error al actualizar perfil Superior:', error);
-        alert('❌ Error al actualizar perfil: ' + error.message);
+        await Modal.alert('❌ Error al actualizar perfil: ' + error.message);
     }
 }
 
@@ -89,7 +89,7 @@ function previewAvatarSuperior(event) {
     if (!file) return;
 
     if (file.type !== 'image/webp') {
-        alert('⚠️ Solo se permiten imágenes en formato .webp');
+        Modal.alert('⚠️ Solo se permiten imágenes en formato .webp');
         event.target.value = '';
         return;
     }
@@ -111,7 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 async function solicitarRestablecimientoSuperior() {
-    const confirmacion = confirm("¿Estás seguro de restablecer la contraseña? Te llegará un correo para confirmar que eres tú.");
+    const confirmacion = await Modal.confirm("¿Estás seguro de restablecer la contraseña? Te llegará un correo para confirmar que eres tú.");
     if (!confirmacion) return;
 
     try {
@@ -129,10 +129,10 @@ async function solicitarRestablecimientoSuperior() {
 
         if (error) throw error;
 
-        alert("✅ ¡Listo! Revisa tu correo electrónico para restablecer tu contraseña.");
+        await Modal.alert("✅ ¡Listo! Revisa tu correo electrónico para restablecer tu contraseña.");
 
     } catch (error) {
         console.error("Error al enviar correo de restablecimiento:", error);
-        alert("❌ Error: " + error.message);
+        await Modal.alert("❌ Error: " + error.message);
     }
 }

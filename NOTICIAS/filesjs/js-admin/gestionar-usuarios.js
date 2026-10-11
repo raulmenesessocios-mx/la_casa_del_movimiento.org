@@ -98,7 +98,7 @@ async function createUsuario(e) {
 
     try {
         if (!nombre || !email || !password || !rol) {
-            alert('⚠️ Todos los campos principales son obligatorios.');
+            await Modal.alert('⚠️ Todos los campos principales son obligatorios.');
             return;
         }
 
@@ -110,7 +110,7 @@ async function createUsuario(e) {
         if (fotoInput && fotoInput.files.length > 0) {
             const file = fotoInput.files[0];
             if (file.type !== 'image/webp') {
-                alert('⚠️ La foto de perfil debe ser en formato .webp');
+                await Modal.alert('⚠️ La foto de perfil debe ser en formato .webp');
                 return;
             }
 
@@ -178,7 +178,7 @@ async function createUsuario(e) {
 
         if (dbError) throw dbError;
 
-        alert(`✅ El ${rol} "${nombre}" se ha creado con éxito.`);
+        await Modal.alert(`✅ El ${rol} "${nombre}" se ha creado con éxito.`);
         document.getElementById('crearUsuarioForm')?.reset();
 
         const preview = document.getElementById('usuarioFotoPreview');
@@ -189,7 +189,7 @@ async function createUsuario(e) {
 
     } catch (error) {
         console.error('❌ Error en el flujo de creación de usuario:', error);
-        alert('❌ Error al crear usuario: ' + error.message);
+        await Modal.alert('❌ Error al crear usuario: ' + error.message);
     } finally {
         if (submitBtn) {
             submitBtn.disabled = false;
@@ -199,7 +199,7 @@ async function createUsuario(e) {
 }
 
 async function deleteUsuario(userId, nombre) {
-    if (!confirm(`¿Confirmas la baja del usuario "${nombre}"?`)) return;
+    if (!await Modal.confirm(`¿Confirmas la baja del usuario "${nombre}"?`)) return;
 
     try {
         const client = getAdminClient();
@@ -210,14 +210,14 @@ async function deleteUsuario(userId, nombre) {
 
         if (error) throw error;
 
-        alert(`✅ Usuario "${nombre}" eliminado.`);
+        await Modal.alert(`✅ Usuario "${nombre}" eliminado.`);
 
         await loadAllUsuarios();
         if (typeof loadDashboardStats === 'function') loadDashboardStats();
 
     } catch (error) {
         console.error('❌ Error en baja de usuario:', error);
-        alert('❌ Error al eliminar usuario: ' + error.message);
+        await Modal.alert('❌ Error al eliminar usuario: ' + error.message);
     }
 }
 
@@ -227,7 +227,7 @@ function previewusuarioFotoImagen(event) {
     if (!file) return;
 
     if (file.type !== 'image/webp') {
-        alert('⚠️ Solo se permiten imágenes en formato .webp');
+        Modal.alert('⚠️ Solo se permiten imágenes en formato .webp');
         event.target.value = '';
         return;
     }

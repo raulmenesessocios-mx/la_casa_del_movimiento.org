@@ -90,7 +90,7 @@ async function createNoticiaSuperior() {
 
         const { data: { user } } = await client.auth.getUser();
         if (!user) {
-            alert('⚠️ Debes iniciar sesión para publicar.');
+            await Modal.alert('Debes iniciar sesión para publicar.','inicia sesion');
             return;
         }
 
@@ -102,7 +102,7 @@ async function createNoticiaSuperior() {
             .single();
 
         if (autorErr || !autor) {
-            alert('⚠️ No se encontró la ficha de autor asociada a tu usuario.');
+            await Modal.alert('No se encontró la ficha de autor asociada a tu usuario.','Error de Autor');
             return;
         }
 
@@ -115,7 +115,7 @@ async function createNoticiaSuperior() {
         const file = fileInput ? fileInput.files[0] : null;
 
         if (!titulo || !resumen || !cuerpo || !categoryVal) {
-            alert('⚠️ Por favor completa todos los campos requeridos.');
+            await Modal.alert('Por favor completa todos los campos requeridos.','Campos Inconpletos');
             return; 
         }
 
@@ -187,7 +187,7 @@ async function createNoticiaSuperior() {
 
         if (insertErr) throw insertErr;
 
-        alert('🚀 ¡Noticia publicada con éxito!');
+        await Modal.alert('Noticia enviada a revisión exitosamente.', 'Éxito');
 
         // C. RESET DE VISTA Y CONTROLES
         if (form) form.reset();
@@ -204,7 +204,7 @@ async function createNoticiaSuperior() {
 
     } catch (error) {
         console.error('Error al crear noticia (Superior):', error);
-        alert('❌ Error al publicar la noticia: ' + error.message);
+        await Modal.alert('❌ Error al publicar la noticia: ' + error.message + 'Error');
     } finally {
         isSubmittingNoticia = false;
         if (submitBtn) {

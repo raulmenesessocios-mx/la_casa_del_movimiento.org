@@ -76,11 +76,16 @@ body {
     gap: 0.35rem;
 }
 
-.form-group label,
 .label-login {
     display: block;
     font-weight: 600;
     color: var(--color-white);
+    font-size: 0.9rem;
+}
+.form-group {
+    display: block;
+    font-weight: 600;
+    color: var(--color-text);
     font-size: 0.9rem;
 }
 

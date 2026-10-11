@@ -1,8 +1,9 @@
 let noticiasCargadas = [];
+let categoriasCargadas = [];
 
 document.addEventListener('DOMContentLoaded', () => {
+    initCategoriasDinamicas();
     fetchAndRenderPublicNoticias();
-    setupTabFiltering();
     setupModalEvents();
 });
 
@@ -10,6 +11,75 @@ function getSupabaseClient() {
     return window.dbClient || window.supabaseClient || window.supabase;
 }
 
+// 1. CARGAR Y RENDERIZAR CATEGORÍAS DINÁMICAS DESDE SUPABASE
+async function initCategoriasDinamicas() {
+    try {
+        const client = getSupabaseClient();
+        if (!client) return;
+
+        const { data: categorias, error } = await client
+            .from('categorias')
+            .select('id, nombre, slug')
+            .order('nombre', { ascending: true });
+
+        if (error) throw error;
+        categoriasCargadas = categorias || [];
+
+        renderizarTabsCategorias();
+    } catch (err) {
+        console.error('❌ Error al cargar categorías dinámicas:', err);
+    }
+}
+
+function renderizarTabsCategorias() {
+    const container = document.getElementById('newsTabsContainer');
+    const dropdownMenu = document.getElementById('dropdownCategoriasMenu');
+    const dropdownWrapper = document.getElementById('dropdownCategoriasWrapper');
+    
+    if (!container) return;
+
+    // Mantenemos siempre el botón de "Todos" inicial
+    let htmlTabs = `<button class="tab-button tab-active" data-filter="todos" onclick="filtrarPorCategoria('todos', this)">Todos</button>`;
+    let htmlDropdown = '';
+
+    // Definimos un límite máximo de botones visibles antes de agrupar en el menú desplegable (ej. máximo 4 visibles)
+    const limiteVisibles = 4;
+
+    categoriasCargadas.forEach((cat, index) => {
+        if (index < limiteVisibles) {
+            htmlTabs += `<button class="tab-button" data-filter="${cat.slug}" onclick="filtrarPorCategoria('${cat.slug}', this)">${escapeHtmlPublic(cat.nombre)}</button>`;
+        } else {
+            htmlDropdown += `<a href="javascript:void(0);" class="dropdown-filter-link" data-filter="${cat.slug}" onclick="filtrarPorCategoria('${cat.slug}', null, '${escapeHtmlPublic(cat.nombre)}')">${escapeHtmlPublic(cat.nombre)}</a>`;
+        }
+    });
+
+    container.innerHTML = htmlTabs;
+
+    // Si hay categorías que superan el límite, activamos el botón desplegable dinámico
+    if (htmlDropdown !== '' && dropdownWrapper && dropdownMenu) {
+        dropdownMenu.innerHTML = htmlDropdown;
+        dropdownWrapper.style.display = 'block';
+    } else if (dropdownWrapper) {
+        dropdownWrapper.style.display = 'none';
+    }
+}
+
+function toggleMenuCategoriasExtras() {
+    const menu = document.getElementById('dropdownCategoriasMenu');
+    if (menu) {
+        menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+    }
+}
+
+// Cerrar menú desplegable al hacer clic fuera
+window.addEventListener('click', (e) => {
+    if (!e.target.closest('.mobile-filters-dropdown')) {
+        const menu = document.getElementById('dropdownCategoriasMenu');
+        if (menu) menu.style.display = 'none';
+    }
+});
+
+// 2. FETCH Y RENDER DE NOTICIAS
 async function fetchAndRenderPublicNoticias() {
     try {
         const client = getSupabaseClient();
@@ -19,7 +89,6 @@ async function fetchAndRenderPublicNoticias() {
         const sidebarContainer = document.querySelector('.news-sidebar-grid');
         if (!featuredContainer || !sidebarContainer) return;
 
-        // Traemos noticia + categoría + imagen portada + autor (con su biografía e imagen conectada)
         const { data: noticias, error } = await client
             .from('noticias')
             .select(`
@@ -56,19 +125,19 @@ async function fetchAndRenderPublicNoticias() {
         const imgPrincipal = principal.imagenes?.url || 'https://via.placeholder.com/600x350?text=Noticia';
 
         featuredContainer.innerHTML = `
-            <article class="news-card news-card-featured" data-id="${principal.id}" data-category="${principal.categorias?.slug || 'reflexiones'}" style="cursor: pointer;">
+            <article class="news-card news-card-featured" data-category="${principal.categorias?.slug || ''}" style="cursor: pointer;" onclick="openModalWithNews('${principal.id}')">
                 <div class="news-card-image">
-                    <img src="${imgPrincipal}" alt="${principal.titulo}" loading="lazy">
+                    <img src="${imgPrincipal}" alt="${escapeHtmlPublic(principal.titulo)}" loading="lazy">
                 </div>
                 <div class="news-card-content">
-                    <span class="news-badge">${principal.categorias?.nombre || 'General'}</span>
-                    <h3 class="news-card-title">${principal.titulo}</h3>
-                    <p class="news-excerpt">${principal.resumen}</p>
+                    <span class="news-badge">${escapeHtmlPublic(principal.categorias?.nombre || 'General')}</span>
+                    <h3 class="news-card-title">${escapeHtmlPublic(principal.titulo)}</h3>
+                    <p class="news-excerpt">${escapeHtmlPublic(principal.resumen)}</p>
                     <div class="news-meta">
-                        <span class="news-author">Por ${principal.autores?.nombre || 'Redacción'}</span>
+                        <span class="news-author">Por ${escapeHtmlPublic(principal.autores?.nombre || 'Redacción')}</span>
                         <span class="news-date">${fechaPrincipal}</span>
                     </div>
-                    <button class="news-link btn-open-modal" data-id="${principal.id}">Leer más →</button>
+                    <button class="news-link btn-open-modal" onclick="event.stopPropagation(); openModalWithNews('${principal.id}')">Leer más →</button>
                 </div>
             </article>
         `;
@@ -80,18 +149,18 @@ async function fetchAndRenderPublicNoticias() {
             const imgSec = item.imagenes?.url || 'https://via.placeholder.com/300x180?text=Noticia';
 
             return `
-                <article class="news-card news-card-compact" data-id="${item.id}" data-category="${item.categorias?.slug || 'reflexiones'}" style="cursor: pointer;">
+                <article class="news-card news-card-compact" data-category="${item.categorias?.slug || ''}" style="cursor: pointer;" onclick="openModalWithNews('${item.id}')">
                     <div class="news-card-image-small">
-                        <img src="${imgSec}" alt="${item.titulo}" loading="lazy">
+                        <img src="${imgSec}" alt="${escapeHtmlPublic(item.titulo)}" loading="lazy">
                     </div>
                     <div class="news-card-content-small">
-                        <span class="news-badge news-badge-small">${item.categorias?.nombre || 'General'}</span>
-                        <h4 class="news-card-title-small">${item.titulo}</h4>
+                        <span class="news-badge news-badge-small">${escapeHtmlPublic(item.categorias?.nombre || 'General')}</span>
+                        <h4 class="news-card-title-small">${escapeHtmlPublic(item.titulo)}</h4>
                         <p class="news-meta-small">
-                            <span class="news-author">Por ${item.autores?.nombre || 'Redacción'}</span>
+                            <span class="news-author">Por ${escapeHtmlPublic(item.autores?.nombre || 'Redacción')}</span>
                             <span class="news-date">${fechaSec}</span>
                         </p>
-                        <button class="news-link-small btn-open-modal" data-id="${item.id}">Leer más →</button>
+                        <button class="news-link-small btn-open-modal" onclick="event.stopPropagation(); openModalWithNews('${item.id}')">Leer más →</button>
                     </div>
                 </article>
             `;
@@ -102,24 +171,46 @@ async function fetchAndRenderPublicNoticias() {
     }
 }
 
-// Lógica de apertura del Modal
-function setupModalEvents() {
-    const modal = document.getElementById('newsDetailModal');
-    const closeBtn = document.getElementById('closeNewsModal');
-    const overlay = document.querySelector('.news-modal-overlay');
+// 3. FILTRADO DINÁMICO POR CATEGORÍA
+function filtrarPorCategoria(slugFilter, btnElement, nombrePersonalizado = null) {
+    // Actualizar clases activas visuales en botones principales
+    const tabButtons = document.querySelectorAll('.tab-button');
+    tabButtons.forEach(btn => btn.classList.remove('tab-active'));
 
-    // Escuchar clics en toda la tarjeta (.news-card)
-    document.addEventListener('click', (e) => {
-        const card = e.target.closest('.news-card');
-        if (card) {
-            const id = card.getAttribute('data-id');
-            if (id) {
-                openModalWithNews(id);
-            }
+    if (btnElement) {
+        btnElement.classList.add('tab-active');
+    } else {
+        // Si se seleccionó del menú desplegable, cambiamos el texto del botón trigger si se desea
+        const triggerBtn = document.querySelector('.btn-filter-trigger');
+        if (triggerBtn && nombrePersonalizado) {
+            triggerBtn.innerHTML = ` ${nombrePersonalizado} ▾`;
+        }
+    }
+
+    // Filtrar tarjetas en el DOM
+    const newsCards = document.querySelectorAll('[data-category]');
+    newsCards.forEach(card => {
+        const cardCategory = card.getAttribute('data-category');
+        const showAll = slugFilter === 'todos';
+        const matchCategory = cardCategory === slugFilter;
+
+        if (showAll || matchCategory) {
+            card.style.display = '';
+        } else {
+            card.style.display = 'none';
         }
     });
 
-    // Cerrar modal
+    // Ocultar menú desplegable al hacer clic
+    const menu = document.getElementById('dropdownCategoriasMenu');
+    if (menu) menu.style.display = 'none';
+}
+
+// 4. MODAL Y UTILIDADES
+function setupModalEvents() {
+    const closeBtn = document.getElementById('closeNewsModal');
+    const overlay = document.querySelector('.news-modal-overlay');
+
     if (closeBtn) closeBtn.addEventListener('click', closeModal);
     if (overlay) overlay.addEventListener('click', closeModal);
     document.addEventListener('keydown', (e) => {
@@ -137,32 +228,30 @@ function openModalWithNews(id) {
     const fecha = formatFecha(noticia.fecha_publicacion);
     const imgUrl = noticia.imagenes?.url || 'https://via.placeholder.com/800x400?text=Noticia';
     
-    // Extracción de datos del autor
     const autorNombre = noticia.autores?.nombre || 'Redacción';
     const autorBio = noticia.autores?.biografia || 'Integrante de La Casa del Movimiento.';
     const autorFoto = noticia.autores?.imagenes?.url || 'https://via.placeholder.com/100?text=Autor';
 
     modalBody.innerHTML = `
-        <span class="news-badge">${noticia.categorias?.nombre || 'General'}</span>
-        <h2 class="modal-news-title">${noticia.titulo}</h2>
+        <span class="news-badge">${escapeHtmlPublic(noticia.categorias?.nombre || 'General')}</span>
+        <h2 class="modal-news-title">${escapeHtmlPublic(noticia.titulo)}</h2>
         <p class="modal-news-date">Publicado el ${fecha}</p>
         
         <div class="modal-news-image">
-            <img src="${imgUrl}" alt="${noticia.titulo}">
+            <img src="${imgUrl}" alt="${escapeHtmlPublic(noticia.titulo)}">
         </div>
 
         <div class="modal-news-text">
-            <p class="modal-news-resumen"><strong>${noticia.resumen}</strong></p>
+            <p class="modal-news-resumen"><strong>${escapeHtmlPublic(noticia.resumen)}</strong></p>
             <hr>
             <div class="modal-news-cuerpo">${noticia.cuerpo || 'Sin contenido adicional.'}</div>
         </div>
 
-        <!-- TARJETA DEL AUTOR AL FINAL -->
         <div class="author-footer-card">
-            <img src="${autorFoto}" alt="${autorNombre}" class="author-avatar">
+            <img src="${autorFoto}" alt="${escapeHtmlPublic(autorNombre)}" class="author-avatar">
             <div class="author-info">
-                <h4>${autorNombre}</h4>
-                <p>${autorBio}</p>
+                <h4>${escapeHtmlPublic(autorNombre)}</h4>
+                <p>${escapeHtmlPublic(autorBio)}</p>
             </div>
         </div>
     `;
@@ -184,28 +273,12 @@ function formatFecha(fechaStr) {
     });
 }
 
-function setupTabFiltering() {
-    const tabButtons = document.querySelectorAll('.tab-button');
-
-    tabButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const filterValue = this.getAttribute('data-filter');
-
-            tabButtons.forEach(btn => btn.classList.remove('tab-active'));
-            this.classList.add('tab-active');
-
-            const newsCards = document.querySelectorAll('[data-category]');
-            newsCards.forEach(card => {
-                const cardCategory = card.getAttribute('data-category');
-                const showAll = filterValue === 'todos';
-                const matchCategory = cardCategory.includes(filterValue);
-
-                if (showAll || matchCategory) {
-                    card.style.display = '';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-        });
-    });
+function escapeHtmlPublic(str) {
+    if (!str) return '';
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
 }
