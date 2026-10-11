@@ -14,7 +14,7 @@
 
         // Validación de infraestructura (SDK del CDN)
         if (!window.supabase || typeof window.supabase.createClient !== 'function') {
-            console.error('🚨 Falla de infraestructura: El SDK de Supabase no está inyectado en el DOM.');
+            console.error('Falla de infraestructura: El SDK de Supabase no está inyectado en el DOM.');
             return null;
         }
 
@@ -43,7 +43,7 @@
             if (error) throw error;
             return data;
         } catch (error) {
-            console.error('❌ Error en fetch de perfil:', error.message);
+            console.error('Error en fetch de perfil:', error.message);
             return null;
         }
     };
@@ -78,7 +78,7 @@
             if (!cached) return null;
             return JSON.parse(cached);
         } catch (e) {
-            console.error('⚠️ Corrupción en caché de sesión detectada. Purgando...', e);
+            console.error('Corrupción en caché de sesión detectada. Purgando...', e);
             localStorage.removeItem('app_session_cache');
             return null;
         }
@@ -89,7 +89,7 @@
         const session = window.getSessionFromLocalStorage();
 
         if (!session) {
-            console.warn("🛡️ Firewall: Intento de acceso sin sesión activa.");
+            console.warn("Firewall: Intento de acceso sin sesión activa.");
             window.location.href = '../../index.html';
             return null;
         }
@@ -105,7 +105,7 @@
         if (requiredRole) {
             const allowedRoles = Array.isArray(requiredRole) ? requiredRole : [requiredRole];
             if (!allowedRoles.includes(currentRole)) {
-                alert('⛔ Privilegios insuficientes para este módulo.');
+                Modal.alert('Privilegios insuficientes para este módulo.');
                 window.location.href = '../../index.html';
                 return null;
             }

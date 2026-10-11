@@ -17,34 +17,28 @@
                 <span>Casa del Movimiento</span>
                 <button class="menu-toggle" id="menuToggle" onclick="toggleMenu()" aria-label="Abrir menú">☰</button>
             </div>
-            
             <div class="sidebar-user">
                 <strong id="userName">Cargando...</strong>
                 <span class="role-badge" >Superior</span>
             </div>
-
             <nav class="sidebar-nav">
                 <ul class="sin-puntos">
-                    <!-- Secciones de Gestión Personal -->
                     <li><a href="#perfil" class="nav-link active">Mi Perfil</a></li>
                     <li><a href="#taller" class="nav-link">Mi Taller</a></li>
                     <li><a href="#interesados" class="nav-link">Interesados</a></li>
                     <li><a href="#crear-noticia" class="nav-link">Crear Noticia</a></li>
                     <li><a href="#mis-noticias" class="nav-link">Mis Noticias</a></li>
-
-                    <!-- Secciones de Supervisión General -->
                     <li><a href="#gestionar-noticias" class="nav-link">Gestionar Noticias</a></li>
                     <li><a href="#gestionar-usuarios" class="nav-link">Gestionar Usuarios</a></li>
                     <li><a href="#ver-talleres" class="nav-link">Ver Talleres</a></li>
-                    <il><a href="#postulados" class="nav-link">postulados</a></il>
-
-                    <li><a class="logout-btn" onclick="logout()">Cerrar Sesión<a></li>
+                    <li><a href="#postulados" class="nav-link">postulados</a></li>
+                    <li><a class="logout-btn" onclick="logout()">Cerrar Sesión</a></li>
                 </ul>
             </nav>
         </aside>
 
         <!-- MAIN CONTENT -->
-        <main class="main-content">
+        <main class="main-content"> 
             <div class="header">
                 <h1>Panel Superior</h1>
             </div>
@@ -78,7 +72,7 @@
                         <label>Biografía</label>
                         <textarea id="profileBio" placeholder="Cuéntanos sobre ti..."></textarea>
                     </div>
-
+                    <br>
                     <div class="avatar-uploader-actions">
                         <button type="button" class="btn btn-secondary" id="btnCambiarFoto">
                             Cambiar foto de perfil
@@ -219,12 +213,12 @@
                             <input type="text" id="noticiaTitleSuperior" required placeholder="Título de la noticia">
                         </div>
 
+
                         <div class="form-group">
                             <label for="noticiaCategoriaSuperior">Categoría</label>
-                            <select id="noticiaCategoriaSuperior" required>
-                                <option value="">Selecciona una categoría</option>
-                                <option value="reflexiones">Reflexiones</option>
-                                <option value="cronicas-eventos">Crónicas de Eventos</option>
+                            <!-- SELECT DINÁMICO: Se puebla directamente desde la base de datos -->
+                            <select id="noticiaCategoriaSuperior" class="form-control" required>
+                                <option value="">Cargando categorías...</option>
                             </select>
                         </div>
 
@@ -241,18 +235,18 @@
                         <div class="form-group">
                             <label>Imagen de la Noticia</label>
                             <div class="image-uploader-container">
-                                <img id="noticiaImagenPreviewSuperior" 
+                                <img id="noticiaImagenPreviewSuperiorcreate" 
                                     src="https://placehold.co/600x400?text=Sin+Imagen" 
                                     class="image-preview-custom" 
                                     alt="Previsualización de Noticia">
                                 
                                 <input type="file" 
-                                    id="noticiaImagenFileSuperior" 
+                                    id="noticiaImagenFileSuperiorcreate" 
                                     class="input-file-hidden"
                                     accept=".webp,image/webp" 
-                                    onchange="previewNoticiaImagenSuperior(event)">
+                                    onchange="previewNoticiaImagenSuperiorcreate(event)">
                                 
-                                <label for="noticiaImagenFileSuperior" class="btn-upload-label">
+                                <label for="noticiaImagenFileSuperiorcreate" class="btn-upload-label">
                                     Asignar imagen (.webp)
                                 </label>
                             </div>
@@ -261,13 +255,18 @@
                             </p>
                         </div>
 
-                        <div class="form-group">
-                            <label>
-                                <input type="checkbox" id="noticiaDestacadaSuperior"> ⭐ Marcar como destacada
+                        <div class="form-group-checkbox">
+                            <label class="checkbox-switch-label" for="noticiaDestacadaSuperior">
+                                <input type="checkbox" id="noticiaDestacadaSuperior" class="checkbox-switch-input">
+                                <span class="checkbox-switch-slider"></span>
+                                <span class="checkbox-switch-text">
+                                    <strong>Marcar como destacada</strong>
+                                    <small>Aparecerá en la sección principal</small>
+                                </span>
                             </label>
                         </div>
 
-                        <button type="submit" class="btn btn-primary">🚀 Publicar Noticia</button>
+                        <button type="submit" class="btn btn-primary">Publicar Noticia</button>
                     </form>
                 </div>
             </section>
@@ -339,6 +338,7 @@
                 </div>
             </section>
 
+            <!--gestion de postulaciones -->
             <section id="postulados"  class="section is-hidden">
                 <table class="postulaciones-table">
                     <thead>
@@ -364,31 +364,75 @@
         </main>
     </div>
 
+
     <!-- MODAL DE EDICIÓN DE NOTICIA SUPERIOR -->
     <div id="modalEditarNoticiaSuperior" class="modal-overlay is-hidden" >
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Editar Noticia (Superior)</h3>
+                <h3>Editar Noticia (Administración Superior)</h3>
                 <button type="button" class="btn-cerrar-modal" onclick="cerrarModalEditarNoticiaSuperior()">&times;</button>
             </div>
-            
-            <form id="editarNoticiaFormSuperior" onsubmit="guardarEdicionNoticiaSuperior(event)" class="edit-not-title">
+
+            <form id="editarNoticiaFormSuperior" onsubmit="guardarEdicionNoticiaSuperior(event)" style="display: flex; flex-direction: column; overflow: hidden; height: 100%;">
                 <div class="modal-body-form">
+                    <!-- CAMPOS OCULTOS -->
+                    <input type="hidden" id="editNoticiaIdSuperior">
+                    <input type="hidden" id="editImagenIdActualSuperior">
+
                     <div class="form-group">
                         <label for="editNoticiaTituloSuperior">Título</label>
-                        <input type="text" id="editNoticiaTituloSuperior" required>
+                        <input type="text" id="editNoticiaTituloSuperior" class="form-control" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="editNoticiaCategoriaSuperior">Categoría</label>
+                        <!-- SELECT DINÁMICO (Carga IDs reales de la DB) -->
+                        <select id="editNoticiaCategoriaSuperior" class="form-control" required>
+                            <option value="">Cargando categorías...</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Imagen de la Noticia</label>
+                        <div class="image-uploader-container">
+                            <img id="editNoticiaImagenPreviewSuperior" src="https://placehold.co/600x400?text=Sin+Imagen" class="image-preview-custom" alt="Imagen de la noticia">
+                            <input type="file" id="editNoticiaImagenSuperior" class="input-file-hidden" accept="image/webp" onchange="previewNoticiaImagenSuperior(event)">
+                            <label for="editNoticiaImagenSuperior" class="btn-upload-label">Reemplazar imagen (.webp)</label>
+                        </div>
+                        <p class="avatar-note text-center">Solo se permiten imágenes en formato <strong>.webp</strong></p>
                     </div>
 
                     <div class="form-group">
                         <label for="editNoticiaResumenSuperior">Resumen</label>
-                        <textarea id="editNoticiaResumenSuperior" rows="3" required></textarea>
+                        <textarea id="editNoticiaResumenSuperior" class="form-control" rows="3" required></textarea>
                     </div>
 
                     <div class="form-group">
-                        <label for="editNoticiaCuerpoSuperior">Cuerpo de la Noticia</label>
-                        <textarea id="editNoticiaCuerpoSuperior" rows="6" required></textarea>
+                        <label for="editNoticiaCuerpoSuperior">Cuerpo de la noticia</label>
+                        <textarea id="editNoticiaCuerpoSuperior" class="form-control" rows="6" required></textarea>
                     </div>
-                </div>
+
+                        <div class="form-group-checkbox">
+                            <label class="checkbox-switch-label" for="editNoticiaDestacadaSuperior">
+                                <input type="checkbox" id="editNoticiaDestacadaSuperior" class="checkbox-switch-input">
+                                <span class="checkbox-switch-slider"></span>
+                                <span class="checkbox-switch-text">
+                                    <strong>Marcar como destacada</strong>
+                                    <small>Aparecerá en Grande en la sección principal</small>
+                                </span>
+                            </label>
+                        </div>
+
+                        <div class="form-group-checkbox">
+                            <label class="checkbox-switch-label" for="editNoticiaPublicadoSuperior">
+                                <input type="checkbox" id="editNoticiaPublicadoSuperior" class="checkbox-switch-input">
+                                <span class="checkbox-switch-slider"></span>
+                                <span class="checkbox-switch-text">
+                                    <strong>publicada</strong>
+                                    <small>Visible para todos en la sección principal </small>
+                                </span>
+                            </label>
+                        </div>
 
                 <div class="modal-footer">
                     <button type="button" class="btn-tabla btn-editar" onclick="cerrarModalEditarNoticiaSuperior()">Cancelar</button>

@@ -68,9 +68,9 @@ if (session) {
 }
 
 function showSection(sectionId) {
-    document.querySelectorAll('.section').forEach(s => s.style.display = 'none');
+    document.querySelectorAll('.section').forEach(s => s.classList.add('is-hidden'));
     const targetSection = document.getElementById(sectionId);
-    if (targetSection) targetSection.style.display = 'block';
+    if (targetSection) targetSection.classList.remove('is-hidden');
 }
 
 async function logout() {

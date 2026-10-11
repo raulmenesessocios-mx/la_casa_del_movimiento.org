@@ -8,7 +8,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // 2. Inicialización del Dashboard
     if (typeof loadDashboardStats === 'function') loadDashboardStats();
 
-    // 3. Navegación entre pestañas/secciones
+    // 3. Cargar la lista de interesados para el Administrador
+    if (typeof loadInteresadosAdmin === 'function') {
+        loadInteresadosAdmin();
+    }
+
+    // 4. Navegación entre pestañas/secciones
     document.querySelectorAll('.nav-link').forEach(link => {
         link.addEventListener('click', (e) => {
             e.preventDefault();

@@ -1,10 +1,12 @@
 let filterEstadoActualSuperior = 'todas';
 let isSubmittingNoticiaSuperior = false;
+let isChangingEstadoSuperior = false;
+let isDeletingNoticiaSuperior = false;
 
 document.addEventListener('DOMContentLoaded', () => {
     loadGestionarNoticiasSuperior();
 
-    const formEdit = document.getElementById('editarNoticiaForm');
+    const formEdit = document.getElementById('editarNoticiaFormSuperior');
     if (formEdit && !formEdit.dataset.listenerAttached) {
         formEdit.addEventListener('submit', guardarEdicionNoticiaSuperior);
         formEdit.dataset.listenerAttached = 'true';
@@ -43,7 +45,7 @@ async function loadGestionarNoticiasSuperior() {
                 destacada, 
                 categoria_id,
                 imagen_id,
-                categorias(slug, nombre),
+                categorias(id, slug, nombre),
                 autores(nombre),
                 imagenes(url)
             `)
@@ -56,6 +58,29 @@ async function loadGestionarNoticiasSuperior() {
 
     } catch (err) {
         console.error('❌ Error al cargar noticias (Superior):', err);
+    }
+}
+
+// Cargar Categorías Dinámicamente en el Select
+async function loadCategoriasSuperior() {
+    try {
+        const client = getClientSuperior();
+        if (!client) return;
+
+        const { data: categorias, error } = await client
+            .from('categorias')
+            .select('id, nombre')
+            .order('nombre', { ascending: true });
+
+        if (error) throw error;
+
+        const select = document.getElementById('editNoticiaCategoriaSuperior');
+        if (!select) return;
+
+        select.innerHTML = '<option value="">Selecciona una categoría</option>' +
+            (categorias || []).map(c => `<option value="${c.id}">${escapeHtmlSuperior(c.nombre)}</option>`).join('');
+    } catch (err) {
+        console.error('❌ Error al cargar categorías:', err);
     }
 }
 
@@ -78,10 +103,7 @@ function renderGestionarNoticiasTablaSuperior() {
     }
 
     const html = `
-        <!-- Filtros responsivos: Botones en escritorio / Menú Filtro en Móvil -->
         <div class="admin-tabs-wrapper">
-            
-            <!-- Vista Escritorio (Botones normales) -->
             <div class="admin-tabs desktop-filters">
                 <button class="admin-tab-btn ${filterEstadoActualSuperior === 'todas' ? 'active' : ''}" onclick="setFilterNoticiasSuperior('todas')">Todas</button>
                 <button class="admin-tab-btn ${filterEstadoActualSuperior === 'revision' ? 'active' : ''}" onclick="setFilterNoticiasSuperior('revision')">En Revisión</button>
@@ -89,7 +111,6 @@ function renderGestionarNoticiasTablaSuperior() {
                 <button class="admin-tab-btn ${filterEstadoActualSuperior === 'rechazadas' ? 'active' : ''}" onclick="setFilterNoticiasSuperior('rechazadas')">Rechazadas</button>
             </div>
 
-            <!-- Vista Móvil (Icono Filtro / Hamburguesa con desplegable) -->
             <div class="mobile-filters-dropdown">
                 <button onclick="toggleFiltrosMobileSuperior()" class="btn-tabla btn-filter-trigger">
                     <span></span> <strong>Filtrar:</strong> ${getNombreFiltroActualSuperior(filterEstadoActualSuperior)} ▾
@@ -104,7 +125,6 @@ function renderGestionarNoticiasTablaSuperior() {
             </div>
         </div>
 
-        <!-- Contenedor de Tabla con Scroll Horizontal -->
         <div class="admin-table-scroll-container">
             <table class="admin-table admin-table-min-width">
                 <thead>
@@ -126,15 +146,14 @@ function renderGestionarNoticiasTablaSuperior() {
                             <td class="cell-title"><strong>${escapeHtmlSuperior(n.titulo)}</strong></td>
                             <td class="cell-padding">${escapeHtmlSuperior(n.autores?.nombre || 'Desconocido')}</td>
                             <td class="cell-nowrap">
-                                ${getBadgeEstadoSuperior(n.estado)}
-                                ${n.destacada ? ' ⭐' : ''}
+                                ${getBadgeEstadoSuperior(n.estado)}${n.destacada ? 'Destacada' : ''}
                             </td>
                             <td class="cell-padding text-right">
                                 <div class="actions-cell actions-cell-right">
-                                    ${!esPublicado ? `<button class="btn-tabla btn-publicar" onclick="cambiarEstadoNoticiaSuperior('${n.id}', 'publicado', true)">Publicar</button>` : ''}
-                                    ${!esPublicado && !esRechazado ? `<button class="btn-tabla btn-regresar" onclick="cambiarEstadoNoticiaSuperior('${n.id}', 'rechazado', false)">Rechazar</button>` : ''}
+                                    ${!esPublicado ? `<button class="btn-tabla btn-publicar" onclick="cambiarEstadoNoticiaSuperior('${n.id}', 'publicado', true, this)">Publicar</button>` : ''}
+                                    ${!esPublicado && !esRechazado ? `<button class="btn-tabla btn-regresar" onclick="cambiarEstadoNoticiaSuperior('${n.id}', 'rechazado', false, this)">Rechazar</button>` : ''}
                                     <button class="btn-tabla btn-editar" onclick="abrirModalEditarNoticiaSuperior('${n.id}')">Editar</button>
-                                    <button class="btn-tabla btn-eliminar" onclick="deleteNoticiaSuperior('${n.id}')">🗑️</button>
+                                    <button class="btn-tabla btn-eliminar" onclick="deleteNoticiaSuperior('${n.id}', this)">Eliminar</button>
                                 </div>
                             </td>
                         </tr>
@@ -148,7 +167,6 @@ function renderGestionarNoticiasTablaSuperior() {
     container.innerHTML = html;
 }
 
-// Funciones Auxiliares para el menú desplegable móvil
 function toggleFiltrosMobileSuperior() {
     const dropdown = document.getElementById('dropdownFiltrosMobile');
     if (dropdown) dropdown.classList.toggle('is-hidden');
@@ -167,8 +185,19 @@ function getBadgeEstadoSuperior(estado) {
     return '<span class="badge-status badge-revision">En Revisión</span>';
 }
 
-async function cambiarEstadoNoticiaSuperior(noticiaId, nuevoEstado, esPublicado) {
+async function cambiarEstadoNoticiaSuperior(noticiaId, nuevoEstado, esPublicado, targetBtn = null) {
+    if (isChangingEstadoSuperior) return;
+
+    const btn = targetBtn || document.activeElement;
+    const originalText = btn ? btn.textContent : '';
+
     try {
+        isChangingEstadoSuperior = true;
+        if (btn && btn.tagName === 'BUTTON') {
+            btn.disabled = true;
+            btn.textContent = 'Procesando...';
+        }
+
         const client = getClientSuperior();
         const { error } = await client
             .from('noticias')
@@ -179,73 +208,87 @@ async function cambiarEstadoNoticiaSuperior(noticiaId, nuevoEstado, esPublicado)
         await loadGestionarNoticiasSuperior();
     } catch (err) {
         console.error('❌ Error cambiando estado:', err);
-        alert('Error al cambiar el estado: ' + err.message);
+        await Modal.alert('Error al cambiar el estado: ' + err.message, 'Error');
+    } finally {
+        isChangingEstadoSuperior = false;
+        if (btn && btn.tagName === 'BUTTON') {
+            btn.disabled = false;
+            btn.textContent = originalText;
+        }
     }
 }
 
-function abrirModalEditarNoticiaSuperior(noticiaId) {
+// Abrir Modal y Cargar Datos de la Noticia
+async function abrirModalEditarNoticiaSuperior(noticiaId) {
     const noticia = (window.gestionarNoticiasSuperiorCache || []).find(n => n.id === noticiaId);
     if (!noticia) return;
+
+    // Cargar opciones del desplegable de categorías
+    await loadCategoriasSuperior();
 
     const setVal = (id, val) => {
         const el = document.getElementById(id);
         if (el) el.value = val ?? '';
     };
 
-    setVal('editNoticiaId', noticia.id);
-    setVal('editImagenIdActual', noticia.imagen_id);
-    setVal('editNoticiaTitulo', noticia.titulo);
-    setVal('editNoticiaResumen', noticia.resumen);
-    setVal('editNoticiaCuerpo', noticia.cuerpo);
+    setVal('editNoticiaIdSuperior', noticia.id);
+    setVal('editImagenIdActualSuperior', noticia.imagen_id);
+    setVal('editNoticiaTituloSuperior', noticia.titulo);
+    setVal('editNoticiaResumenSuperior', noticia.resumen);
+    setVal('editNoticiaCuerpoSuperior', noticia.cuerpo);
 
-    const selectCat = document.getElementById('editNoticiaCategoria');
-    if (selectCat && noticia.categorias?.slug) {
-        selectCat.value = noticia.categorias.slug;
+    const selectCat = document.getElementById('editNoticiaCategoriaSuperior');
+    if (selectCat) {
+        selectCat.value = noticia.categoria_id || '';
     }
 
-    const checkPublicado = document.getElementById('editNoticiaPublicado');
+    const checkPublicado = document.getElementById('editNoticiaPublicadoSuperior');
     if (checkPublicado) checkPublicado.checked = !!noticia.publicado;
 
-    const checkDestacada = document.getElementById('editNoticiaDestacada');
+    const checkDestacada = document.getElementById('editNoticiaDestacadaSuperior');
     if (checkDestacada) checkDestacada.checked = !!noticia.destacada;
 
-    const fileInput = document.getElementById('editNoticiaImagen');
+    const fileInput = document.getElementById('editNoticiaImagenSuperior');
     if (fileInput) fileInput.value = '';
 
-    const imgPreview = document.getElementById('editNoticiaImagenPreview');
+    // Cargar imagen actual guardada en la base de datos
+    const imgPreview = document.getElementById('editNoticiaImagenPreviewSuperior');
     if (imgPreview) {
         imgPreview.src = noticia.imagenes?.url || 'https://placehold.co/600x400?text=Sin+Imagen';
     }
 
     const modal = document.getElementById('modalEditarNoticiaSuperior');
     if (modal) {
+        modal.style.display = 'flex';
         modal.classList.remove('is-hidden');
     }
 }
 
-function cerrarModalEditar() {
-    const modal = document.getElementById('modalEditarNoticiaSuperior');
-    if (modal) {
-        modal.classList.add('is-hidden');
-    }
-}
-
-function previeweditNoticiaImagenImagen(event) {
+// Previsualizar la nueva imagen local elegida por el usuario
+async function previewNoticiaImagenSuperior(event) {
     const file = event.target.files[0];
     if (!file) return;
 
     if (file.type !== 'image/webp') {
-        alert('⚠️ Solo se permiten imágenes en formato .webp');
+        await Modal.alert('Solo se permiten imágenes en formato .webp', 'Formato no permitido');
         event.target.value = '';
         return;
     }
 
     const reader = new FileReader();
     reader.onload = (e) => {
-        const preview = document.getElementById('editNoticiaImagenPreview');
+        const preview = document.getElementById('editNoticiaImagenPreviewSuperior');
         if (preview) preview.src = e.target.result;
     };
     reader.readAsDataURL(file);
+}
+
+function cerrarModalEditarNoticiaSuperior() {
+    const modal = document.getElementById('modalEditarNoticiaSuperior');
+    if (modal) {
+        modal.style.display = 'none';
+        modal.classList.add('is-hidden');
+    }
 }
 
 async function guardarEdicionNoticiaSuperior(event) {
@@ -253,7 +296,7 @@ async function guardarEdicionNoticiaSuperior(event) {
 
     if (isSubmittingNoticiaSuperior) return;
 
-    const form = document.getElementById('editarNoticiaForm');
+    const form = document.getElementById('editarNoticiaFormSuperior');
     const submitBtn = form ? form.querySelector('button[type="submit"]') : null;
     const cancelBtn = form ? form.querySelector('.btn-editar') : null;
     const originalSubmitText = submitBtn ? submitBtn.textContent : 'Guardar Cambios';
@@ -268,21 +311,24 @@ async function guardarEdicionNoticiaSuperior(event) {
         if (cancelBtn) cancelBtn.disabled = true;
 
         const client = getClientSuperior();
-        const id = document.getElementById('editNoticiaId')?.value;
-        const titulo = document.getElementById('editNoticiaTitulo')?.value.trim();
-        const resumen = document.getElementById('editNoticiaResumen')?.value.trim();
-        const cuerpo = document.getElementById('editNoticiaCuerpo')?.value.trim();
-        const categoriaSlug = document.getElementById('editNoticiaCategoria')?.value;
-        const publicado = document.getElementById('editNoticiaPublicado')?.checked || false;
-        const destacada = document.getElementById('editNoticiaDestacada')?.checked || false;
+        const id = document.getElementById('editNoticiaIdSuperior')?.value;
+        const titulo = document.getElementById('editNoticiaTituloSuperior')?.value.trim();
+        const resumen = document.getElementById('editNoticiaResumenSuperior')?.value.trim();
+        const cuerpo = document.getElementById('editNoticiaCuerpoSuperior')?.value.trim();
+        const categoriaId = document.getElementById('editNoticiaCategoriaSuperior')?.value;
+        const publicado = document.getElementById('editNoticiaPublicadoSuperior')?.checked || false;
+        const destacada = document.getElementById('editNoticiaDestacadaSuperior')?.checked || false;
 
-        const fileInput = document.getElementById('editNoticiaImagen');
+        if (!id) throw new Error('No se especificó la noticia a editar.');
+
+        const fileInput = document.getElementById('editNoticiaImagenSuperior');
         const file = fileInput ? fileInput.files[0] : null;
-        let imagenId = document.getElementById('editImagenIdActual')?.value || null;
+        let imagenId = document.getElementById('editImagenIdActualSuperior')?.value || null;
 
+        // Subir nueva imagen si se seleccionó una
         if (file) {
             if (file.type !== 'image/webp') {
-                alert('⚠️ El archivo debe estar en formato .webp');
+                await Modal.alert('El archivo debe estar en formato .webp', 'Formato no permitido');
                 return;
             }
 
@@ -309,17 +355,6 @@ async function guardarEdicionNoticiaSuperior(event) {
             imagenId = imgRecord.id;
         }
 
-        let categoriaId = null;
-        if (categoriaSlug) {
-            const { data: catData } = await client
-                .from('categorias')
-                .select('id')
-                .eq('slug', categoriaSlug)
-                .maybeSingle();
-
-            if (catData) categoriaId = catData.id;
-        }
-
         const updatePayload = {
             titulo,
             resumen,
@@ -330,8 +365,8 @@ async function guardarEdicionNoticiaSuperior(event) {
             actualizado_en: new Date().toISOString()
         };
 
-        if (imagenId) updatePayload.imagen_id = imagenId;
         if (categoriaId) updatePayload.categoria_id = categoriaId;
+        if (imagenId) updatePayload.imagen_id = imagenId;
 
         const { error } = await client
             .from('noticias')
@@ -340,13 +375,13 @@ async function guardarEdicionNoticiaSuperior(event) {
 
         if (error) throw error;
 
-        alert('✅ Noticia actualizada con éxito.');
-        cerrarModalEditar();
+        await Modal.alert('Noticia actualizada con éxito.', 'Éxito');
+        cerrarModalEditarNoticiaSuperior();
         await loadGestionarNoticiasSuperior();
 
     } catch (err) {
         console.error('❌ Error al actualizar noticia:', err);
-        alert('Error al guardar cambios: ' + err.message);
+        await Modal.alert('Error al guardar cambios: ' + err.message, 'Error');
     } finally {
         isSubmittingNoticiaSuperior = false;
         if (submitBtn) {
@@ -357,18 +392,36 @@ async function guardarEdicionNoticiaSuperior(event) {
     }
 }
 
-async function deleteNoticiaSuperior(noticiaId) {
-    if (!confirm('¿Estás seguro de eliminar esta noticia?')) return;
+async function deleteNoticiaSuperior(noticiaId, targetBtn = null) {
+    if (isDeletingNoticiaSuperior) return;
+
+    const confirmado = await Modal.confirm('¿Estás seguro de eliminar esta noticia?', 'Confirmar eliminación');
+    if (!confirmado) return;
+
+    const btn = targetBtn || document.activeElement;
+    const originalText = btn ? btn.textContent : '🗑️';
 
     try {
+        isDeletingNoticiaSuperior = true;
+        if (btn && btn.tagName === 'BUTTON') {
+            btn.disabled = true;
+            btn.textContent = 'Eliminando...';
+        }
+
         const client = getClientSuperior();
         const { error } = await client.from('noticias').delete().eq('id', noticiaId);
         if (error) throw error;
 
-        alert('✅ Noticia eliminada');
+        await Modal.alert('Noticia eliminada correctamente.', 'Éxito');
         await loadGestionarNoticiasSuperior();
     } catch (err) {
         console.error('❌ Error al eliminar noticia:', err);
-        alert('Error al eliminar la noticia');
+        await Modal.alert('Error al eliminar la noticia.', 'Error');
+    } finally {
+        isDeletingNoticiaSuperior = false;
+        if (btn && btn.tagName === 'BUTTON') {
+            btn.disabled = false;
+            btn.textContent = originalText;
+        }
     }
 }

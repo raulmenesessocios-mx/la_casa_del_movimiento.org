@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             const tallerIdSelected = tallerSelect.value;
             if (!tallerIdSelected) {
-                alert('⚠️ Por favor selecciona un taller.');
+                await Modal.alert('⚠️ Por favor selecciona un taller.');
                 return;
             }
 
@@ -82,13 +82,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 if (insertError) throw insertError;
 
-                alert('🎉 ¡Inscripción registrada con éxito! Tu lugar ha sido reservado.');
+                await Modal.alert('🎉 ¡Inscripción registrada con éxito! Tu lugar ha sido reservado.');
                 form.reset();
                 actualizarResumen(null);
 
             } catch (err) {
                 console.error('Error al registrar inscripción:', err);
-                alert('❌ Ocurrió un error al procesar tu inscripción: ' + err.message);
+                await Modal.alert('❌ Ocurrió un error al procesar tu inscripción: ' + err.message);
             } finally {
                 btnSubmit.disabled = false;
                 btnSubmit.textContent = 'Confirmar Inscripción';

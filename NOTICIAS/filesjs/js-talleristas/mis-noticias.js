@@ -1,5 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
     try {
+        // Carga preventiva de categorías al iniciar la vista
+        cargarCategoriasEditTallerista();
+
         const formReenviar = document.getElementById('formEditarTallerista');
         if (formReenviar && !formReenviar.dataset.listenerAttached) {
             formReenviar.addEventListener('submit', volverAMandarNoticia);
@@ -23,7 +26,39 @@ function escapeHtml(str) {
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&#039;');
 }
-// 1. Consulta actualizada con imagenes(url)
+
+// 1. CARGA DINÁMICA DE CATEGORÍAS PARA EL MODAL TALLERISTA
+async function cargarCategoriasEditTallerista(selectedVal = null) {
+    const client = window.supabaseClient || window.dbClient;
+    const selectCategoria = document.getElementById('editTalleristaCategoria');
+    if (!selectCategoria || !client) return;
+
+    try {
+        const { data: categorias, error } = await client
+            .from('categorias')
+            .select('id, nombre, slug')
+            .order('nombre', { ascending: true });
+
+        if (error) throw error;
+
+        selectCategoria.innerHTML = '<option value="">-- Selecciona una categoría --</option>';
+
+        (categorias || []).forEach(cat => {
+            const option = document.createElement('option');
+            option.value = cat.id; // Guarda el UUID exigido por la DB
+            option.textContent = cat.nombre;
+
+            if (selectedVal && (cat.id === selectedVal || cat.slug === selectedVal)) {
+                option.selected = true;
+            }
+            selectCategoria.appendChild(option);
+        });
+    } catch (err) {
+        console.error('❌ Error al cargar categorías en modal tallerista:', err.message);
+    }
+}
+
+// 2. CONSULTA Y RENDERIZADO DE MIS NOTICIAS
 async function loadMisNoticias() {
     try {
         const client = window.supabaseClient || window.dbClient;
@@ -43,10 +78,9 @@ async function loadMisNoticias() {
 
         if (!autor) return;
 
-        // Se agrega imagenes(url) a la consulta
         const { data, error } = await client
             .from('noticias')
-            .select('*, categorias(slug, nombre), imagenes(url)')
+            .select('*, categorias(id, slug, nombre), imagenes(url)')
             .eq('autor_id', autor.id)
             .order('fecha_publicacion', { ascending: false });
 
@@ -67,7 +101,6 @@ async function loadMisNoticias() {
     }
 }
 
-// Alias global para ser llamado desde crear-noticia.js
 window.loadMisNoticias = loadMisNoticias;
 window.loadMyNoticias = loadMisNoticias;
 
@@ -76,7 +109,7 @@ function renderMisNoticias(noticias) {
     if (!container) return;
 
     if (!noticias || noticias.length === 0) {
-        container.innerHTML = '<p>Aún no has redactado ninguna noticia.</p>';
+        container.innerHTML = '<p class="mis-noticias-empty">Aún no has redactado ninguna noticia.</p>';
         return;
     }
 
@@ -84,22 +117,30 @@ function renderMisNoticias(noticias) {
         const esRechazada = n.estado === 'rechazado' || n.estado === 'no_aprobada';
         const titulo = escapeHtml(n.titulo);
         const resumen = escapeHtml(n.resumen);
+        // Fallback si la noticia no tiene imagen asociada
+        const imgUrl = n.imagenes?.url || 'https://placehold.co/600x400?text=Sin+Imagen';
 
         return `
-            <div class="card-noticia-item" style="border: 1px solid #e2e8f0; padding: 18px; border-radius: 12px; background: #fff; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-                <h3 style="margin-top:0;">${titulo}</h3>
-                <p style="color: #64748b; font-size: 0.9em; margin-bottom: 8px;">${resumen}</p>
-                <p style="margin: 10px 0;"><strong>Estado:</strong> ${getBadgeEstadoTallerista(n.estado)}</p>
-                
-                <div style="display: flex; gap: 10px; margin-top: 15px;">
-                    ${esRechazada ? `
-                        <button type="button" class="btn btn-warning" onclick="abrirEditarNoticiaTallerista('${n.id}')" style="background: #f39c12; color: white; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-weight: bold;">
-                            ✏️ Editar y Reenviar
-                        </button>
-                    ` : ''}
-                    <button type="button" class="btn btn-danger" onclick="deleteNoticiaTallerista('${n.id}')" style="background: #e74c3c; color: white; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-weight: bold;">
-                        🗑️ Eliminar
-                    </button>
+            <div class="card mis-noticias-card">
+                <div class="mis-noticias-content">
+                    <img src="${imgUrl}" alt="${titulo}" class="mis-noticias-img">
+
+                    <div class="mis-noticias-body">
+                        <h3 class="mis-noticias-title">${titulo}</h3>
+                        <p class="mis-noticias-text">${resumen}</p>
+                        <p class="mis-noticias-text"><strong>Estado:</strong> ${getBadgeEstadoTallerista(n.estado)}</p>
+                        
+                        <div class="mis-noticias-footer">
+                            ${esRechazada ? `
+                                <button type="button" class="btn-tabla btn-regresar" onclick="abrirEditarNoticiaTallerista('${n.id}')">
+                                    Editar y Reenviar
+                                </button>
+                            ` : ''}
+                            <button type="button" class="btn-tabla btn-eliminar" onclick="deleteNoticiaTallerista('${n.id}')">
+                                Eliminar
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         `;
@@ -107,22 +148,25 @@ function renderMisNoticias(noticias) {
 }
 
 function getBadgeEstadoTallerista(estado) {
-    if (estado === 'publicado') return '<span style="color:#27ae60; font-weight:bold;">✅ Publicada</span>';
-    if (estado === 'rechazado' || estado === 'no_aprobada') return '<span style="color:#e74c3c; font-weight:bold;">❌ No aprobada (Requiere cambios)</span>';
-    return '<span style="color:#f39c12; font-weight:bold;">⏳ En Revisión</span>';
+    if (estado === 'publicado') return '<span class="badge-status badge-publicado">Publicada</span>';
+    if (estado === 'rechazado' || estado === 'no_aprobada') return '<span class="badge-status badge-rechazado">No aprobada (Requiere cambios)</span>';
+    return '<span class="badge-status badge-revision">⏳ En Revisión</span>';
 }
 
-function abrirEditarNoticiaTallerista(noticiaId) {
+// 3. APERTURA Y POBLADO DEL MODAL
+async function abrirEditarNoticiaTallerista(noticiaId) {
     if (!window.misNoticiasCache) return;
     const noticia = window.misNoticiasCache.find(n => n.id === noticiaId);
     if (!noticia) return;
+
+    // Sincroniza categorías y auto-selecciona el UUID de la noticia
+    await cargarCategoriasEditTallerista(noticia.categoria_id || noticia.categorias?.id || noticia.categorias?.slug);
 
     const campoId = document.getElementById('editTalleristaId');
     const campoImagenId = document.getElementById('editTalleristaImagenIdActual');
     const campoTitulo = document.getElementById('editTalleristaTitulo');
     const campoResumen = document.getElementById('editTalleristaResumen');
     const campoCuerpo = document.getElementById('editTalleristaCuerpo');
-    const catSelect = document.getElementById('editTalleristaCategoria');
     const modal = document.getElementById('modalEditarNoticiaTallerista');
 
     if (!campoId || !campoTitulo || !campoResumen || !campoCuerpo || !modal) {
@@ -136,26 +180,22 @@ function abrirEditarNoticiaTallerista(noticiaId) {
     campoResumen.value = noticia.resumen ?? '';
     campoCuerpo.value = noticia.cuerpo ?? '';
 
-    if (catSelect) {
-        catSelect.value = noticia.categorias?.slug || 'reflexiones';
-    }
-
-    // 📸 Asignar la imagen guardada al preview
+    // Preview de la imagen
     const imgPreview = document.getElementById('editTalleristaImagenPreview');
     if (imgPreview) {
         const defaultPlaceholder = 'https://placehold.co/600x400?text=Sin+Imagen';
         imgPreview.src = noticia.imagenes?.url || defaultPlaceholder;
     }
 
-    modal.style.display = 'flex';
+    modal.classList.remove('is-hidden');
 }
 
-function previewnwenoticoaImagen(event) {
+async function previewnwenoticoaImagen(event) {
     const file = event.target.files[0];
     if (!file) return;
 
     if (file.type !== 'image/webp') {
-        alert('⚠️ Solo se permiten imágenes en formato .webp');
+        await Modal.alert('Solo se permiten imágenes en formato .webp', 'Formato no permitido');
         event.target.value = '';
         return;
     }
@@ -169,7 +209,7 @@ function previewnwenoticoaImagen(event) {
 
 function cerrarModalTallerista() {
     const modal = document.getElementById('modalEditarNoticiaTallerista');
-    if (modal) modal.style.display = 'none';
+    if (modal) modal.classList.add('is-hidden');
     
     const form = document.getElementById('formEditarTallerista');
     if (form) form.reset();
@@ -180,12 +220,13 @@ function cerrarModalTallerista() {
     }
 }
 
+// 4. REENVIAR A REVISIÓN (ACTUALIZACIÓN EN SUPABASE)
 async function volverAMandarNoticia(e) {
     e.preventDefault();
 
     const client = window.supabaseClient || window.dbClient;
     if (!client) {
-        alert('❌ Error: Cliente de base de datos no disponible.');
+        await Modal.alert('Error: Cliente de base de datos no disponible.', 'Error');
         return;
     }
 
@@ -195,10 +236,10 @@ async function volverAMandarNoticia(e) {
     const titulo = document.getElementById('editTalleristaTitulo').value.trim();
     const resumen = document.getElementById('editTalleristaResumen').value.trim();
     const cuerpo = document.getElementById('editTalleristaCuerpo').value.trim();
-    const categorySlug = document.getElementById('editTalleristaCategoria').value;
+    const categoryVal = document.getElementById('editTalleristaCategoria').value;
 
-    if (!titulo || !resumen || !cuerpo) {
-        alert('⚠️ Título, resumen y cuerpo son obligatorios.');
+    if (!titulo || !resumen || !cuerpo || !categoryVal) {
+        await Modal.alert('Título, resumen, cuerpo y categoría son obligatorios.', 'Campos requeridos');
         return;
     }
 
@@ -208,7 +249,7 @@ async function volverAMandarNoticia(e) {
     try {
         if (file) {
             if (file.type !== 'image/webp') {
-                alert('⚠️ La imagen debe estar en formato .webp');
+                await Modal.alert('La imagen debe estar en formato .webp', 'Formato no permitido');
                 return;
             }
 
@@ -235,13 +276,20 @@ async function volverAMandarNoticia(e) {
             imagenId = imgRecord.id;
         }
 
-        const { data: catData, error: catErr } = await client
-            .from('categorias')
-            .select('id')
-            .eq('slug', categorySlug)
-            .single();
+        // Resolución de la Categoría (Fallback si es UUID o Slug)
+        let targetCategoriaId = categoryVal;
+        const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(categoryVal);
 
-        if (catErr) throw catErr;
+        if (!isUuid) {
+            const { data: catData, error: catErr } = await client
+                .from('categorias')
+                .select('id')
+                .eq('slug', categoryVal)
+                .single();
+
+            if (catErr) throw catErr;
+            targetCategoriaId = catData.id;
+        }
 
         const { error: updateErr } = await client
             .from('noticias')
@@ -249,39 +297,42 @@ async function volverAMandarNoticia(e) {
                 titulo,
                 resumen,
                 cuerpo,
-                categoria_id: catData.id,
+                categoria_id: targetCategoriaId,
                 imagen_id: imagenId,
                 estado: 'en_revision',
-                publicado: false
+                publicado: false,
+                actualizado_en: new Date().toISOString()
             })
             .eq('id', id);
 
         if (updateErr) throw updateErr;
 
-        alert('🚀 Noticia actualizada y reenviada a revisión.');
+        await Modal.alert('Noticia actualizada y reenviada a revisión.', 'Éxito');
         cerrarModalTallerista();
         loadMisNoticias();
     } catch (error) {
         console.error('Error al reenviar noticia:', error);
-        alert('❌ Error al reenviar noticia: ' + error.message);
+        await Modal.alert('Error al reenviar noticia: ' + error.message, 'Error');
     }
 }
 
 async function deleteNoticiaTallerista(noticiaId) {
-    if (!confirm('¿Seguro que deseas eliminar esta noticia?')) return;
+    const confirmado = await Modal.confirm('¿Seguro que deseas eliminar esta noticia?', 'Confirmar eliminación');
+    if (!confirmado) return;
+
     try {
         const client = window.supabaseClient || window.dbClient;
         if (!client) {
-            alert('❌ Error: Cliente de base de datos no disponible.');
+            await Modal.alert('Error: Cliente de base de datos no disponible.', 'Error');
             return;
         }
         const { error } = await client.from('noticias').delete().eq('id', noticiaId);
         if (error) throw error;
 
-        alert('🗑️ Noticia eliminada.');
+        await Modal.alert('Noticia eliminada correctamente.', 'Éxito');
         loadMisNoticias();
     } catch (err) {
         console.error('Error al eliminar:', err);
-        alert('❌ No se pudo eliminar la noticia.');
+        await Modal.alert('No se pudo eliminar la noticia.', 'Error');
     }
 }

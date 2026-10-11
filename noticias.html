@@ -37,11 +37,22 @@
             <h2 class="section-title">Noticias</h2>
             <p class="news-subtitle">Artículos, reflexiones y crónicas de la comunidad</p>
 
-            <!-- TABS INTERACTIVOS -->
-            <div class="news-tabs">
-                <button class="tab-button tab-active" data-filter="todos">Todos</button>
-                <button class="tab-button" data-filter="reflexiones">Reflexiones</button>
-                <button class="tab-button" data-filter="cronicas">Crónicas de Eventos</button>
+<!-- TABS INTERACTIVOS DINÁMICOS -->
+            <div class="news-tabs-container" style="position: relative; margin-bottom: 3rem;">
+                <div class="news-tabs" id="newsTabsContainer" style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                    <button class="tab-button tab-active" data-filter="todos">Todos</button>
+                    <!-- Las demás categorías se inyectarán dinámicamente aquí mediante JS -->
+                </div>
+
+                <!-- BOTÓN DINÁMICO OCULTO POR DEFECTO PARA EXCEDENTES -->
+                <div id="dropdownCategoriasWrapper" class="mobile-filters-dropdown" style="display: none; text-align: center; margin-top: 1rem;">
+                    <button type="button" class="tab-button btn-filter-trigger" onclick="toggleMenuCategoriasExtras()">
+                        Más categorías ▾
+                    </button>
+                    <div id="dropdownCategoriasMenu" class="dropdown-filters-menu" style="display: none; left: 50%; transform: translateX(-50%);">
+                        <!-- Aquí se agruparán las categorías que no quepan o excedan el límite -->
+                    </div>
+                </div>
             </div>
 
             <!-- GRID ASIMÉTRICO DINÁMICO (Se llena con JS) -->
@@ -143,9 +154,9 @@
             <div class="footer-site-bottom-container">
                 <p>© 2026 Nuestra Casa del Movimiento Tizayuca. Proyecto comunitario sin fines de lucro.</p>
                 <div class="footer-legal-links">
-                    <a href="privacidad.html">Aviso de Privacidad</a>
+                    <a href="pages/privacidad.html">Aviso de Privacidad</a>
                     <span>•</span>
-                    <a href="terminos.html">Términos de Uso</a>
+                    <a href="pages/terminos.html">Términos de Uso</a>
                 </div>
             </div>
         </div>
@@ -158,6 +169,6 @@
     <script src="NOTICIAS/filesjs/js-login/supabase-config.js"></script>
 
     <!-- 2. Tu script de lógica pública -->
-    <script src="js/scritps.js"></script>
+    <script src="js/js_noticias.js"></script>
 </body>
 </html>

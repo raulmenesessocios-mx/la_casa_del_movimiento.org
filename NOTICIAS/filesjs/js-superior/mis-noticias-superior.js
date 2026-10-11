@@ -85,7 +85,7 @@ function renderMisNoticiasSuperior(noticias) {
 }
 
 async function eliminarNoticiaSuperior(noticiaId, targetBtn = null) {
-    if (!confirm('¿Seguro que deseas eliminar esta noticia?')) return;
+    if (!await Modal.confirm('¿Seguro que deseas eliminar esta noticia?')) return;
 
     // Si se pasa event.target o la referencia del botón, se usa ese; si no, intenta buscarlo
     const submitBtn = targetBtn || document.activeElement;
@@ -105,12 +105,12 @@ async function eliminarNoticiaSuperior(noticiaId, targetBtn = null) {
 
         if (error) throw error;
 
-        alert('🗑️ Noticia eliminada exitosamente.');
+        await Modal.alert('🗑️ Noticia eliminada exitosamente.');
         await loadMisNoticiasSuperior();
 
     } catch (err) {
         console.error('❌ Error al eliminar noticia:', err);
-        alert('❌ No se pudo eliminar la noticia: ' + err.message);
+        await Modal.alert('❌ No se pudo eliminar la noticia: ' + err.message);
     } finally {
         // Garantiza que el botón vuelva a su estado original (éxito o error)
         if (submitBtn && submitBtn.tagName === 'BUTTON') {

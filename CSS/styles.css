@@ -1620,3 +1620,230 @@ backdrop-filter: blur(10px); }
     text-align: center; 
     margin-top: 0.4rem;
 }
+
+/* ============================================
+   SECCIÓN DE EVENTOS - VISTA PÚBLICA
+   ============================================ */
+.events-section {
+    padding: var(--spacing-lg) 0;
+}
+
+.events-subtitle {
+    text-align: center;
+    color: var(--color-text-light);
+    margin-bottom: var(--spacing-xl);
+}
+
+.events-container {
+    display: grid;
+    grid-template-columns: 350px 1fr;
+    gap: var(--spacing-lg);
+    align-items: start;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+/* Lado Izquierdo: Agenda */
+.events-agenda {
+    background: var(--color-white);
+    padding: var(--spacing-md);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-sm);
+}
+
+.agenda-title {
+    font-family: var(--font-serif);
+    font-size: 1.25rem;
+    color: var(--color-primary);
+    margin-bottom: var(--spacing-md);
+    border-bottom: 2px solid var(--color-border);
+    padding-bottom: 0.5rem;
+}
+
+.agenda-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.agenda-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    border: 2px solid var(--color-border);
+    border-radius: var(--border-radius);
+    background: var(--color-bg);
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.agenda-item:hover {
+    border-color: var(--color-primary);
+    background-color: rgba(158, 27, 34, 0.03);
+}
+
+.agenda-item.agenda-item-active {
+    border-color: var(--color-primary);
+    background-color: rgba(158, 27, 34, 0.06);
+    box-shadow: var(--shadow-sm);
+}
+
+.agenda-date {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    padding: 0.4rem 0.6rem;
+    border-radius: 6px;
+    text-align: center;
+    min-width: 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.agenda-day {
+    font-size: 1.1rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.agenda-month {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.agenda-info {
+    flex: 1;
+}
+
+.agenda-info h4 {
+    font-size: 0.95rem;
+    color: var(--color-text);
+    margin-bottom: 0.15rem;
+}
+
+.agenda-time {
+    font-size: 0.8rem;
+    color: var(--color-text-light);
+    font-weight: 600;
+}
+
+.agenda-arrow {
+    color: var(--color-primary);
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+/* Lado Derecho: Evento Destacado */
+.featured-event-container {
+    background: var(--color-white);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+}
+
+.featured-event {
+    display: flex;
+    flex-direction: column;
+}
+
+.event-featured-image img {
+    width: 100%;
+    height: 320px;
+    object-fit: cover;
+}
+
+.event-featured-content {
+    padding: var(--spacing-lg);
+}
+
+.event-featured-title {
+    font-family: var(--font-serif);
+    font-size: 1.8rem;
+    color: var(--color-primary);
+    margin-bottom: var(--spacing-sm);
+}
+
+.event-featured-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: var(--spacing-md);
+    font-size: 0.9rem;
+    color: var(--color-text-light);
+}
+
+.event-featured-description {
+    color: var(--color-text);
+    margin-bottom: var(--spacing-lg);
+    line-height: 1.7;
+}
+
+/* ============================================
+ESPONSIVE MÓVILES (< 768px): PÍLDORAS HORIZONTALES
+   ============================================ */
+@media (max-width: 768px) {
+    .events-container {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        padding: 0 0.5rem;
+    }
+
+    /* Transformar la agenda en un carrusel/barra horizontal superior */
+    .events-agenda {
+        width: 100%;
+        padding: 0.75rem;
+        background: var(--color-white);
+    }
+
+    .agenda-title {
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .agenda-list {
+        display: flex;
+        flex-direction: row;
+        gap: 0.75rem;
+        overflow-x: auto;
+        padding-bottom: 0.5rem;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Cada tarjeta en móvil con tamaño justo y cómodo al tacto */
+    .agenda-item {
+        flex: 0 0 auto;
+        width: 210px;
+        scroll-snap-align: start;
+        padding: 0.6rem;
+    }
+
+    .agenda-arrow {
+        display: none; /* Ocultar flecha en móvil para ganar espacio */
+    }
+
+    .agenda-info h4 {
+        font-size: 0.85rem;
+        display: -webkit-box;
+        line-clamp: 2;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .event-featured-image img {
+        height: 220px;
+    }
+
+    .event-featured-content {
+        padding: 1.25rem;
+    }
+
+    .event-featured-title {
+        font-size: 1.4rem;
+    }
+}

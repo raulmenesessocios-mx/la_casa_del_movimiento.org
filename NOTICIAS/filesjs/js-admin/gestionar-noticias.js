@@ -2,11 +2,27 @@ let filterEstadoActual = 'todas';
 
 document.addEventListener('DOMContentLoaded', () => {
     loadAllNoticiasAdmin();
+    cargarCategoriasSelect();
 
+    // Listener para Formulario de Edición de Noticias
     const formEdit = document.getElementById('editarNoticiaForm');
     if (formEdit && !formEdit.dataset.listenerAttached) {
         formEdit.addEventListener('submit', guardarEdicionNoticia);
         formEdit.dataset.listenerAttached = 'true';
+    }
+
+    // Listener para Formulario de Nueva Categoría
+    const formCat = document.getElementById('nuevaCategoriaForm');
+    if (formCat && !formCat.dataset.listenerAttached) {
+        formCat.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const inputNombre = document.getElementById('nombreNuevaCategoria');
+            const nombre = inputNombre ? inputNombre.value.trim() : '';
+            if (nombre) {
+                await agregarCategoria(nombre);
+            }
+        });
+        formCat.dataset.listenerAttached = 'true';
     }
 });
 
@@ -23,6 +39,77 @@ function escapeHtmlAdmin(str) {
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&#039;');
 }
+
+// --- GESTIÓN DE CATEGORÍAS ---
+
+async function cargarCategoriasSelect(selectedVal = null) {
+    const client = getAdminClient();
+    const selectCategoria = document.getElementById('editNoticiaCategoria');
+    if (!selectCategoria || !client) return;
+
+    try {
+        const { data: categorias, error } = await client
+            .from('categorias')
+            .select('id, nombre, slug')
+            .order('nombre', { ascending: true });
+
+        if (error) throw error;
+
+        selectCategoria.innerHTML = '<option value="">-- Selecciona una categoría --</option>';
+        (categorias || []).forEach(cat => {
+            const option = document.createElement('option');
+            option.value = cat.id; // Guarda el UUID requerido por la tabla noticias
+            option.textContent = cat.nombre;
+
+            if (selectedVal && (cat.id === selectedVal || cat.slug === selectedVal)) {
+                option.selected = true;
+            }
+            selectCategoria.appendChild(option);
+        });
+    } catch (err) {
+        console.error('❌ Error al cargar categorías:', err.message);
+    }
+}
+
+async function agregarCategoria(nombreCategoria) {
+    try {
+        const client = getAdminClient();
+        if (!client) throw new Error("Cliente Supabase no disponible.");
+
+
+        const { data, error } = await client
+            .from('categorias')
+            .insert([{ nombre: nombreCategoria, slug: slug }])
+            .select();
+
+        if (error) throw error;
+
+        await Modal.alert(`✅ Categoría "${nombreCategoria}" creada con éxito.`);
+
+        // Recargar select de categorías y seleccionar automáticamente la nueva
+        await cargarCategoriasSelect(data[0].id);
+        cerrarModalCategoria();
+        return data;
+
+    } catch (error) {
+        console.error('❌ Error al agregar categoría:', error);
+        await Modal.alert('❌ Error al agregar categoría. Es posible que el nombre o slug ya existan.');
+    }
+}
+
+function abrirModalCategoria() {
+    const modal = document.getElementById('nuevaCategoriaModal');
+    if (modal) modal.style.display = 'flex';
+}
+
+function cerrarModalCategoria() {
+    const modal = document.getElementById('nuevaCategoriaModal');
+    const form = document.getElementById('nuevaCategoriaForm');
+    if (modal) modal.style.display = 'none';
+    if (form) form.reset();
+}
+
+// --- GESTIÓN DE NOTICIAS ---
 
 async function loadAllNoticiasAdmin() {
     try {
@@ -44,7 +131,7 @@ async function loadAllNoticiasAdmin() {
                 destacada, 
                 categoria_id,
                 imagen_id,
-                categorias(slug, nombre),
+                categorias(id, slug, nombre),
                 autores(nombre),
                 imagenes(url)
             `)
@@ -98,21 +185,20 @@ function renderTableAdmin() {
                 ${filtradas.map(n => {
                     const esPublicado = n.estado === 'publicado';
                     const esRechazado = n.estado === 'rechazado';
-
+                    const nombreseguro = (n.titulo|| '').replace(/'/g, "\\'");
                     return `
                     <tr>
                         <td><strong>${escapeHtmlAdmin(n.titulo)}</strong></td>
                         <td>${escapeHtmlAdmin(n.autores?.nombre || 'Desconocido')}</td>
                         <td>
-                            ${getBadgeEstado(n.estado)}
-                            ${n.destacada ? ' ⭐ destacada' : ''}
+                            ${getBadgeEstado(n.estado)}${n.destacada ? ' ⭐ destacada' : ''}
                         </td>
                         <td>
                             <div class="actions-cell">
                                 ${!esPublicado ? `<button class="btn-tabla btn-publicar" onclick="cambiarEstadoNoticia('${n.id}', 'publicado', true)">Publicar</button>` : ''}
                                 ${!esPublicado && !esRechazado ? `<button class="btn-tabla btn-regresar" onclick="cambiarEstadoNoticia('${n.id}', 'rechazado', false)">Rechazar</button>` : ''}
                                 <button class="btn-tabla btn-editar" onclick="abrirEditarNoticia('${n.id}')">Editar</button>
-                                <button class="btn-tabla btn-eliminar" onclick="deleteNoticia('${n.id}')">🗑️</button>
+                                <button class="btn-tabla btn-eliminar" onclick="deleteNoticia('${n.id}','${nombreseguro}')">Eliminar</button>
                             </div>
                         </td>
                     </tr>
@@ -147,17 +233,20 @@ async function cambiarEstadoNoticia(noticiaId, nuevoEstado, esPublicado) {
 
         await loadAllNoticiasAdmin();
     } catch (err) {
-        console.error('❌ Error cambiando estado de noticia:', err);
-        alert('Error al cambiar el estado: ' + err.message);
+        console.error('Error cambiando estado de noticia:', err);
+        await Modal.alert('Error al cambiar el estado: ' + err.message);
     }
 }
 
-function abrirEditarNoticia(noticiaId) {
+async function abrirEditarNoticia(noticiaId) {
     const noticia = (window.noticiasAdminCache || []).find(n => n.id === noticiaId);
     if (!noticia) {
-        console.error('❌ No se encontró la noticia en caché:', noticiaId);
+        console.error('No se encontró la noticia en caché:', noticiaId);
         return;
     }
+
+    // Cargar categorías y auto-seleccionar la de la noticia actual
+    await cargarCategoriasSelect(noticia.categoria_id || noticia.categorias?.id);
 
     const setVal = (id, val) => {
         const el = document.getElementById(id);
@@ -174,7 +263,7 @@ function abrirEditarNoticia(noticiaId) {
     setVal('editNoticiaTitulo', noticia.titulo);
     setVal('editNoticiaResumen', noticia.resumen);
     setVal('editNoticiaCuerpo', noticia.cuerpo);
-    setVal('editNoticiaCategoria', noticia.categorias?.slug || 'reflexiones');
+    setVal('editNoticiaCategoria', noticia.categoria_id || noticia.categorias?.id || '');
     setChecked('editNoticiaPublicado', noticia.publicado);
     setChecked('editNoticiaDestacada', noticia.destacada);
 
@@ -207,21 +296,21 @@ async function guardarEdicionNoticia(e) {
     const titulo = document.getElementById('editNoticiaTitulo')?.value.trim();
     const resumen = document.getElementById('editNoticiaResumen')?.value.trim();
     const cuerpo = document.getElementById('editNoticiaCuerpo')?.value.trim();
-    const categorySlug = document.getElementById('editNoticiaCategoria')?.value;
+    const categoryVal = document.getElementById('editNoticiaCategoria')?.value;
     const publicado = document.getElementById('editNoticiaPublicado')?.checked || false;
     const destacada = document.getElementById('editNoticiaDestacada')?.checked || false;
     const fileInput = document.getElementById('editNoticiaImagen');
     const file = fileInput ? fileInput.files[0] : null;
 
     try {
-        if (!titulo || !resumen || !cuerpo || !categorySlug) {
-            alert('⚠️ Por favor completa los campos obligatorios.');
+        if (!titulo || !resumen || !cuerpo || !categoryVal) {
+            await Modal.alert('⚠️ Por favor completa los campos obligatorios.');
             return;
         }
 
         if (file) {
             if (file.type !== 'image/webp') {
-                alert('⚠️ La imagen debe estar en formato .webp');
+                await Modal.alert('⚠️ La imagen debe estar en formato .webp');
                 return;
             }
 
@@ -248,13 +337,20 @@ async function guardarEdicionNoticia(e) {
             mimagenId = imgRecord.id;
         }
 
-        const { data: catData, error: catErr } = await client
-            .from('categorias')
-            .select('id')
-            .eq('slug', categorySlug)
-            .single();
+        // Resolución de la Categoría (Soporta UUID directo o Slug)
+        let targetCategoriaId = categoryVal;
+        const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(categoryVal);
 
-        if (catErr) throw catErr;
+        if (!isUuid) {
+            const { data: catData, error: catErr } = await client
+                .from('categorias')
+                .select('id')
+                .eq('slug', categoryVal)
+                .single();
+
+            if (catErr) throw catErr;
+            targetCategoriaId = catData.id;
+        }
 
         const { error: updateErr } = await client
             .from('noticias')
@@ -262,7 +358,7 @@ async function guardarEdicionNoticia(e) {
                 titulo,
                 resumen,
                 cuerpo,
-                categoria_id: catData.id,
+                categoria_id: targetCategoriaId,
                 imagen_id: mimagenId,
                 publicado,
                 estado: publicado ? 'publicado' : 'en_revision',
@@ -273,17 +369,17 @@ async function guardarEdicionNoticia(e) {
 
         if (updateErr) throw updateErr;
 
-        alert('✅ Noticia actualizada con éxito');
+        await Modal.alert('Noticia actualizada con éxito');
         cerrarModalEditar();
         await loadAllNoticiasAdmin();
     } catch (error) {
-        console.error('❌ Error al actualizar noticia:', error);
-        alert('❌ Error al actualizar: ' + error.message);
+        console.error('Error al actualizar noticia:', error);
+        await Modal.alert('Error al actualizar: ' + error.message);
     }
 }
 
-async function deleteNoticia(noticiaId) {
-    if (!confirm('¿Estás seguro de que quieres eliminar esta noticia?')) return;
+async function deleteNoticia(noticiaId, titulo) {
+    if (!await Modal.confirm(`¿Estás seguro de que quieres eliminar esta noticia "$titulo}" ?`)) return;
 
     try {
         const client = getAdminClient();
@@ -294,11 +390,11 @@ async function deleteNoticia(noticiaId) {
 
         if (error) throw error;
 
-        alert('✅ Noticia eliminada');
+        await Modal.alert('Noticia eliminada');
         await loadAllNoticiasAdmin();
         if (typeof loadDashboardStats === 'function') loadDashboardStats();
     } catch (error) {
-        console.error('❌ Error al eliminar noticia:', error);
-        alert('❌ Error al eliminar la noticia');
+        console.error('Error al eliminar noticia:', error);
+        await Modal.alert('Error al eliminar la noticia');
     }
 }

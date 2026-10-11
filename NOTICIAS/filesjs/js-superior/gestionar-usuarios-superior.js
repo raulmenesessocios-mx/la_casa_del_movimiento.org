@@ -103,7 +103,7 @@ async function registrarTalleristaSuperior() {
 
     try {
         if (!nombre || !email) {
-            alert('⚠️ Los campos Nombre y Email son requeridos.');
+            await Modal.alert('⚠️ Los campos Nombre y Email son requeridos.');
             return;
         }
 
@@ -161,13 +161,13 @@ async function registrarTalleristaSuperior() {
         if (dbError) throw dbError;
 
         // Alerta única de éxito al finalizar todo el proceso
-        alert(`✅ Tallerista "${nombre}" registrado exitosamente en el sistema.`);
+        await Modal.alert(`✅ Tallerista "${nombre}" registrado exitosamente en el sistema.`);
         form?.reset();
         await loadUsuariosSuperior();
 
     } catch (err) {
         console.error('❌ Error operacional al registrar tallerista:', err);
-        alert('❌ Error al crear tallerista: ' + err.message);
+        await Modal.alert('❌ Error al crear tallerista: ' + err.message);
     } finally {
 
         if (submitBtn) {

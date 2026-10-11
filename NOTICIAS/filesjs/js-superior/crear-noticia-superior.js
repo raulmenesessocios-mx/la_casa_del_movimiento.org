@@ -2,6 +2,12 @@
 let isSubmittingNoticia = false;
 
 document.addEventListener('DOMContentLoaded', () => {
+    // 1. Carga inicial de categorías
+    cargarCategoriasCrearNoticiaSuperior();
+
+
+
+    // 3. Registrar listener del formulario
     const form = document.getElementById('crearNoticiaFormSuperior');
     if (form && !form.dataset.listenerAttached) {
         form.addEventListener('submit', async (e) => {
@@ -12,31 +18,60 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// --- AQUÍ ESTÁ TU PREVISUALIZACIÓN RESTAURADA ---
-function previewNoticiaImagenSuperior(event) {
+function getSupabaseClient() {
+    return window.supabaseClient || window.dbClient;
+}
+
+// 1. OBTENER Y POBLAR CATEGORÍAS
+async function cargarCategoriasCrearNoticiaSuperior() {
+    const selectCategoria = document.getElementById('noticiaCategoriaSuperior');
+    const client = getSupabaseClient();
+    
+    if (!selectCategoria || !client) return;
+
+    try {
+        const { data: categorias, error } = await client
+            .from('categorias')
+            .select('id, nombre, slug')
+            .order('nombre', { ascending: true });
+
+        if (error) throw error;
+
+        selectCategoria.innerHTML = '<option value="">-- Selecciona una categoría --</option>';
+
+        (categorias || []).forEach(cat => {
+            const option = document.createElement('option');
+            option.value = cat.id; // Guarda el UUID directo para la FK
+            option.textContent = cat.nombre;
+            selectCategoria.appendChild(option);
+        });
+    } catch (err) {
+        console.error('❌ Error al obtener categorías:', err.message);
+        selectCategoria.innerHTML = '<option value="">Error al cargar categorías</option>';
+    }
+}
+
+// 2. PREVISUALIZACIÓN DE IMAGEN
+async function previewNoticiaImagenSuperiorcreate(event) {
     const file = event.target.files[0];
     if (!file) return;
 
     if (file.type !== 'image/webp') {
-        alert('⚠️ Solo se permiten imágenes en formato .webp');
-        event.target.value = ''; // Resetea el input
+        await Modal.alert('Solo se permiten imágenes en formato .webp', 'Formato no permitido');
+        event.target.value = '';
         return;
     }
 
     const reader = new FileReader();
     reader.onload = (e) => {
-        const preview = document.getElementById('noticiaImagenPreviewSuperior');
-        if (preview) {
-            preview.src = e.target.result;
-            preview.style.display = 'block'; // Asegura que se vea
-        }
+        const preview = document.getElementById('noticiaImagenPreviewSuperiorcreate');
+        if (preview) preview.src = e.target.result;
     };
     reader.readAsDataURL(file);
 }
-// ------------------------------------------------
 
+// 3. CREAR Y PUBLICAR NOTICIA (ROLE: SUPERIOR)
 async function createNoticiaSuperior() {
-    // 1. Bloqueo inmediato síncrono si ya hay un envío en curso
     if (isSubmittingNoticia) return;
 
     const form = document.getElementById('crearNoticiaFormSuperior');
@@ -44,19 +79,18 @@ async function createNoticiaSuperior() {
     const originalBtnText = submitBtn ? submitBtn.innerText : 'Publicar Noticia';
 
     try {
-        // Activamos el flag y bloqueamos el botón INMEDIATAMENTE
         isSubmittingNoticia = true;
         if (submitBtn) {
             submitBtn.disabled = true;
             submitBtn.innerText = 'Publicando noticia...';
         }
 
-        const client = window.supabaseClient || window.dbClient;
+        const client = getSupabaseClient();
         if (!client) throw new Error("Cliente de Supabase no disponible.");
 
         const { data: { user } } = await client.auth.getUser();
         if (!user) {
-            alert('⚠️ Debes iniciar sesión para publicar.');
+            await Modal.alert('Debes iniciar sesión para publicar.','inicia sesion');
             return;
         }
 
@@ -68,35 +102,39 @@ async function createNoticiaSuperior() {
             .single();
 
         if (autorErr || !autor) {
-            alert('⚠️ No se encontró la ficha de autor asociada a tu usuario.');
+            await Modal.alert('No se encontró la ficha de autor asociada a tu usuario.','Error de Autor');
             return;
         }
 
         const titulo = document.getElementById('noticiaTitleSuperior')?.value.trim();
         const resumen = document.getElementById('noticiaResumenSuperior')?.value.trim();
         const cuerpo = document.getElementById('noticiaCuerpoSuperior')?.value.trim();
-        const categorySlug = document.getElementById('noticiaCategoriaSuperior')?.value;
+        const categoryVal = document.getElementById('noticiaCategoriaSuperior')?.value;
         const destacada = document.getElementById('noticiaDestacadaSuperior')?.checked || false;
-        const fileInput = document.getElementById('noticiaImagenFileSuperior');
+        const fileInput = document.getElementById('noticiaImagenFileSuperiorcreate');
         const file = fileInput ? fileInput.files[0] : null;
 
-        // Validaciones básicas antes de procesar imagen
-        if (!titulo || !resumen || !cuerpo || !categorySlug) {
-            alert('⚠️ Por favor completa todos los campos requeridos.');
-            // En validaciones manuales, reactivamos manualmente aquí o dejamos que finally lo haga
+        if (!titulo || !resumen || !cuerpo || !categoryVal) {
+            await Modal.alert('Por favor completa todos los campos requeridos.','Campos Inconpletos');
             return; 
         }
 
-        // Obtener la categoría por su slug
-        const { data: catData, error: catErr } = await client
-            .from('categorias')
-            .select('id')
-            .eq('slug', categorySlug)
-            .single();
+        // RESOLUCIÓN DE CATEGORIA_ID
+        let targetCategoriaId = categoryVal;
+        const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(categoryVal);
 
-        if (catErr) throw catErr;
+        if (!isUuid) {
+            const { data: catData, error: catErr } = await client
+                .from('categorias')
+                .select('id')
+                .eq('slug', categoryVal)
+                .single();
 
-        // 2. Procesamiento de imagen en .webp
+            if (catErr) throw catErr;
+            targetCategoriaId = catData.id;
+        }
+
+        // A. PROCESAMIENTO DE IMAGEN DE ALMACENAMIENTO
         let imagenId = null;
         if (file) {
             if (file.type !== 'image/webp') {
@@ -126,13 +164,13 @@ async function createNoticiaSuperior() {
             imagenId = imgRecord.id;
         }
 
-        // 3. Inserción con estado publicado (Rol Superior publica directamente)
+        // B. INSERCIÓN DE LA NOTICIA PUBLICADA
         const insertPayload = {
             titulo,
             resumen,
             cuerpo,
             autor_id: autor.id,
-            categoria_id: catData.id,
+            categoria_id: targetCategoriaId,
             publicado: true,
             estado: 'publicado',
             destacada,
@@ -149,29 +187,25 @@ async function createNoticiaSuperior() {
 
         if (insertErr) throw insertErr;
 
-        // ÚNICA ALERTA DE ÉXITO
-        alert('🚀 ¡Noticia publicada con éxito!');
+        await Modal.alert('Noticia enviada a revisión exitosamente.', 'Éxito');
 
-        // 4. Limpieza del formulario
+        // C. RESET DE VISTA Y CONTROLES
         if (form) form.reset();
         if (fileInput) fileInput.value = '';
 
-        // Resetear la previsualización al estado por defecto
-        const preview = document.getElementById('noticiaImagenPreviewSuperior');
+        const preview = document.getElementById('noticiaImagenPreviewSuperiorcreate');
         if (preview) {
-            preview.src = 'https://placehold.co/600x300?text=Previsualizaci%C3%B3n+de+Imagen';
+            preview.src = 'https://placehold.co/600x400?text=Sin+Imagen';
         }
 
-        // 5. Recargar la tabla (si existe la función)
         if (typeof loadMisNoticiasSuperior === 'function') {
             await loadMisNoticiasSuperior();
         }
 
     } catch (error) {
         console.error('Error al crear noticia (Superior):', error);
-        alert('❌ Error al publicar la noticia: ' + error.message);
+        await Modal.alert('❌ Error al publicar la noticia: ' + error.message + 'Error');
     } finally {
-        // Desbloquear bandera y botón SIEMPRE al finalizar (éxito o error)
         isSubmittingNoticia = false;
         if (submitBtn) {
             submitBtn.disabled = false;
